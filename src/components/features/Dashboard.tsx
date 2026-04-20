@@ -32,11 +32,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const currentStreak = stats?.streak || 0;
   const totalStars = stats?.stars || (sessionsCount * 10); // Fallback to calculation if profile not setup
 
-  const completedUnits = units.filter(unit => {
-    const questionsDone = unit.questions?.filter((_, i) => answers[`${unit.id}-${i}`]?.is_done).length || 0;
-    return questionsDone === (unit.questions?.length || 1);
-  }).length;
-
+  // Dashboard logic
   const handleSupportClick = () => {
     const text = `Olá Prof. ${mediatorName}, sou a Ione! Preciso de uma ajuda com as atividades de hoje.`;
     const cleanPhone = mediatorPhone.replace(/\D/g, '');
