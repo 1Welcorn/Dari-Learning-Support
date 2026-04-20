@@ -68,21 +68,6 @@ export const useSarehData = () => {
   }, []);
 
   const saveAnswer = async (unitId: string, qIdx: number, val: string) => {
-    // Atualização otimista do estado local
-    const answerKey = `${unitId}-${qIdx}`;
-    const newAnswer: Answer = {
-      unit_id: unitId,
-      question_index: qIdx,
-      answer_value: val,
-      is_done: true,
-      updated_at: new Date().toISOString()
-    };
-    
-    setAnswers(prev => ({
-      ...prev,
-      [answerKey]: newAnswer
-    }));
-
     try {
       const { error } = await supabase.from('answers').upsert({
         unit_id: unitId,
@@ -94,13 +79,27 @@ export const useSarehData = () => {
       if (error) {
         console.error('Error saving answer to Supabase:', error);
         setSyncStatus('err');
-        // Opcional: Reverter estado em caso de erro
-      } else {
-        setSyncStatus('ok');
+        return false;
       }
+      
+      // Atualiza estado local apenas após sucesso
+      const answerKey = `${unitId}-${qIdx}`;
+      setAnswers(prev => ({
+        ...prev,
+        [answerKey]: {
+          unit_id: unitId,
+          question_index: qIdx,
+          answer_value: val,
+          is_done: true
+        }
+      }));
+      
+      setSyncStatus('ok');
+      return true;
     } catch (err) {
       console.error('Exception in saveAnswer:', err);
       setSyncStatus('err');
+      return false;
     }
   };
 

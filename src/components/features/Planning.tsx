@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import type { Unit } from '../../types';
-import { Printer, Save, CheckCircle } from 'lucide-react';
+import { Printer, Save, CheckCircle, Trash2, Plus } from 'lucide-react';
 import { COLORS } from '../../constants';
+import type { Question } from '../../types';
 
 interface PlanningProps {
   units: Unit[];
@@ -14,24 +15,26 @@ const AdminUnitResourceRow: React.FC<{
   unit: Unit, 
   onSave: (id: string, updates: Partial<Unit>) => Promise<boolean> 
 }> = ({ unit, onSave }) => {
-  const [embedText, setEmbedText] = useState(unit.embed_urls?.join('\n') || '');
+  const [embedUrls, setEmbedUrls] = useState<string[]>(unit.embed_urls || []);
+  const [questions, setQuestions] = useState<Question[]>(unit.questions || []);
   const [descText, setDescText] = useState(unit.descriptors?.join(', ') || '');
   const [isSaved, setIsSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Sincronizar estado local se a prop unit mudar (ex: após fetch)
+  // Sincronizar estado local se a prop unit mudar
   React.useEffect(() => {
-    setEmbedText(unit.embed_urls?.join('\n') || '');
+    setEmbedUrls(unit.embed_urls || []);
+    setQuestions(unit.questions || []);
     setDescText(unit.descriptors?.join(', ') || '');
-  }, [unit.embed_urls, unit.descriptors]);
+  }, [unit]);
 
   const handleSave = async () => {
     setIsSaving(true);
-    const urls = embedText.split('\n').map(v => v.trim()).filter(Boolean);
     const descs = descText.split(',').map(v => v.trim()).filter(Boolean);
     
     const success = await onSave(unit.id, {
-      embed_urls: urls,
+      embed_urls: embedUrls,
+      questions: questions,
       descriptors: descs
     });
     
@@ -42,6 +45,30 @@ const AdminUnitResourceRow: React.FC<{
     }
   };
 
+  const removeQuestion = (idx: number) => {
+    if (window.confirm('Excluir esta pergunta permanentemente?')) {
+      setQuestions(prev => prev.filter((_, i) => i !== idx));
+    }
+  };
+
+  const removeEmbed = (idx: number) => {
+    if (window.confirm('Excluir este link interativo?')) {
+      setEmbedUrls(prev => prev.filter((_, i) => i !== idx));
+    }
+  };
+
+  const clearAllEmbeds = () => {
+    if (window.confirm('Deseja excluir TODAS as atividades interativas desta unidade?')) {
+      setEmbedUrls([]);
+    }
+  };
+
+  const clearAllQuestions = () => {
+    if (window.confirm('Deseja excluir TODAS as perguntas desta unidade?')) {
+      setQuestions([]);
+    }
+  };
+
   return (
     <div className="admin-unit-card">
       <div className="admin-unit-header">
@@ -49,40 +76,96 @@ const AdminUnitResourceRow: React.FC<{
         <strong>{unit.title}</strong>
       </div>
       
+      {/* --- INTERATIVAS --- */}
       <div className="admin-form-group">
-        <label>Atividades HTML (Wordwall, etc.) - Uma por linha</label>
-        <textarea 
-          rows={3}
-          placeholder="https://wordwall.net/embed/..."
-          value={embedText}
-          onChange={(e) => setEmbedText(e.target.value)}
-          style={{ 
-            width: '100%', 
-            padding: '12px', 
-            borderRadius: '12px', 
-            border: '2px solid var(--border)', 
-            background: 'var(--bg)',
-            fontSize: '13px',
-            resize: 'vertical'
-          }}
-        />
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <label style={{ margin: 0 }}>Atividades Interativas ({embedUrls.length})</label>
+          {embedUrls.length > 0 && (
+            <button className="text-danger-btn" onClick={clearAllEmbeds} style={{ fontSize: '11px' }}>
+              Limpar Tudo
+            </button>
+          )}
+        </div>
+        <div className="admin-items-list">
+          {embedUrls.length === 0 ? (
+            <div className="empty-mini">Nenhuma atividade interativa.</div>
+          ) : (
+            embedUrls.map((url, i) => (
+              <div key={i} className="admin-item-row">
+                <div className="admin-item-text truncate">{url}</div>
+                <button className="admin-item-del" title="Excluir link" onClick={() => removeEmbed(i)}>
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+        <button className="admin-add-btn" onClick={() => {
+          const url = window.prompt('Cole a URL do Wordwall/Embed:');
+          if (url) setEmbedUrls([...embedUrls, url]);
+        }}>
+          <Plus size={14} /> Adicionar Link Interativo
+        </button>
+      </div>
+
+      {/* --- PERGUNTAS --- */}
+      <div className="admin-form-group">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
+          <label style={{ margin: 0 }}>Perguntas da Lição ({questions.length})</label>
+          {questions.length > 0 && (
+            <button className="text-danger-btn" onClick={clearAllQuestions} style={{ fontSize: '11px' }}>
+              Limpar Tudo
+            </button>
+          )}
+        </div>
+        <div className="admin-items-list">
+          {questions.length === 0 ? (
+            <div className="empty-mini">Nenhuma pergunta cadastrada.</div>
+          ) : (
+            questions.map((q, i) => (
+              <div key={i} className="admin-item-row">
+                <div className="admin-item-text">
+                  <span className="q-index-tag">{i + 1}</span> {q.q}
+                </div>
+                <button className="admin-item-del" title="Excluir pergunta" onClick={() => removeQuestion(i)}>
+                  <Trash2 size={16} />
+                </button>
+              </div>
+            ))
+          )}
+        </div>
+        <button className="admin-add-btn" onClick={() => {
+          const qText = window.prompt('Digite a pergunta:');
+          if (qText) {
+            setQuestions([...questions, { 
+              q: qText, 
+              type: 'text', 
+              mediator: 'Instrução para mediadora...', 
+              hint: 'Dica para a aluna...' 
+            }]);
+          }
+        }}>
+          <Plus size={14} /> Adicionar Pergunta (Texto)
+        </button>
       </div>
 
       <div className="admin-form-group">
-        <label>Descritores BNCC (D3, D5, D12... separados por vírgula)</label>
+        <label>Descritores BNCC (separados por vírgula)</label>
         <input 
           type="text" 
           placeholder="D3, D5, D12..."
           value={descText}
           onChange={(e) => setDescText(e.target.value)}
+          className="admin-input-full"
         />
       </div>
 
       <button 
-        className={`confirm-session-btn ${isSaved ? 'success' : ''}`}
+        className={`confirm-session-btn premium ${isSaved ? 'success' : ''}`}
         onClick={handleSave}
+        disabled={isSaving}
         style={{ 
-          marginTop: '10px', 
+          marginTop: '15px', 
           width: '100%',
           background: isSaved ? 'var(--teal)' : COLORS[unit.color]?.main || 'var(--teal)'
         }}
@@ -90,14 +173,15 @@ const AdminUnitResourceRow: React.FC<{
         {isSaving ? (
           <div className="loader-spinner" style={{ width: '18px', height: '18px' }}></div>
         ) : isSaved ? (
-          <><CheckCircle size={18} /> Salvo!</>
+          <><CheckCircle size={18} /> Alterações Salvas no Banco!</>
         ) : (
-          <><Save size={18} /> Salvar Recursos</>
+          <><Save size={18} /> Salvar Alterações na Unidade</>
         )}
       </button>
     </div>
   );
 };
+
 
 export const Planning: React.FC<PlanningProps> = ({ units, isAdmin, settings, onUpdateUnit }) => {
   const handlePrint = () => {

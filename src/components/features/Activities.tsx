@@ -11,7 +11,7 @@ interface QuestionBlockProps {
   color: string;
   isDone: boolean;
   savedAnswer: string;
-  onSaveAnswer: (val: string) => void;
+  onSaveAnswer: (val: string) => Promise<boolean>;
 }
 
 const QuestionBlock: React.FC<QuestionBlockProps> = ({ 
@@ -19,11 +19,26 @@ const QuestionBlock: React.FC<QuestionBlockProps> = ({
 }) => {
   const [showMediatorGuide, setShowMediatorGuide] = useState(false);
   const [tempAnswer, setTempAnswer] = useState(savedAnswer);
+  const [isSaving, setIsSaving] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const currentColors = COLORS[color] || COLORS.teal;
 
   React.useEffect(() => {
     setTempAnswer(savedAnswer);
   }, [savedAnswer]);
+
+  const handleSave = async (val: string) => {
+    if (!val || isSaving) return;
+    setIsSaving(true);
+    const success = await onSaveAnswer(val);
+    setIsSaving(false);
+    if (success) {
+      setShowSuccess(true);
+      setTimeout(() => setShowSuccess(false), 3000);
+    } else {
+      window.alert('Erro ao salvar resposta. Verifique sua conexão.');
+    }
+  };
 
   return (
     <div className={`q-block ${isDone ? 'is-done' : ''}`}>
@@ -76,13 +91,13 @@ const QuestionBlock: React.FC<QuestionBlockProps> = ({
               key={i} 
               className={`opt-large-btn ${tempAnswer === opt ? 'selected' : ''}`}
               onClick={() => {
-                setTempAnswer(opt);
-                // onSaveAnswer(opt); // Removido para salvar apenas no botão de confirmar
+                if (!isDone) setTempAnswer(opt);
               }}
               style={{ 
                 '--opt-color': currentColors.main,
                 '--opt-bg': currentColors.light 
               } as React.CSSProperties}
+              disabled={isDone || isSaving}
             >
               <div className="opt-indicator">
                 {tempAnswer === opt && <CheckCircle size={20} />}
@@ -108,27 +123,42 @@ const QuestionBlock: React.FC<QuestionBlockProps> = ({
             value={tempAnswer}
             onChange={(e) => setTempAnswer(e.target.value)}
             placeholder="Digite sua resposta aqui..."
+            disabled={isDone || isSaving}
           />
-          <button 
-            className="save-action-btn" 
-            onClick={() => onSaveAnswer(tempAnswer)}
-            style={{ background: currentColors.main }}
-            disabled={!tempAnswer.trim()}
-          >
-            <Save size={18} /> Salvar Resposta
-          </button>
+          {!isDone && (
+            <button 
+              className={`save-action-btn ${showSuccess ? 'success' : ''}`}
+              onClick={() => handleSave(tempAnswer)}
+              style={{ background: currentColors.main }}
+              disabled={!tempAnswer.trim() || isSaving}
+            >
+              {isSaving ? (
+                <div className="loader-spinner" style={{ width: '16px', height: '16px' }}></div>
+              ) : showSuccess ? (
+                <><CheckCircle size={18} /> Salvo!</>
+              ) : (
+                <><Save size={18} /> Salvar Resposta</>
+              )}
+            </button>
+          )}
         </div>
       )}
 
       {!isDone && question.type === 'mc' && (
          <div className="q-footer-actions">
             <button 
-              className="confirm-btn"
-              onClick={() => onSaveAnswer(tempAnswer)}
+              className={`confirm-btn ${showSuccess ? 'success' : ''}`}
+              onClick={() => handleSave(tempAnswer)}
               style={{ background: currentColors.main }}
-              disabled={!tempAnswer}
+              disabled={!tempAnswer || isSaving}
             >
-              Confirmar Resposta
+              {isSaving ? (
+                <div className="loader-spinner" style={{ width: '18px', height: '18px' }}></div>
+              ) : showSuccess ? (
+                <><CheckCircle size={18} /> Salvo!</>
+              ) : (
+                'Confirmar Resposta'
+              )}
             </button>
          </div>
       )}
@@ -145,7 +175,7 @@ const QuestionBlock: React.FC<QuestionBlockProps> = ({
 interface UnitCardProps {
   unit: Unit;
   answers: Record<string, any>;
-  onSaveAnswer: (qIdx: number, val: string) => void;
+  onSaveAnswer: (qIdx: number, val: string) => Promise<boolean>;
   onSaveSession: (note: string) => void;
 }
 
@@ -267,7 +297,12 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
   );
 };
 
-export const Activities: React.FC<{ units: Unit[]; answers: Record<string, any>; onSaveAnswer: (uId: string, qIdx: number, val: string) => void; onSaveSession: (uId: string, note: string) => void }> = ({ units, answers, onSaveAnswer, onSaveSession }) => {
+export const Activities: React.FC<{ 
+  units: Unit[]; 
+  answers: Record<string, any>; 
+  onSaveAnswer: (uId: string, qIdx: number, val: string) => Promise<boolean>; 
+  onSaveSession: (uId: string, note: string) => void 
+}> = ({ units, answers, onSaveAnswer, onSaveSession }) => {
   
   return (
     <div className="screen">

@@ -1340,11 +1340,123 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px}
   transform: rotate(-45deg);
 }
 
-/* Session Logs */
-.log-list {
+.admin-items-list {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.admin-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: 8px;
+  gap: 12px;
+}
+
+.admin-item-text {
+  font-size: 13px;
+  color: var(--ink2);
+  flex: 1;
+}
+
+.admin-item-text.truncate {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.admin-item-del {
+  background: none;
+  border: none;
+  color: var(--ink4);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.admin-item-del:hover {
+  color: var(--coral);
+  background: var(--coral-light);
+  border-radius: 4px;
+}
+
+.admin-add-btn {
+  background: var(--bg);
+  border: 1px dashed var(--ink4);
+  color: var(--ink3);
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: fit-content;
+}
+
+.admin-add-btn:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+  background: var(--teal-light);
+}
+
+.text-danger-btn {
+  background: none;
+  border: none;
+  color: var(--coral);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.text-danger-btn:hover {
+  background: var(--coral-light);
+  text-decoration: underline;
+}
+
+.q-index-tag {
+  background: var(--ink4);
+  color: #fff;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  margin-right: 8px;
+}
+
+.admin-input-full {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: 2px solid var(--border);
+  background: var(--bg);
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.admin-input-full:focus {
+  border-color: var(--teal);
+  outline: none;
+}
+
+.confirm-session-btn.premium {
+  padding: 16px;
+  font-size: 15px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .session-log-card {
