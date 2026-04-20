@@ -2684,3 +2684,160 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px}
   to { transform: rotate(360deg); }
 }
 
+/* --- PROGRESSIVE CARD GRID V2 --- */
+
+.activities-screen {
+  padding-bottom: 80px;
+}
+
+.unit-grid-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+@media (min-width: 768px) {
+  .unit-grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.unit-card-v2 {
+  background: #fff;
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  height: fit-content;
+  position: relative;
+}
+
+.unit-card-v2:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+}
+
+.unit-card-v2.expanded {
+  grid-column: 1 / -1;
+  transform: none;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+}
+
+.unit-hdr-v2 {
+  padding: 24px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 160px;
+  justify-content: flex-start;
+}
+
+.unit-header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.unit-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.unit-title-text {
+  font-family: 'DM Sans', sans-serif; /* Changed back to DM Sans for title weight as per snippet */
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.unit-meta-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.unit-status-pill {
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 99px;
+  font-weight: 700;
+}
+
+.chev-v2 {
+  color: #ccc;
+  transition: all 0.3s;
+}
+
+.unit-card-v2:hover .chev-v2 {
+  color: var(--ink3);
+}
+
+.chev-v2.open {
+  transform: rotate(180deg);
+}
+
+.unit-header-mid {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.unit-sub-text-v2 {
+  font-size: 14px;
+  color: var(--ink3);
+  max-width: 80%;
+  line-height: 1.4;
+  opacity: 0.8;
+}
+
+.descriptor-pills-v2 {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.desc-pill-v3 {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  color: var(--ink4);
+  font-weight: 600;
+  text-transform: uppercase;
+  background: transparent;
+}
+
+.unit-icon-decor-v2 {
+  position: absolute;
+  bottom: 24px;
+  right: 24px;
+  opacity: 0.15;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.unit-card-v2:hover .unit-icon-decor-v2 {
+  opacity: 1;
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.unit-card-v2 .unit-body {
+  border-top: 1px solid var(--border);
+  background: #fff;
+  animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Ensure QuestionBlock looks good in the new card */
+.unit-card-v2 .q-block {
+  padding: 24px;
+}

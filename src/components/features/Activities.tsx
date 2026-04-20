@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { Unit, Question } from '../../types';
 import { COLORS } from '../../constants';
-import { ChevronDown, FileText, Edit2, Trash2, X, Check, Plus, CheckCircle } from 'lucide-react';
+import { ChevronDown, FileText, Edit2, Trash2, X, Check, Plus, CheckCircle, ChefHat, Headphones, User, Building2, Smartphone, BookOpen, GraduationCap } from 'lucide-react';
 import { QuestionBlock } from './QuestionBlock';
 
 // Local QuestionBlock implementation removed in favor of shared component
@@ -16,6 +16,17 @@ interface UnitCardProps {
   isExpanded: boolean;
   onToggle: () => void;
 }
+
+const getUnitIcon = (title: string) => {
+  const t = title.toLowerCase();
+  if (t.includes('cozinha') || t.includes('kitchen')) return <ChefHat size={36} strokeWidth={1.5} />;
+  if (t.includes('escuta') || t.includes('listening') || t.includes('família')) return <Headphones size={36} strokeWidth={1.5} />;
+  if (t.includes('nome') || t.includes('gosto') || t.includes('perfil') || t.includes('intro')) return <User size={36} strokeWidth={1.5} />;
+  if (t.includes('redor') || t.includes('city') || t.includes('around') || t.includes('cidade')) return <Building2 size={36} strokeWidth={1.5} />;
+  if (t.includes('celular') || t.includes('digital') || t.includes('phone')) return <Smartphone size={36} strokeWidth={1.5} />;
+  if (t.includes('receita') || t.includes('book') || t.includes('estudo')) return <BookOpen size={36} strokeWidth={1.5} />;
+  return <GraduationCap size={36} strokeWidth={1.5} />;
+};
 
 const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSaveSession, isAdmin, onUpdateUnit, isExpanded, onToggle }) => {
   const [note, setNote] = useState('');
@@ -89,28 +100,37 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
   const isComplete = questionsDone === unit.questions.length;
 
   return (
-    <div className="unit-card">
-      <div className="unit-hdr" onClick={onToggle}>
-        <div className="unit-dot" style={{ background: currentColors.main }}></div>
-        <div className="unit-info">
-          <div className="unit-title-row">
+    <div className={`unit-card-v2 ${isExpanded ? 'expanded' : ''}`} style={{ borderColor: currentColors.main }}>
+      <div className="unit-hdr-v2" onClick={onToggle}>
+        <div className="unit-header-top">
+          <div className="unit-title-group">
+            <div className="unit-dot" style={{ background: currentColors.main }}></div>
             <div className="unit-title-text">{unit.title}</div>
-            {Array.isArray(unit.descriptors) && unit.descriptors.length > 0 && (
-              <div className="descriptor-pills">
-                {unit.descriptors.map(d => (
-                  <span key={d} className="desc-pill" style={{ borderColor: currentColors.main, color: currentColors.main }}>
-                    {d}
-                  </span>
-                ))}
-              </div>
-            )}
           </div>
-          <div className="unit-sub-text">{unit.sub}</div>
+          <div className="unit-meta-right">
+            <div className="unit-status-pill" style={{ background: currentColors.light, color: currentColors.dark }}>
+              {questionsDone}/{unit.questions.length}
+            </div>
+            <ChevronDown size={18} className={`chev-v2 ${isExpanded ? 'open' : ''}`} />
+          </div>
         </div>
-        <div className="unit-status" style={{ background: isComplete ? 'var(--teal-light)' : 'var(--bg)', color: isComplete ? 'var(--teal2)' : 'var(--ink4)' }}>
-          {questionsDone}/{unit.questions.length}
+        
+        <div className="unit-header-mid">
+          <div className="unit-sub-text-v2">{unit.sub}</div>
+          {Array.isArray(unit.descriptors) && unit.descriptors.length > 0 && (
+            <div className="descriptor-pills-v2">
+              {unit.descriptors.map(d => (
+                <span key={d} className="desc-pill-v3">
+                  {d}
+                </span>
+              ))}
+            </div>
+          )}
         </div>
-        <ChevronDown size={18} className={`chev ${isExpanded ? 'open' : ''}`} />
+
+        <div className="unit-icon-decor-v2" style={{ color: currentColors.main }}>
+          {getUnitIcon(unit.title)}
+        </div>
       </div>
 
       {isExpanded && (
@@ -321,20 +341,22 @@ export const Activities: React.FC<{
   };
 
   return (
-    <div className="screen">
-      {units.map((unit) => (
-        <UnitCard 
-          key={unit.id} 
-          unit={unit} 
-          answers={answers}
-          onSaveAnswer={(qIdx, val) => onSaveAnswer(unit.id, qIdx, val)}
-          onSaveSession={(note) => onSaveSession(unit.id, note)}
-          isAdmin={isAdmin}
-          onUpdateUnit={onUpdateUnit}
-          isExpanded={expandedUnitId === unit.id}
-          onToggle={() => setExpandedUnitId(expandedUnitId === unit.id ? null : unit.id)}
-        />
-      ))}
+    <div className="screen activities-screen">
+      <div className="unit-grid-container">
+        {units.map((unit) => (
+          <UnitCard 
+            key={unit.id} 
+            unit={unit} 
+            answers={answers}
+            onSaveAnswer={(qIdx, val) => onSaveAnswer(unit.id, qIdx, val)}
+            onSaveSession={(note) => onSaveSession(unit.id, note)}
+            isAdmin={isAdmin}
+            onUpdateUnit={onUpdateUnit}
+            isExpanded={expandedUnitId === unit.id}
+            onToggle={() => setExpandedUnitId(expandedUnitId === unit.id ? null : unit.id)}
+          />
+        ))}
+      </div>
 
       {isAdmin && (
         <div style={{ padding: '0 16px 40px' }}>
