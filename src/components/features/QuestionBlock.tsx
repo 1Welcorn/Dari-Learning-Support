@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import type { Question, QuestionType } from '../../types';
 import { COLORS } from '../../constants';
-import { Info, CheckCircle, Volume2, Edit2, Trash2, X, Check, Plus, Circle, CheckSquare, Image as ImageIcon, Music, Upload, Play, Loader2 } from 'lucide-react';
+import { Info, CheckCircle, Volume2, Edit2, Trash2, X, Check, Plus, Circle, CheckSquare, Image as ImageIcon, Music, Loader2 } from 'lucide-react';
 import { speechService } from '../../utils/speech';
 import { supabase } from '../../services/supabase';
 
@@ -53,7 +53,7 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
       const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
       const filePath = `question-media/${fileName}`;
 
-      const { data, error } = await supabase.storage
+      const { error } = await supabase.storage
         .from('media')
         .upload(filePath, file, {
           cacheControl: '3600',
