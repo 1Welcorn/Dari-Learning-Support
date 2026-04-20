@@ -375,8 +375,9 @@ export const Activities: React.FC<{
   onUpdateUnit?: (uId: string, updates: Partial<Unit>) => Promise<boolean>;
   onCreateUnit?: (title: string) => Promise<boolean>;
   onGameOver?: (score: number, words: number) => void;
-}> = ({ units, answers, onSaveAnswer, onSaveSession, isAdmin, onUpdateUnit, onCreateUnit, onGameOver }) => {
-  const [expandedUnitId, setExpandedUnitId] = useState<string | null>(null);
+  initialExpandedId?: string | null;
+}> = ({ units, answers, onSaveAnswer, onSaveSession, isAdmin, onUpdateUnit, onCreateUnit, onGameOver, initialExpandedId }) => {
+  const [expandedUnitId, setExpandedUnitId] = useState<string | null>(initialExpandedId || null);
   const [activeGameUnitId, setActiveGameUnitId] = useState<string | null>(null);
   
   const handleCreateUnit = async () => {

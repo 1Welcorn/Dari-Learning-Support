@@ -19,6 +19,7 @@ export const App: React.FC = () => {
 
   const { role, user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('home');
+  const [targetUnitId, setTargetUnitId] = useState<string | null>(null);
   const [celebration, setCelebration] = useState<{ xp: number, stars: number } | null>(null);
   const [editingUnitId, setEditingUnitId] = useState<string | null>(null);
   const { 
@@ -124,7 +125,7 @@ export const App: React.FC = () => {
           </div>
         </div>
 
-        <button className={`nav-btn ${activeTab === 'home' ? 'active' : ''}`} onClick={() => setActiveTab('home')}>
+        <button className={`nav-btn ${activeTab === 'home' ? 'active' : ''}`} onClick={() => { setActiveTab('home'); setTargetUnitId(null); }}>
           <Home size={24} className="nav-icon" />
           Início
         </button>
@@ -152,7 +153,10 @@ export const App: React.FC = () => {
         <main className="screen active">
           {activeTab === 'home' && (
              <Dashboard 
-                onNavigate={setActiveTab}
+                onNavigate={(screen, unitId) => {
+                  setActiveTab(screen);
+                  if (unitId) setTargetUnitId(unitId);
+                }}
                 units={units}
                 answers={answers}
                 completedPct={completedPct}
@@ -178,6 +182,7 @@ export const App: React.FC = () => {
                   onUpdateUnit={updateUnit}
                   onCreateUnit={createUnit}
                   onGameOver={handleGameOver}
+                  initialExpandedId={targetUnitId}
                 />
              </div>
           )}

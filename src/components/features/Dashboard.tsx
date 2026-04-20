@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useStudentJourney } from '../../hooks/useStudentJourney';
 
 interface DashboardProps {
-  onNavigate: (screen: string) => void;
+  onNavigate: (screen: string, unitId?: string) => void;
   units: Unit[];
   answers: Record<string, any>;
   completedPct: number;
@@ -83,7 +83,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
       {/* FLOATING MISSION CARD */}
       <div className="mission-island-container">
-        <div className="mission-island" onClick={() => onNavigate('activities')}>
+        <div className="mission-island" onClick={() => onNavigate('activities', nextUnit?.id)}>
           <div className="mission-tag-v4">SUA MISSÃO AGORA</div>
           <h2 className="mission-title-v4">{nextUnit?.title || 'Unidade 2'}</h2>
           <p className="mission-subtitle-v4">"{nextUnit?.sub?.split('·')[0]?.trim() || 'Vamos aprender algo novo?'}"</p>
@@ -135,7 +135,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <div 
                 key={unit.id} 
                 className={`adventure-node ${isDone ? 'is-complete' : ''} ${isLocked ? 'is-locked' : ''} ${idx % 2 === 0 ? 'left' : 'right'}`}
-                onClick={() => !isLocked && onNavigate('activities')}
+                onClick={() => !isLocked && onNavigate('activities', unit.id)}
               >
                 <div className="island-node" style={{ backgroundColor: isLocked ? '#E2E8F0' : color }}>
                    <div className="island-icon">
