@@ -7,7 +7,7 @@ interface PlanningProps {
   units: Unit[];
   isAdmin: boolean;
   settings: any;
-  onUpdateUnit: (id: string, field: string, val: string) => void;
+  onUpdateUnit: (id: string, field: string, val: any) => void;
 }
 
 export const Planning: React.FC<PlanningProps> = ({ units, isAdmin, settings, onUpdateUnit }) => {
@@ -148,7 +148,7 @@ export const Planning: React.FC<PlanningProps> = ({ units, isAdmin, settings, on
                     defaultValue={unit.embed_urls?.join('\n') || ''}
                     onBlur={(e) => {
                       const urls = e.target.value.split('\n').map(v => v.trim()).filter(Boolean);
-                      onUpdateUnit(unit.id, 'embed_urls', JSON.stringify(urls));
+                      onUpdateUnit(unit.id, 'embed_urls', urls);
                     }}
                     style={{ 
                       width: '100%', 
@@ -170,13 +170,7 @@ export const Planning: React.FC<PlanningProps> = ({ units, isAdmin, settings, on
                     defaultValue={unit.descriptors?.join(', ') || ''}
                     onBlur={(e) => {
                       const vals = e.target.value.split(',').map(v => v.trim()).filter(Boolean);
-                      // Since onUpdateUnit expects a string value for the field, 
-                      // and we are dealing with JSONB in the backend, we should 
-                      // ideally pass the array. However, our current updateUnit 
-                      // implementation in useData handles the update.
-                      // Let's assume the onUpdateUnit can handle the field update.
-                      // We'll pass the array for descriptors.
-                      onUpdateUnit(unit.id, 'descriptors', JSON.stringify(vals));
+                      onUpdateUnit(unit.id, 'descriptors', vals);
                     }}
                   />
                 </div>
