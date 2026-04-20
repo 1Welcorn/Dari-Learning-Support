@@ -176,12 +176,6 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
          }</div>
       </div>
       <div className="q-content-area">
-        {question.imageUrl && !isEditing && (
-          <div className="q-media-image">
-            <img src={question.imageUrl} alt="Ilustração da questão" />
-          </div>
-        )}
-
         {question.audioUrl && !isEditing && (
           <div className="q-media-audio">
             <button 
