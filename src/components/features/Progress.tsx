@@ -1,15 +1,74 @@
 import React from 'react';
 import type { Unit, Session } from '../../types';
 import { COLORS } from '../../constants';
-import { FileText, Calendar, CheckCircle2, Clock } from 'lucide-react';
+import { FileText, Calendar, CheckCircle2, Clock, RotateCcw, Edit2, Trash2, Save, X } from 'lucide-react';
 
 interface ProgressProps {
   units: Unit[];
   sessions: Session[];
   unitStatus: Record<string, boolean>;
+  onResetUnitAnswers: (uId: string) => void;
+  onUpdateSession: (sId: string, note: string) => Promise<boolean>;
+  onDeleteSession: (sId: string) => Promise<boolean>;
 }
 
-export const Progress: React.FC<ProgressProps> = ({ units, sessions, unitStatus }) => {
+const SessionItem: React.FC<{ 
+  session: Session, 
+  unitTitle: string, 
+  onUpdate: (id: string, note: string) => Promise<boolean>,
+  onDelete: (id: string) => Promise<boolean>
+}> = ({ session, unitTitle, onUpdate, onDelete }) => {
+  const [isEditing, setIsEditing] = React.useState(false);
+  const [tempNote, setTempNote] = React.useState(session.note);
+
+  const handleSave = async () => {
+    const success = await onUpdate(session.id, tempNote);
+    if (success) setIsEditing(false);
+  };
+
+  return (
+    <div className="session-log-card">
+      <div className="log-header">
+        <div className="log-date-pill">{session.session_date}</div>
+        <div className="log-unit-tag">{unitTitle}</div>
+        <div className="log-actions">
+           {!isEditing && (
+             <>
+               <button className="log-action-btn edit" onClick={() => setIsEditing(true)}>
+                 <Edit2 size={14} />
+               </button>
+               <button className="log-action-btn delete" onClick={() => {
+                 if(window.confirm('Excluir este registro permanentemente?')) onDelete(session.id);
+               }}>
+                 <Trash2 size={14} />
+               </button>
+             </>
+           )}
+        </div>
+      </div>
+      
+      {isEditing ? (
+        <div className="log-edit-area">
+          <textarea 
+            className="log-edit-textarea"
+            value={tempNote}
+            onChange={(e) => setTempNote(e.target.value)}
+          />
+          <div className="log-edit-btns">
+            <button className="log-save-btn" onClick={handleSave}><Save size={14} /> Salvar</button>
+            <button className="log-cancel-btn" onClick={() => setIsEditing(false)}><X size={14} /> Cancelar</button>
+          </div>
+        </div>
+      ) : (
+        <div className="log-body-text">{session.note}</div>
+      )}
+    </div>
+  );
+};
+
+export const Progress: React.FC<ProgressProps> = ({ 
+  units, sessions, unitStatus, onResetUnitAnswers, onUpdateSession, onDeleteSession 
+}) => {
   const completedCount = Object.values(unitStatus).filter(Boolean).length;
   const totalCount = units.length;
   const totalPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
@@ -103,8 +162,20 @@ export const Progress: React.FC<ProgressProps> = ({ units, sessions, unitStatus 
                 <div className="prog-row-name">{unit.title}</div>
                 <div className="prog-row-meta">{isDone ? 'Missão Cumprida!' : 'Exploração em andamento'}</div>
               </div>
-              <div className="prog-row-status">
+              <div className="prog-row-status" style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
                  {isDone ? <span className="badge-done">FEITO</span> : <span className="badge-todo">PENDENTE</span>}
+                 <button 
+                   className="reset-mini-btn"
+                   title="Resetar progresso desta unidade"
+                   onClick={(e) => {
+                     e.stopPropagation();
+                     if(window.confirm(`Deseja realmente resetar as respostas da "${unit.title}"?`)) {
+                       onResetUnitAnswers(unit.id);
+                     }
+                   }}
+                 >
+                   <RotateCcw size={14} />
+                 </button>
               </div>
             </div>
           );
@@ -119,18 +190,15 @@ export const Progress: React.FC<ProgressProps> = ({ units, sessions, unitStatus 
             <p>Seu diário ainda está em branco. Vamos começar?</p>
           </div>
         ) : (
-          sessions.map((session, i) => {
-            const unit = units.find(u => u.id === session.unit_id);
-            return (
-              <div key={i} className="session-log-card">
-                <div className="log-header">
-                  <div className="log-date-pill">{session.session_date}</div>
-                  <div className="log-unit-tag">{unit?.title || 'Atendimento Geral'}</div>
-                </div>
-                <div className="log-body-text">{session.note}</div>
-              </div>
-            );
-          })
+          sessions.map((session) => (
+            <SessionItem 
+              key={session.id} 
+              session={session} 
+              unitTitle={units.find(u => u.id === session.unit_id)?.title || 'Atendimento Geral'}
+              onUpdate={onUpdateSession}
+              onDelete={onDeleteSession}
+            />
+          ))
         )}
       </div>
     </div>

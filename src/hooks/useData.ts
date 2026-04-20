@@ -68,13 +68,40 @@ export const useSarehData = () => {
   }, []);
 
   const saveAnswer = async (unitId: string, qIdx: number, val: string) => {
-    const { error } = await supabase.from('answers').upsert({
+    // Atualização otimista do estado local
+    const answerKey = `${unitId}-${qIdx}`;
+    const newAnswer: Answer = {
       unit_id: unitId,
       question_index: qIdx,
       answer_value: val,
-      is_done: true
-    }, { onConflict: 'unit_id,question_index' });
-    if (error) console.error('Error saving answer:', error);
+      is_done: true,
+      updated_at: new Date().toISOString()
+    };
+    
+    setAnswers(prev => ({
+      ...prev,
+      [answerKey]: newAnswer
+    }));
+
+    try {
+      const { error } = await supabase.from('answers').upsert({
+        unit_id: unitId,
+        question_index: qIdx,
+        answer_value: val,
+        is_done: true
+      }, { onConflict: 'unit_id,question_index' });
+      
+      if (error) {
+        console.error('Error saving answer to Supabase:', error);
+        setSyncStatus('err');
+        // Opcional: Reverter estado em caso de erro
+      } else {
+        setSyncStatus('ok');
+      }
+    } catch (err) {
+      console.error('Exception in saveAnswer:', err);
+      setSyncStatus('err');
+    }
   };
 
   const saveSession = async (unitId: string, note: string) => {
@@ -84,6 +111,67 @@ export const useSarehData = () => {
       note
     });
     if (error) console.error('Error saving session:', error);
+  };
+
+  const resetUnitAnswers = async (unitId: string) => {
+    try {
+      const { error } = await supabase.from('answers').delete().eq('unit_id', unitId);
+      if (error) {
+        console.error('Error resetting unit answers:', error);
+        setSyncStatus('err');
+      } else {
+        setSyncStatus('ok');
+        // Atualiza estado local removendo as chaves dessa unidade
+        setAnswers(prev => {
+          const next = { ...prev };
+          Object.keys(next).forEach(key => {
+            if (key.startsWith(`${unitId}-`)) {
+              delete next[key];
+            }
+          });
+          return next;
+        });
+      }
+    } catch (err) {
+      console.error('Exception in resetUnitAnswers:', err);
+      setSyncStatus('err');
+    }
+  };
+
+  const updateSession = async (sessionId: string, note: string) => {
+    try {
+      const { error } = await supabase.from('sessions').update({ note }).eq('id', sessionId);
+      if (error) {
+        console.error('Error updating session:', error);
+        setSyncStatus('err');
+        return false;
+      }
+      setSyncStatus('ok');
+      setSessions(prev => prev.map(s => s.id === sessionId ? { ...s, note } : s));
+      return true;
+    } catch (err) {
+      console.error('Exception in updateSession:', err);
+      setSyncStatus('err');
+      return false;
+    }
+  };
+
+  const deleteSession = async (sessionId: string) => {
+    try {
+      const { error } = await supabase.from('sessions').delete().eq('id', sessionId);
+      if (error) {
+        console.error('Error deleting session:', error);
+        setSyncStatus('err');
+        return false;
+      }
+      setSyncStatus('ok');
+      setSessions(prev => prev.filter(s => s.id !== sessionId));
+      return true;
+    } catch (err) {
+      console.error('Exception in deleteSession:', err);
+      setSyncStatus('err');
+      return false;
+    }
   };
 
   const updateUnit = async (id: string, updates: Partial<Unit>) => {
@@ -105,6 +193,9 @@ export const useSarehData = () => {
     syncStatus,
     saveAnswer,
     saveSession,
+    updateSession,
+    deleteSession,
+    resetUnitAnswers,
     updateUnit,
     refresh: fetchData
   };

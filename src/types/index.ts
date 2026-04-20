@@ -38,11 +38,12 @@ export interface Session {
 }
 
 export interface Answer {
-  id: string;
+  id?: string;
   unit_id: string;
   question_index: number;
   answer_value: string;
   is_done: boolean;
+  updated_at?: string;
 }
 
 export interface AppSettings {

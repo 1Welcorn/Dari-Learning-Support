@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import type { Unit, Question } from '../../types';
 import { COLORS } from '../../constants';
-import { ChevronDown, Info, CheckCircle, Save, ExternalLink, Volume2, FileText } from 'lucide-react';
+import { ChevronDown, Info, CheckCircle, Save, Volume2, FileText } from 'lucide-react';
 import { speechService } from '../../utils/speech';
 
 interface QuestionBlockProps {
@@ -77,7 +77,7 @@ const QuestionBlock: React.FC<QuestionBlockProps> = ({
               className={`opt-large-btn ${tempAnswer === opt ? 'selected' : ''}`}
               onClick={() => {
                 setTempAnswer(opt);
-                onSaveAnswer(opt);
+                // onSaveAnswer(opt); // Removido para salvar apenas no botão de confirmar
               }}
               style={{ 
                 '--opt-color': currentColors.main,
@@ -113,6 +113,7 @@ const QuestionBlock: React.FC<QuestionBlockProps> = ({
             className="save-action-btn" 
             onClick={() => onSaveAnswer(tempAnswer)}
             style={{ background: currentColors.main }}
+            disabled={!tempAnswer.trim()}
           >
             <Save size={18} /> Salvar Resposta
           </button>
@@ -217,18 +218,21 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
 
 
 
-          {unit.questions.map((q, i) => (
-            <QuestionBlock 
-              key={i}
-              question={q}
-              index={i}
-              unitId={unit.id}
-              color={unit.color}
-              isDone={!!answers[`${unit.id}-${i}`]?.is_done}
-              savedAnswer={answers[`${unit.id}-${i}`]?.answer_value || ''}
-              onSaveAnswer={(val) => onSaveAnswer(i, val)}
-            />
-          ))}
+          {unit.questions.map((q, i) => {
+            const embedCount = Array.isArray(unit.embed_urls) ? unit.embed_urls.filter(u => u.trim()).length : 0;
+            return (
+              <QuestionBlock 
+                key={i}
+                question={q}
+                index={embedCount + i}
+                unitId={unit.id}
+                color={unit.color}
+                isDone={!!answers[`${unit.id}-${i}`]?.is_done}
+                savedAnswer={answers[`${unit.id}-${i}`]?.answer_value || ''}
+                onSaveAnswer={(val) => onSaveAnswer(i, val)}
+              />
+            );
+          })}
 
           <div className="session-reporting-card">
             <div className="reporting-header">
@@ -264,6 +268,7 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
 };
 
 export const Activities: React.FC<{ units: Unit[]; answers: Record<string, any>; onSaveAnswer: (uId: string, qIdx: number, val: string) => void; onSaveSession: (uId: string, note: string) => void }> = ({ units, answers, onSaveAnswer, onSaveSession }) => {
+  
   return (
     <div className="screen">
       {units.map((unit) => (

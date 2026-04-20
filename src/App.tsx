@@ -19,7 +19,7 @@ export const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState('home');
   const { 
     units, sessions, answers, settings, loading, syncStatus, 
-    saveAnswer, saveSession, updateUnit 
+    saveAnswer, saveSession, updateSession, deleteSession, resetUnitAnswers, updateUnit 
   } = useSarehData();
 
   const completedPct = useMemo(() => {
@@ -155,7 +155,14 @@ export const App: React.FC = () => {
                   <button className="back-btn" onClick={() => setActiveTab('home')}>←</button>
                   <h2 className="screen-title" style={{ margin: 0 }}>Progresso</h2>
                </div>
-               <Progress units={units} sessions={sessions} unitStatus={unitStatus} />
+               <Progress 
+                 units={units} 
+                 sessions={sessions} 
+                 unitStatus={unitStatus} 
+                 onResetUnitAnswers={resetUnitAnswers} 
+                 onUpdateSession={updateSession}
+                 onDeleteSession={deleteSession}
+               />
              </div>
           )}
            {activeTab === 'planning' && role === 'admin' && (

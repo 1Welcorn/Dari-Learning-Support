@@ -1321,6 +1321,25 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px}
   border-radius: 8px;
 }
 
+.reset-mini-btn {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--coral);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+
+.reset-mini-btn:hover {
+  background: var(--coral-light);
+  border-color: var(--coral);
+  transform: rotate(-45deg);
+}
+
 /* Session Logs */
 .log-list {
   display: flex;
@@ -1362,6 +1381,71 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px}
   line-height: 1.6;
   color: var(--ink2);
 }
+
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  gap: 8px;
+}
+
+.log-actions {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.log-action-btn {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink3);
+  transition: all 0.2s;
+}
+
+.log-action-btn.edit:hover { color: var(--blue); border-color: var(--blue); background: var(--blue-light); }
+.log-action-btn.delete:hover { color: var(--coral); border-color: var(--coral); background: var(--coral-light); }
+
+.log-edit-area {
+  margin-top: 8px;
+}
+
+.log-edit-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 12px;
+  border: 2px solid var(--teal);
+  border-radius: 12px;
+  background: #fff;
+  font-size: 14px;
+  outline: none;
+  margin-bottom: 8px;
+}
+
+.log-edit-btns {
+  display: flex;
+  gap: 8px;
+}
+
+.log-save-btn, .log-cancel-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+}
+
+.log-save-btn { background: var(--teal); color: #fff; }
+.log-cancel-btn { background: var(--bg); color: var(--ink3); }
 
 .empty-state-card {
   background: var(--bg);

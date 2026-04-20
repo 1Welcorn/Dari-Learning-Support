@@ -88,7 +88,7 @@ const AdminUnitResourceRow: React.FC<{
         }}
       >
         {isSaving ? (
-          <div className="loader-spinner" style={{ width: '18px', height: '18px', borderWeight: '2px' }}></div>
+          <div className="loader-spinner" style={{ width: '18px', height: '18px' }}></div>
         ) : isSaved ? (
           <><CheckCircle size={18} /> Salvo!</>
         ) : (
