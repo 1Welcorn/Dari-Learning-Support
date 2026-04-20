@@ -3,6 +3,8 @@ import type { Unit, Question } from '../../types';
 import { COLORS } from '../../constants';
 import { ChevronDown, FileText, Edit2, Trash2, X, Check, Plus, CheckCircle, ChefHat, Headphones, User, Building2, Smartphone, BookOpen, GraduationCap } from 'lucide-react';
 import { QuestionBlock } from './QuestionBlock';
+import { useAuth } from '../../context/AuthContext';
+import { useStudentJourney } from '../../hooks/useStudentJourney';
 
 // Local QuestionBlock implementation removed in favor of shared component
 
@@ -76,12 +78,19 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
     setEditingEmbedIdx(null);
   };
 
+  const { user } = useAuth();
+  const { completeLesson } = useStudentJourney(user?.id || '');
+
   const handleSaveSession = async () => {
     if (!note.trim() || isSavingSession) return;
     setIsSavingSession(true);
     const success = await onSaveSession(note);
     setIsSavingSession(false);
+    
     if (success) {
+      // Reward XP and mark as completed in student_progress
+      await completeLesson(unit.id, 50);
+      
       setSessionSuccess(true);
       setNote('');
       setTimeout(() => {

@@ -1,5 +1,7 @@
 import { Star, CheckCircle2, Trophy, Sparkles, MessageCircle, Flame, Rocket, Play } from 'lucide-react';
 import type { Unit } from '../../types';
+import { useAuth } from '../../context/AuthContext';
+import { useStudentJourney } from '../../hooks/useStudentJourney';
 
 interface DashboardProps {
   onNavigate: (screen: string) => void;
@@ -22,6 +24,22 @@ export const Dashboard: React.FC<DashboardProps> = ({
   mediatorName,
   mediatorPhone,
 }) => {
+  const { user } = useAuth();
+  const { stats, progress, loading: journeyLoading } = useStudentJourney(user?.id || '');
+
+  // Dynamic values from Supabase stats
+  const currentXP = stats?.xp || 0;
+  const currentLevel = stats?.level || 1;
+  const currentStreak = stats?.streak || 0;
+  const totalStars = stats?.stars || (sessionsCount * 10); // Fallback to calculation if profile not setup
+
+  const completedUnits = units.filter(unit => {
+    const questionsDone = unit.questions?.filter((_, i) => answers[`${unit.id}-${i}`]?.is_done).length || 0;
+    return questionsDone === (unit.questions?.length || 1);
+  }).length;
+  
+  const completedPct = Math.round((completedUnits / (units.length || 1)) * 100);
+
   const handleSupportClick = () => {
     const text = `Olá Prof. ${mediatorName}, sou a Ione! Preciso de uma ajuda com as atividades de hoje.`;
     const cleanPhone = mediatorPhone.replace(/\D/g, '');
@@ -34,6 +52,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
     return questionsDone < totalQuestions;
   }) || units[0];
 
+  if (journeyLoading) return <div className="screen-loading">Carregando sua jornada...</div>;
+
   return (
     <div className="screen-home platform-view landing-style">
       {/* HERO SECTION - PROFILE CARD */}
@@ -41,7 +61,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="kid-profile">
           <div className="kid-avatar-wrapper">
              <div className="kid-avatar">I</div>
-             <div className="kid-level">Lvl 1</div>
+             <div className="kid-level">Lvl {currentLevel}</div>
           </div>
           <div className="kid-text">
             <h1 className="kid-name">Oi, Ione! 🌟</h1>
@@ -52,11 +72,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="kid-stats">
           <div className="kid-stat-pill orange">
             <Star size={20} fill="currentColor" />
-            <span>{sessionsCount * 10}</span>
+            <span>{totalStars}</span>
           </div>
           <div className="kid-stat-pill blue">
             <Flame size={20} fill="currentColor" />
-            <span>3 Dias</span>
+            <span>{currentStreak} Dias</span>
           </div>
         </div>
       </div>
@@ -89,10 +109,23 @@ export const Dashboard: React.FC<DashboardProps> = ({
           <div className="path-line-main"></div>
           
           {units.map((unit, idx) => {
+             // Find if the student has progress for THIS specific unit from useStudentJourney
+             const unitProgress = progress.find(p => p.unit_id === unit.id);
+             
+             // Questions-based logic (fallback)
              const questionsDone = unit.questions?.filter((_, i) => answers[`${unit.id}-${i}`]?.is_done).length || 0;
              const totalQuestions = unit.questions?.length || 1;
-             const isDone = questionsDone === totalQuestions;
-             const isLocked = idx > 0 && !units[idx-1].questions.every((_, i) => answers[`${units[idx-1].id}-${i}`]?.is_done);
+             const isQuestionsDone = questionsDone === totalQuestions;
+             
+             // User's requested logic: check if status is 'completed'
+             const isDone = unitProgress?.status === 'completed' || isQuestionsDone;
+             
+             // Logic: Unit is unlocked if it's the first one OR the previous one is completed
+             const prevUnitProgress = idx > 0 ? progress.find(p => p.unit_id === units[idx-1].id) : null;
+             const prevUnitQuestionsDone = idx > 0 ? units[idx-1].questions.every((_, i) => answers[`${units[idx-1].id}-${i}`]?.is_done) : true;
+             
+             const isUnlocked = idx === 0 || prevUnitProgress?.status === 'completed' || prevUnitQuestionsDone;
+             const isLocked = !isUnlocked;
              
              // Vibrant colors for islands
              const colors = ['#FF6B6B', '#4ECDC4', '#FFD93D', '#6C5CE7', '#FF8E3C', '#2ECC71'];
