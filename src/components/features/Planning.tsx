@@ -15,9 +15,8 @@ const AdminUnitResourceRow: React.FC<{
   unit: Unit, 
   onSave: (id: string, updates: Partial<Unit>) => Promise<boolean> 
 }> = ({ unit, onSave }) => {
-  const [embedUrls, setEmbedUrls] = useState<string[]>(unit.embed_urls || []);
-  const [questions, setQuestions] = useState<Question[]>(unit.questions || []);
-  const [descText, setDescText] = useState(unit.descriptors?.join(', ') || '');
+  const [vocabulary, setVocabulary] = useState<string[]>(unit.vocabulary_list || []);
+  const [newWord, setNewWord] = useState('');
   const [isSaved, setIsSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -26,6 +25,7 @@ const AdminUnitResourceRow: React.FC<{
     setEmbedUrls(unit.embed_urls || []);
     setQuestions(unit.questions || []);
     setDescText(unit.descriptors?.join(', ') || '');
+    setVocabulary(unit.vocabulary_list || []);
   }, [unit]);
 
   const handleSave = async () => {
@@ -35,7 +35,8 @@ const AdminUnitResourceRow: React.FC<{
     const success = await onSave(unit.id, {
       embed_urls: embedUrls,
       questions: questions,
-      descriptors: descs
+      descriptors: descs,
+      vocabulary_list: vocabulary
     });
     
     setIsSaving(false);
@@ -164,6 +165,52 @@ const AdminUnitResourceRow: React.FC<{
           onChange={(e) => setDescText(e.target.value)}
           className="admin-input-full"
         />
+      </div>
+
+      {/* --- VOCABULARY MANAGER --- */}
+      <div className="admin-form-group">
+        <label>Vocabulário do Módulo (Para Word Fall / Games)</label>
+        <div className="vocab-builder-row">
+          <input 
+            type="text" 
+            placeholder="Ex: Refrigerator"
+            value={newWord}
+            onChange={(e) => setNewWord(e.target.value)}
+            className="admin-input-full"
+            style={{ flex: 1, marginBottom: 0 }}
+            onKeyPress={(e) => {
+               if (e.key === 'Enter') {
+                 setVocabulary([...vocabulary, newWord]);
+                 setNewWord('');
+               }
+            }}
+          />
+          <button 
+            className="admin-add-btn" 
+            style={{ width: 'auto', padding: '10px 20px' }}
+            onClick={() => {
+               if (newWord.trim()) {
+                 setVocabulary([...vocabulary, newWord.trim()]);
+                 setNewWord('');
+               }
+            }}
+          >
+            <Plus size={14} /> Add
+          </button>
+        </div>
+        
+        <div className="vocab-tags-cloud">
+          {vocabulary.length === 0 ? (
+            <div className="empty-mini">Nenhuma palavra cadastrada.</div>
+          ) : (
+            vocabulary.map((word, i) => (
+              <span key={i} className="vocab-tag">
+                {word}
+                <button className="vocab-tag-del" onClick={() => setVocabulary(vocabulary.filter((_, idx) => idx !== i))}>×</button>
+              </span>
+            ))
+          )}
+        </div>
       </div>
 
       <button 

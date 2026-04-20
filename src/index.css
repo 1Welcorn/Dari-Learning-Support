@@ -3562,3 +3562,48 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px;border-rad
 @keyframes popIn { 0% { transform: scale(0.5); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+
+/* --- VOCABULARY MANAGER --- */
+.vocab-builder-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.vocab-tags-cloud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 20px;
+  border: 1.5px dashed #e2e8f0;
+}
+
+.vocab-tag {
+  background: white;
+  border: 1.5px solid #e2e8f0;
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.vocab-tag-del {
+  background: #fee2e2;
+  color: #ef4444;
+  border: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  cursor: pointer;
+}
+
