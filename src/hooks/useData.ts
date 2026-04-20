@@ -19,7 +19,16 @@ export const useSarehData = () => {
         supabase.from('settings').select('*')
       ]);
 
-      if (uRes.data) setUnits(uRes.data);
+      if (uRes.data) {
+        const sanitizedUnits = uRes.data.map(u => ({
+          ...u,
+          descriptors: typeof u.descriptors === 'string' ? JSON.parse(u.descriptors) : (u.descriptors || []),
+          embed_urls: typeof u.embed_urls === 'string' ? JSON.parse(u.embed_urls) : (u.embed_urls || []),
+          questions: typeof u.questions === 'string' ? JSON.parse(u.questions) : (u.questions || []),
+          external_links: typeof u.external_links === 'string' ? JSON.parse(u.external_links) : (u.external_links || [])
+        }));
+        setUnits(sanitizedUnits);
+      }
       if (sRes.data) setSessions(sRes.data);
       if (aRes.data) {
         const aMap: Record<string, Answer> = {};
@@ -79,7 +88,10 @@ export const useSarehData = () => {
 
   const updateUnit = async (id: string, updates: Partial<Unit>) => {
     const { error } = await supabase.from('units').update(updates).eq('id', id);
-    if (error) console.error('Error updating unit:', error);
+    if (error) {
+      console.error('Error updating unit:', error);
+      window.alert('Erro ao salvar no banco de dados: ' + error.message + '\nVerifique se você rodou o SQL de permissões.');
+    }
   };
 
   return {
