@@ -1,4 +1,4 @@
-import { BookOpen, Star, ArrowRight, CheckCircle2, Trophy, Sparkles, MessageCircle, Flame, Rocket, Play } from 'lucide-react';
+import { Star, CheckCircle2, Trophy, Sparkles, MessageCircle, Flame, Rocket, Play } from 'lucide-react';
 import type { Unit } from '../../types';
 
 interface DashboardProps {
