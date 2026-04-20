@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import type { Question, QuestionType } from '../../types';
 import { COLORS } from '../../constants';
-import { Info, CheckCircle, Volume2, Edit2, Trash2, X, Check, Plus, Circle, CheckSquare, Image as ImageIcon, Music } from 'lucide-react';
+import { Info, CheckCircle, Volume2, Edit2, Trash2, X, Check, Plus, Circle, CheckSquare, Image as ImageIcon, Music, Upload, Play, Loader2 } from 'lucide-react';
 import { speechService } from '../../utils/speech';
+import { supabase } from '../../services/supabase';
 
 interface QuestionBlockProps {
   question: Question;
@@ -25,6 +26,7 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
   const [tempAnswer, setTempAnswer] = useState(savedAnswer || '');
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   
   const [isEditing, setIsEditing] = useState(isNew || false);
   const [editQ, setEditQ] = useState(question.q);
@@ -40,6 +42,46 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
   const [editAudio, setEditAudio] = useState(question.audioUrl || '');
   
   const currentColors = COLORS[color] || COLORS.teal;
+  
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, type: 'image' | 'audio') => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      setIsUploading(true);
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `question-media/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('media')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: false
+        });
+
+      if (error) {
+        // Se o bucket não existir, instruir o usuário
+        if (error.message.includes('bucket not found')) {
+          throw new Error('O bucket "media" não foi encontrado no Supabase. Crie um bucket chamado "media" com acesso público no painel do Supabase.');
+        }
+        throw error;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('media')
+        .getPublicUrl(filePath);
+
+      if (type === 'image') setEditImage(publicUrl);
+      else setEditAudio(publicUrl);
+
+    } catch (err: any) {
+      console.error('Error uploading:', err);
+      window.alert('Erro ao carregar arquivo: ' + err.message);
+    } finally {
+      setIsUploading(false);
+    }
+  };
 
   React.useEffect(() => {
     if (savedAnswer !== undefined) setTempAnswer(savedAnswer);
@@ -133,8 +175,28 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
            question.type === 'paragraph' ? 'Parágrafo' : 'Resposta Curta'
          }</div>
       </div>
-      
       <div className="q-content-area">
+        {question.imageUrl && !isEditing && (
+          <div className="q-media-image">
+            <img src={question.imageUrl} alt="Ilustração da questão" />
+          </div>
+        )}
+
+        {question.audioUrl && !isEditing && (
+          <div className="q-media-audio">
+            <button 
+              className="audio-play-btn"
+              onClick={() => {
+                const audio = new Audio(question.audioUrl);
+                audio.play();
+              }}
+              style={{ background: currentColors.main + '20', color: currentColors.main }}
+            >
+              <Volume2 size={18} /> Ouvir Pergunta
+            </button>
+          </div>
+        )}
+
         {isEditing ? (
           <div className="admin-modern-editor">
             <div className="editor-row">
@@ -183,14 +245,50 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
                         <Check size={12} style={{ verticalAlign: 'middle', marginRight: '2px' }} /> RESPOSTA CORRETA
                       </span>
                     )}
-                    <button onClick={() => removeOption(i)} className="admin-opt-del"><X size={12} /></button>
+                    <button className="admin-opt-del" onClick={() => removeOption(i)}><Trash2 size={12} /></button>
                   </div>
                 ))}
-                <button className="admin-add-opt-btn" onClick={addOption}>
-                  <Plus size={14} /> Adicionar opção
+                <button className="admin-add-opt" onClick={addOption}>
+                  <Plus size={14} /> Adicionar Opção
                 </button>
               </div>
             )}
+
+            <div className="editor-media-uploads" style={{ margin: '16px 0', display: 'flex', gap: '16px', borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
+                <div className="media-upload-item" style={{ flex: 1 }}>
+                  <label className="media-upload-label" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '8px 12px', background: 'var(--bg2)', borderRadius: '8px', fontSize: '13px', fontWeight: '600' }}>
+                    <ImageIcon size={16} /> {editImage ? 'Alterar Imagem' : 'Adicionar Imagem'}
+                    <input type="file" accept="image/*" onChange={(e) => handleFileUpload(e, 'image')} hidden />
+                  </label>
+                  {editImage && (
+                    <div className="media-preview-mini" style={{ marginTop: '8px', position: 'relative', width: 'fit-content' }}>
+                      <img src={editImage} alt="Preview" style={{ height: '60px', borderRadius: '4px', border: '1px solid var(--border)' }} />
+                      <button className="remove-media" onClick={() => setEditImage('')} style={{ position: 'absolute', top: '-6px', right: '-6px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '50%', width: '18px', height: '18px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
+                        <X size={10} />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="media-upload-item" style={{ flex: 1 }}>
+                  <label className="media-upload-label" style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', padding: '8px 12px', background: 'var(--bg2)', borderRadius: '8px', fontSize: '13px', fontWeight: '600' }}>
+                    <Music size={16} /> {editAudio ? 'Alterar Áudio' : 'Adicionar Áudio'}
+                    <input type="file" accept="audio/*" onChange={(e) => handleFileUpload(e, 'audio')} hidden />
+                  </label>
+                  {editAudio && (
+                    <div className="media-preview-mini" style={{ marginTop: '8px', display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 8px', background: 'var(--bg3)', borderRadius: '4px' }}>
+                      <Volume2 size={14} /> <span style={{ fontSize: '11px' }}>Áudio Carregado</span>
+                      <button className="remove-media" onClick={() => setEditAudio('')} style={{ background: 'none', border: 'none', color: '#ef4444', cursor: 'pointer' }}><X size={14} /></button>
+                    </div>
+                  )}
+                </div>
+
+                {isUploading && (
+                  <div className="upload-status-mini" style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '12px', color: 'var(--teal2)' }}>
+                    <Loader2 size={16} className="spin" /> Enviando...
+                  </div>
+                )}
+            </div>
 
             {['text', 'paragraph'].includes(editType) && (
               <div className="admin-form-group" style={{ marginTop: '12px' }}>

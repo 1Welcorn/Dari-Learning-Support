@@ -2637,3 +2637,50 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px}
   background: #dc2626;
   transform: scale(1.05);
 }
+
+.q-media-image {
+  margin: 16px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: white;
+}
+
+.q-media-image img {
+  width: 100%;
+  max-height: 400px;
+  object-fit: contain;
+  display: block;
+}
+
+.q-media-audio {
+  margin: 12px 0;
+}
+
+.audio-play-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.audio-play-btn:hover {
+  transform: translateY(-2px);
+  filter: brightness(0.95);
+}
+
+.spin {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
