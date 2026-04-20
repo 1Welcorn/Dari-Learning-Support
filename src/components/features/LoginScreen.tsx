@@ -1,5 +1,6 @@
 import React from 'react';
 import { useAuth } from '../../context/AuthContext';
+import teacherLogo from '../../assets/teacher-willians.png';
 
 export const LoginScreen: React.FC<{ settings: any }> = () => {
   const { 
@@ -11,6 +12,9 @@ export const LoginScreen: React.FC<{ settings: any }> = () => {
   return (
     <div id="login-screen">
       <div className="login-card">
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <img src={teacherLogo} alt="Teacher Willians" style={{ width: '120px', height: '120px', borderRadius: '50%', border: '3px solid var(--teal-light)' }} />
+        </div>
         <div className="login-logo">SAREH · Domiciliar · 2026</div>
         <h1 className="login-title">Bem-vinda</h1>
         <p className="login-sub">Colégio Est. N. Sra. de Lourdes<br />Atendimento domiciliar — Ione Jordão</p>

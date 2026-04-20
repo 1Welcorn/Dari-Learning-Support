@@ -1,5 +1,6 @@
 import { BookOpen, Star, ArrowRight, CheckCircle2, Trophy, Sparkles, MessageCircle } from 'lucide-react';
 import type { Unit } from '../../types';
+import teacherLogo from '../../assets/teacher-willians.png';
 
 interface DashboardProps {
   onNavigate: (screen: string) => void;
@@ -159,9 +160,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
         <div className="mediator-card">
           <div className="med-avatar-container">
-            <div className="med-avatar-circle">
-               {mediatorName.charAt(0)}
-            </div>
+            <img src={teacherLogo} alt="Teacher Willians" className="med-avatar-img" />
             <div className="med-status-dot"></div>
           </div>
           
