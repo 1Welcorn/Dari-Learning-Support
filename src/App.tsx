@@ -9,7 +9,6 @@ import { Planning } from './components/features/Planning';
 import { WhatsAppAssistant } from './components/features/WhatsAppAssistant';
 import { useSarehData } from './hooks/useData';
 import { speechService } from './utils/speech';
-import teacherLogo from './assets/teacher-willians.png';
 
 export const App: React.FC = () => {
   useEffect(() => {
@@ -93,16 +92,14 @@ export const App: React.FC = () => {
           </span>
           <span className={`sync-dot ${syncStatus}`}></span><br />
           <span style={{ fontSize: '11px', color: 'var(--ink4)' }}>
-            {role === 'student' ? 'Ione Jordão Ribeiro' : (settings?.med_name || 'Prof. Willians')}
+            {role === 'student' ? 'Ione Jordão Ribeiro' : (settings?.med_name || 'Geocélia')}
           </span>
         </div>
       </div>
 
       <nav className="bottom-nav" style={{ gridTemplateColumns: role === 'admin' ? 'repeat(5, 1fr)' : 'repeat(4, 1fr)' }}>
         <div className="sidebar-profile">
-          <div className="side-avatar-container">
-            <img src={teacherLogo} alt="Teacher Willians" className="side-avatar-img" />
-          </div>
+          <div className="side-avatar">{role === 'student' ? 'I' : 'G'}</div>
           <div className="side-profile-info">
              <div className="side-name">{role === 'student' ? 'Ione Ribeiro' : (settings?.med_name || 'Geocélia')}</div>
              <div className="side-role">{role === 'student' ? 'Estudante' : 'Mediadora'}</div>
