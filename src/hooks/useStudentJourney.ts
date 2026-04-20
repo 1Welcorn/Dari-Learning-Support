@@ -80,9 +80,28 @@ export const useStudentJourney = (userId: string) => {
     }
   };
 
+  const addStudentRewards = async (xpGained: number, starsEarned: number) => {
+    if (!userId) return { success: false };
+    
+    try {
+      const { data, error } = await supabase.rpc('add_student_rewards', {
+        xp_to_add: xpGained,
+        stars_to_add: starsEarned
+      });
+
+      if (error) throw error;
+      
+      await fetchJourneyData();
+      return { success: true, data };
+    } catch (err) {
+      console.error('Error adding student rewards:', err);
+      return { success: false, error: err };
+    }
+  };
+
   useEffect(() => {
     if (userId) fetchJourneyData();
   }, [userId]);
 
-  return { stats, progress, loading, completeLesson, refresh: fetchJourneyData };
+  return { stats, progress, loading, completeLesson, addStudentRewards, refresh: fetchJourneyData };
 };

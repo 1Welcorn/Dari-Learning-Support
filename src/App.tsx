@@ -8,6 +8,7 @@ import { Progress } from './components/features/Progress';
 import { Planning } from './components/features/Planning';
 import { WhatsAppAssistant } from './components/features/WhatsAppAssistant';
 import { useSarehData } from './hooks/useData';
+import { useStudentJourney } from './hooks/useStudentJourney';
 import { speechService } from './utils/speech';
 
 export const App: React.FC = () => {
@@ -15,12 +16,27 @@ export const App: React.FC = () => {
     speechService.preload();
   }, []);
 
-  const { role, logout } = useAuth();
+  const { role, user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('home');
+  const [celebration, setCelebration] = useState<{ xp: number, stars: number } | null>(null);
   const { 
     units, sessions, answers, settings, loading, syncStatus, 
     saveAnswer, saveSession, updateSession, deleteSession, resetUnitAnswers, updateUnit, createUnit 
   } = useSarehData();
+
+  // Student Journey Hook for rewards
+  const { addStudentRewards } = useStudentJourney(user?.id || '');
+
+  const handleGameOver = async (finalScore: number, wordsFound: number) => {
+    const xpGained = wordsFound * 5;
+    const starsEarned = Math.floor(finalScore / 100);
+
+    const { success } = await addStudentRewards(xpGained, starsEarned);
+
+    if (success) {
+      setCelebration({ xp: xpGained, stars: starsEarned });
+    }
+  };
 
   const completedPct = useMemo(() => {
     try {
@@ -151,15 +167,16 @@ export const App: React.FC = () => {
                   <button className="back-btn" onClick={() => setActiveTab('home')}>←</button>
                   <h2 className="screen-title" style={{ margin: 0 }}>Aulas</h2>
                </div>
-               <Activities 
-                 units={units} 
-                 answers={answers} 
-                 onSaveAnswer={saveAnswer} 
-                 onSaveSession={saveSession}
+                <Activities 
+                  units={units} 
+                  answers={answers} 
+                  onSaveAnswer={saveAnswer} 
+                  onSaveSession={saveSession}
                   isAdmin={role === 'admin'}
                   onUpdateUnit={updateUnit}
                   onCreateUnit={createUnit}
-               />
+                  onGameOver={handleGameOver}
+                />
              </div>
           )}
            {activeTab === 'progress' && (
@@ -217,6 +234,31 @@ export const App: React.FC = () => {
           )}
         </main>
       </div>
+
+      {celebration && (
+        <div className="celebration-overlay">
+          <div className="celebration-card">
+             <span className="cel-trophy">🏆</span>
+             <h2 className="cel-title">INCRÍVEL!</h2>
+             <p className="cel-sub">Você completou o desafio com sucesso!</p>
+             
+             <div className="cel-rewards">
+               <div className="cel-reward-item">
+                 <span className="cel-reward-val">+{celebration.xp}</span>
+                 <span className="cel-reward-lbl">XP</span>
+               </div>
+               <div className="cel-reward-item">
+                 <span className="cel-reward-val">+{celebration.stars}</span>
+                 <span className="cel-reward-lbl">Estrelas</span>
+               </div>
+             </div>
+
+             <button className="cel-btn" onClick={() => setCelebration(null)}>
+               CONTINUAR JORNADA
+             </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

@@ -358,7 +358,8 @@ export const Activities: React.FC<{
   isAdmin?: boolean;
   onUpdateUnit?: (uId: string, updates: Partial<Unit>) => Promise<boolean>;
   onCreateUnit?: (title: string) => Promise<boolean>;
-}> = ({ units, answers, onSaveAnswer, onSaveSession, isAdmin, onUpdateUnit, onCreateUnit }) => {
+  onGameOver?: (score: number, words: number) => void;
+}> = ({ units, answers, onSaveAnswer, onSaveSession, isAdmin, onUpdateUnit, onCreateUnit, onGameOver }) => {
   const [expandedUnitId, setExpandedUnitId] = useState<string | null>(null);
   
   const handleCreateUnit = async () => {
