@@ -514,19 +514,20 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
 
       {!isEditing && showMediatorGuide && (
         <div className="mediator-panel" style={{ borderLeftColor: currentColors.main }}>
-          {question.mediator && (
+          {question.mediator && question.mediator !== 'Instrução para a mediadora...' && (
             <>
               <div className="mediator-label">Sugestão de Mediação:</div>
               <p>{question.mediator}</p>
             </>
           )}
-          {question.hint && (
+          {question.hint && question.hint !== 'Dica para a aluna...' && (
             <>
               <div className="mediator-label">Dica para a Aluna:</div>
               <p className="student-hint">{question.hint}</p>
             </>
           )}
-          {!question.mediator && !question.hint && (
+          {(!question.mediator || question.mediator === 'Instrução para a mediadora...') && 
+           (!question.hint || question.hint === 'Dica para a aluna...') && (
             <p style={{ fontStyle: 'italic', color: 'var(--ink4)' }}>Nenhuma dica cadastrada para esta questão.</p>
           )}
         </div>

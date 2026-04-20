@@ -251,8 +251,8 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
                     q: 'Nova Pergunta', 
                     type: 'mc', 
                     opts: ['Opção 1'],
-                    mediator: 'Instrução para a mediadora...', 
-                    hint: 'Dica para a aluna...' 
+                    mediator: '', 
+                    hint: '' 
                   };
                   const newQs = [...unit.questions, newQ];
                   handleUpdateUnitContent({ questions: newQs });
