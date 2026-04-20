@@ -166,6 +166,7 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
 
 
           {unit.questions.map((q, i) => {
+            if (!isAdmin && (q.q === 'Nova Pergunta' || !q.q.trim())) return null;
             const embedCount = Array.isArray(unit.embed_urls) ? unit.embed_urls.filter(u => u.trim()).length : 0;
             return (
               <QuestionBlock 
