@@ -61,4 +61,4 @@ export interface AppSettings {
   student_email: string;
 }
 
-export type UserRole = 'admin' | 'mediator' | null;
+export type UserRole = 'admin' | 'mediator' | 'student' | null;

@@ -20,6 +20,9 @@ const MEDIATOR_EMAILS = [
   'ione.ribeiro@escola.pr.gov.br', 
   'geocelia.ribeiro@escola.pr.gov.br'
 ]; 
+const STUDENT_EMAILS = [
+  'elesindra.moriinelli@gmail.com'
+]; 
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
@@ -60,6 +63,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.log("AuthContext: User is MEDIATOR");
         setRole('mediator');
         localStorage.setItem('sareh_role', 'mediator');
+      } else if (STUDENT_EMAILS.includes(user.email)) {
+        console.log("AuthContext: User is STUDENT");
+        setRole('student');
+        localStorage.setItem('sareh_role', 'student');
       } else {
         console.warn("AuthContext: Unauthorized email:", user.email);
         setRole(null);
