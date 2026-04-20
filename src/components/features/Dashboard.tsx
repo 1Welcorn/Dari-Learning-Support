@@ -1,5 +1,7 @@
-import { BookOpen, Star, ArrowRight, CheckCircle2, Trophy, Sparkles, MessageCircle } from 'lucide-react';
+import { BookOpen, Star, ArrowRight, CheckCircle2, Trophy, Sparkles, MessageCircle, Flame } from 'lucide-react';
 import type { Unit } from '../../types';
+import robot3d from '../../assets/robot-3d.png';
+import pan3d from '../../assets/pan-3d.png';
 
 interface DashboardProps {
   onNavigate: (screen: string) => void;
@@ -36,130 +38,100 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   return (
     <div className="screen-home platform-view landing-style">
+      {/* BACKGROUND BLOBS */}
+      <div className="bg-blob blob-1"></div>
+      <div className="bg-blob blob-2"></div>
+      <div className="bg-blob blob-3"></div>
+
       {/* HERO SECTION - PROFILE CARD */}
-      <div className="platform-header profile-hero-layout">
-        <div className="profile-main-info">
-          <div className="avatar-container">
-            <div className="avatar-ring"></div>
-            <div className="avatar-circle">I</div>
-            <div className="level-badge">Lv.1</div>
+      <div className="dashboard-top-row">
+        <div className="profile-hero-mini">
+          <div className="avatar-mini-container">
+            <div className="avatar-mini">I</div>
+            <div className="level-tag">Nível 1</div>
           </div>
-          <div className="greeting-text">
-            <span className="welcome-tag">ESTUDANTE EXPLORADORA</span>
-            <h1 className="welcome-title">Olá, Ione! 👋</h1>
-            <p className="welcome-subtitle">Você já conquistou <strong>{completedPct}%</strong> da sua jornada!</p>
+          <div className="profile-mini-text">
+            <span className="profile-mini-tag">ESTUDANTE EXPLORADORA</span>
+            <h1 className="profile-mini-title">Olá, Ione! 👋</h1>
+            <p className="profile-mini-sub">Você já conquistou 50% de nass per unida!</p>
           </div>
         </div>
-        
-        <div className="header-stats-mini">
-           <div className="mini-stat">
-              <Star size={18} className="stat-icon" />
-              <span>{sessionsCount} Estrelas</span>
-           </div>
-           <div className="mini-stat">
-              <Trophy size={18} className="stat-icon" />
-              <span>Nível 1</span>
-           </div>
-        </div>
-      </div>
 
-      {/* NEXT UP / HERO CARD V2 */}
-      <div className="next-up-card-v2" onClick={() => onNavigate('activities')}>
-        {/* Decorative Blur Element */}
-        <div className="next-up-blur-decor"></div>
-        
-        <div className="next-up-content-v2">
-          <div className="next-up-main-text">
-            <span className="next-up-badge">
-              Próximo Desafio 🏆
-            </span>
-            <h2 className="next-up-title-v2">{nextUnit?.title || 'Inglês 2026'}</h2>
-            <p className="next-up-quote">
-              "{nextUnit?.sub?.split('·')[0]?.trim() || 'Prepare-se para o próximo passo!'}"
-            </p>
-            
-            <button className="next-up-btn-v2">
-              PARTIU! 🚀
-            </button>
+        <div className="stats-mini-bar">
+          <div className="stat-item">
+            <div className="stat-icon-bg stars"><Star size={24} fill="#fbbf24" color="#fbbf24" /></div>
+            <div className="stat-val-group">
+              <span className="stat-label">Estrelas</span>
+              <span className="stat-value">{sessionsCount * 10} Estrelas</span>
+            </div>
           </div>
-
-          <div className="next-up-icon-wrapper">
-            <div className="next-up-emoji-v2">
-              {nextUnit?.title?.toLowerCase().includes('cozinha') ? '🍳' : 
-               nextUnit?.title?.toLowerCase().includes('escuta') ? '🎧' :
-               nextUnit?.title?.toLowerCase().includes('nome') ? '🙋‍♀️' :
-               nextUnit?.title?.toLowerCase().includes('redor') ? '🔍' :
-               nextUnit?.title?.toLowerCase().includes('celular') ? '📱' :
-               nextUnit?.title?.toLowerCase().includes('receita') ? '🍽️' : '🚀'}
+          <div className="stat-item">
+            <div className="stat-icon-bg streak"><Flame size={24} fill="#f97316" color="#f97316" /></div>
+            <div className="stat-val-group">
+              <span className="stat-label">Streak</span>
+              <span className="stat-value">3 dias!</span>
             </div>
           </div>
         </div>
       </div>
 
-      {/* GAMIFIED STATS */}
-      <div className="gamified-stats">
-        <div className="stat-pill">
-          <div className="pill-icon trophy"><Trophy size={20} /></div>
-          <div className="stat-text">
-            <strong>Nível 1</strong>
-            <span>Exploradora</span>
-          </div>
+      {/* NEXT UP / MISSION CARD */}
+      <div className="mission-card" onClick={() => onNavigate('activities')}>
+        <div className="mission-content">
+          <span className="mission-tag">CONTINUAR ESTUDOS</span>
+          <h2 className="mission-title">
+             🚀 SUA MISSÃO ATUAL: {nextUnit?.title || 'Unidade 2'}
+          </h2>
+          <p className="mission-quote">
+            "{nextUnit?.sub?.split('·')[0]?.trim() || 'Prepare-se para o próximo passo!'}"
+          </p>
+          
+          <button className="mission-btn">
+            PARTIU! ⚡
+          </button>
         </div>
-        <div className="stat-pill">
-          <div className="pill-icon sessions"><Star size={20} /></div>
-          <div className="stat-text">
-            <strong>{sessionsCount}</strong>
-            <span>Estrelas</span>
-          </div>
+
+        <div className="mission-visual">
+           <img src={robot3d} alt="Robot" className="mission-robot" />
         </div>
       </div>
 
-      {/* CURRICULUM PATH */}
-      <div className="curriculum-section">
-        <div className="section-header">
-          <h2 className="section-title">Mapa de Aprendizado</h2>
-          <p className="section-subtitle">Siga os caminhos para conquistar novas habilidades!</p>
+      {/* CURRICULUM JOURNEY */}
+      <div className="journey-section">
+        <div className="journey-header">
+           <h2 className="journey-title">🚀 SUA JORNADA DE CONQUISTAS</h2>
         </div>
 
-        <div className="learning-path-trail">
+        <div className="journey-trail">
           {units.map((unit, idx) => {
              const questionsDone = unit.questions?.filter((_, i) => answers[`${unit.id}-${i}`]?.is_done).length || 0;
              const totalQuestions = unit.questions?.length || 1;
              const isDone = questionsDone === totalQuestions;
-             const isCurrent = questionsDone > 0 && !isDone;
+             const isLocked = idx > 0 && !units[idx-1].questions.every((_, i) => answers[`${units[idx-1].id}-${i}`]?.is_done);
              
              return (
               <div 
                 key={unit.id} 
-                className={`path-node ${unit.color} ${isDone ? 'is-done' : ''} ${isCurrent ? 'is-current' : ''}`}
-                onClick={() => onNavigate('activities')}
+                className={`journey-node ${isDone ? 'is-done' : ''} ${isLocked ? 'is-locked' : ''}`}
+                onClick={() => !isLocked && onNavigate('activities')}
               >
                 <div className="node-connector"></div>
-                <div className="node-card">
-                  <div className="node-visual">
-                    <div className="node-icon-bg">
-                      {isDone ? <CheckCircle2 size={24} /> : idx === 0 || isCurrent ? <Sparkles size={24} /> : <BookOpen size={24} />}
-                    </div>
-                    <div className="node-progress-mini">
-                       <div className="node-progress-fill" style={{ height: `${(questionsDone/totalQuestions)*100}%` }}></div>
-                    </div>
+                <div className="journey-card">
+                  <div className="node-icon-visual">
+                    {isDone ? <CheckCircle2 size={24} color="#10b981" /> : <div className="node-circle"></div>}
                   </div>
                   
-                  <div className="node-info">
-                    <div className="node-top-row">
-                      <span className="node-step">ETAPA {idx + 1}</span>
-                      {isDone && <span className="node-badge done">CONCLUÍDO</span>}
-                      {isCurrent && <span className="node-badge current">EM FOCO</span>}
-                    </div>
-                    <h3 className="node-title">{unit.title}</h3>
-                    <p className="node-desc">{unit.sub || 'Explore este módulo'}</p>
-                    
-                    <div className="node-footer">
-                       <span className="node-stat">{questionsDone}/{totalQuestions} Atividades</span>
-                       <div className="node-go-btn">
-                          {isDone ? 'Revisar' : 'Continuar'} <ArrowRight size={14} />
-                       </div>
-                    </div>
+                  <div className="journey-node-info">
+                    <span className="node-unit-tag">UNID. {idx + 1}</span>
+                    <h3 className="node-card-title">{unit.title}</h3>
+                    <p className="node-card-sub">{unit.sub?.split('·')[0]}</p>
+                    <span className="node-card-stat">{questionsDone}/{totalQuestions} Atividades</span>
+                  </div>
+
+                  <div className="journey-node-visual">
+                     {idx === 0 && <img src={pan3d} alt="Pan" className="node-3d-img" />}
+                     {isLocked && <div className="node-lock">🔒</div>}
+                     {isDone && <div className="node-done-check">2/2</div>}
                   </div>
                 </div>
               </div>
