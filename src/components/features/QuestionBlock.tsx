@@ -437,20 +437,6 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
                   {question.audioUrl ? <Music size={16} /> : <Volume2 size={16} />}
                 </button>
               )}
-              {tempAnswer && question.correctAnswer && (
-                <span className={`answer-feedback-tag ${
-                  Array.isArray(question.correctAnswer) 
-                    ? question.correctAnswer.includes(tempAnswer) 
-                    : tempAnswer === question.correctAnswer 
-                  ? 'correct' : 'wrong'
-                }`}>
-                  {(Array.isArray(question.correctAnswer) ? question.correctAnswer.includes(tempAnswer) : tempAnswer === question.correctAnswer) ? (
-                    <><CheckCircle size={14} /> Correto</>
-                  ) : (
-                    <><X size={14} /> Tente novamente</>
-                  )}
-                </span>
-              )}
             </div>
 
             {question.imageUrl && (
