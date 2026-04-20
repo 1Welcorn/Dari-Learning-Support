@@ -7,28 +7,39 @@ interface PlanningProps {
   units: Unit[];
   isAdmin: boolean;
   settings: any;
-  onUpdateUnit: (id: string, updates: Partial<Unit>) => void;
+  onUpdateUnit: (id: string, updates: Partial<Unit>) => Promise<boolean>;
 }
 
 const AdminUnitResourceRow: React.FC<{ 
   unit: Unit, 
-  onSave: (id: string, updates: Partial<Unit>) => void 
+  onSave: (id: string, updates: Partial<Unit>) => Promise<boolean> 
 }> = ({ unit, onSave }) => {
   const [embedText, setEmbedText] = useState(unit.embed_urls?.join('\n') || '');
   const [descText, setDescText] = useState(unit.descriptors?.join(', ') || '');
   const [isSaved, setIsSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
 
-  const handleSave = () => {
+  // Sincronizar estado local se a prop unit mudar (ex: após fetch)
+  React.useEffect(() => {
+    setEmbedText(unit.embed_urls?.join('\n') || '');
+    setDescText(unit.descriptors?.join(', ') || '');
+  }, [unit.embed_urls, unit.descriptors]);
+
+  const handleSave = async () => {
+    setIsSaving(true);
     const urls = embedText.split('\n').map(v => v.trim()).filter(Boolean);
     const descs = descText.split(',').map(v => v.trim()).filter(Boolean);
     
-    onSave(unit.id, {
+    const success = await onSave(unit.id, {
       embed_urls: urls,
       descriptors: descs
     });
     
-    setIsSaved(true);
-    setTimeout(() => setIsSaved(false), 3000);
+    setIsSaving(false);
+    if (success) {
+      setIsSaved(true);
+      setTimeout(() => setIsSaved(false), 3000);
+    }
   };
 
   return (
@@ -76,7 +87,13 @@ const AdminUnitResourceRow: React.FC<{
           background: isSaved ? 'var(--teal)' : COLORS[unit.color]?.main || 'var(--teal)'
         }}
       >
-        {isSaved ? <><CheckCircle size={18} /> Salvo!</> : <><Save size={18} /> Salvar Recursos</>}
+        {isSaving ? (
+          <div className="loader-spinner" style={{ width: '18px', height: '18px', borderWeight: '2px' }}></div>
+        ) : isSaved ? (
+          <><CheckCircle size={18} /> Salvo!</>
+        ) : (
+          <><Save size={18} /> Salvar Recursos</>
+        )}
       </button>
     </div>
   );

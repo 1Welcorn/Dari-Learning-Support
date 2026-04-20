@@ -91,7 +91,9 @@ export const useSarehData = () => {
     if (error) {
       console.error('Error updating unit:', error);
       window.alert('Erro ao salvar no banco de dados: ' + error.message + '\nVerifique se você rodou o SQL de permissões.');
+      return false;
     }
+    return true;
   };
 
   return {
