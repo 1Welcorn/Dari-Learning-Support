@@ -6,6 +6,7 @@ import { Dashboard } from './components/features/Dashboard';
 import { Activities } from './components/features/Activities';
 import { Progress } from './components/features/Progress';
 import { Planning } from './components/features/Planning';
+import PlanningEditor from './components/features/PlanningEditor';
 import { WhatsAppAssistant } from './components/features/WhatsAppAssistant';
 import { useSarehData } from './hooks/useData';
 import { useStudentJourney } from './hooks/useStudentJourney';
@@ -19,6 +20,7 @@ export const App: React.FC = () => {
   const { role, user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('home');
   const [celebration, setCelebration] = useState<{ xp: number, stars: number } | null>(null);
+  const [editingUnitId, setEditingUnitId] = useState<string | null>(null);
   const { 
     units, sessions, answers, settings, loading, syncStatus, 
     saveAnswer, saveSession, updateSession, deleteSession, resetUnitAnswers, updateUnit, createUnit 
@@ -198,11 +200,26 @@ export const App: React.FC = () => {
           )}
            {activeTab === 'planning' && role === 'admin' && (
              <div>
-               <div className="back-row">
-                  <button className="back-btn" onClick={() => setActiveTab('home')}>←</button>
-                  <h2 className="screen-title" style={{ margin: 0 }}>Planejamento</h2>
-               </div>
-               <Planning units={units} isAdmin={role === 'admin'} settings={settings} onUpdateUnit={(id, updates) => updateUnit(id, updates)} />
+               {!editingUnitId ? (
+                 <>
+                   <div className="back-row">
+                      <button className="back-btn" onClick={() => setActiveTab('home')}>←</button>
+                      <h2 className="screen-title" style={{ margin: 0 }}>Planejamento</h2>
+                   </div>
+                   <Planning 
+                     units={units} 
+                     isAdmin={role === 'admin'} 
+                     settings={settings} 
+                     onUpdateUnit={(id, updates) => updateUnit(id, updates)} 
+                     onEditDetails={(id) => setEditingUnitId(id)}
+                   />
+                 </>
+               ) : (
+                 <PlanningEditor 
+                   unitId={editingUnitId} 
+                   onBack={() => setEditingUnitId(null)} 
+                 />
+               )}
              </div>
           )}
            {activeTab === 'whatsapp' && (

@@ -9,12 +9,14 @@ interface PlanningProps {
   isAdmin: boolean;
   settings: any;
   onUpdateUnit: (id: string, updates: Partial<Unit>) => Promise<boolean>;
+  onEditDetails: (id: string) => void;
 }
 
 const AdminUnitResourceRow: React.FC<{ 
   unit: Unit, 
-  onSave: (id: string, updates: Partial<Unit>) => Promise<boolean> 
-}> = ({ unit, onSave }) => {
+  onSave: (id: string, updates: Partial<Unit>) => Promise<boolean>,
+  onEditDetails: (id: string) => void
+}> = ({ unit, onSave, onEditDetails }) => {
   const [vocabulary, setVocabulary] = useState<string[]>(unit.vocabulary_list || []);
   const [newWord, setNewWord] = useState('');
   const [isSaved, setIsSaved] = useState(false);
@@ -72,9 +74,27 @@ const AdminUnitResourceRow: React.FC<{
 
   return (
     <div className="admin-unit-card">
-      <div className="admin-unit-header">
-        <div className="unit-dot" style={{ background: COLORS[unit.color]?.main || 'var(--teal)' }}></div>
-        <strong>{unit.title}</strong>
+      <div className="admin-unit-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div className="unit-dot" style={{ background: COLORS[unit.color]?.main || 'var(--teal)' }}></div>
+          <strong>{unit.title}</strong>
+        </div>
+        <button 
+          className="admin-edit-details-btn" 
+          onClick={() => onEditDetails(unit.id)}
+          style={{ 
+            fontSize: '11px', 
+            fontWeight: '800', 
+            padding: '6px 12px', 
+            borderRadius: '8px', 
+            background: '#f1f5f9', 
+            color: '#475569',
+            border: 'none',
+            cursor: 'pointer'
+          }}
+        >
+          EDITAR DETALHES ⚙️
+        </button>
       </div>
       
       {/* --- INTERATIVAS --- */}
@@ -236,7 +256,7 @@ const AdminUnitResourceRow: React.FC<{
 };
 
 
-export const Planning: React.FC<PlanningProps> = ({ units, isAdmin, settings, onUpdateUnit }) => {
+export const Planning: React.FC<PlanningProps> = ({ units, isAdmin, settings, onUpdateUnit, onEditDetails }) => {
   const handlePrint = () => {
     window.print();
   };
@@ -358,6 +378,7 @@ export const Planning: React.FC<PlanningProps> = ({ units, isAdmin, settings, on
                 key={unit.id} 
                 unit={unit} 
                 onSave={onUpdateUnit} 
+                onEditDetails={onEditDetails}
               />
             ))}
           </div>
