@@ -100,40 +100,36 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
   const isComplete = questionsDone === unit.questions.length;
 
   return (
-    <div className={`unit-card-v2 ${isExpanded ? 'expanded' : ''}`} style={{ borderColor: isExpanded ? currentColors.main : 'var(--border)' }}>
-      <div className="unit-hdr-v2" onClick={onToggle}>
-        {/* Watermark Icon */}
-        <div className="unit-watermark" style={{ color: currentColors.main }}>
+    <div className={`adventure-card ${isExpanded ? 'expanded' : ''}`} style={{ borderBottomColor: currentColors.main }}>
+      <div className="unit-hdr-v4" onClick={onToggle}>
+        <div className="unit-icon-island" style={{ background: currentColors.light, color: currentColors.main }}>
           {getUnitIcon(unit.title)}
         </div>
 
-        <div className="unit-content-v2">
-          <div className="unit-header-top">
-            <div className="unit-title-group">
-              <div className="unit-dot" style={{ background: currentColors.main }}></div>
-              <h3 className="unit-title-v3">
-                {unit.title}
-              </h3>
-            </div>
-            <span className="unit-progress-pill-v2">
-              {questionsDone}/{unit.questions.length}
-            </span>
-          </div>
-
-          <div className="unit-info-body">
-            <p className="unit-subtitle-v2">{unit.sub?.split('·')[0]?.trim() || unit.sub}</p>
-            <p className="unit-meta-v2">
-              {unit.sub?.split('·').slice(1).join(' • ') || ''}
+        <div className="unit-content-v4">
+          <div className="unit-header-top-v4">
+            <p className="unit-status-text" style={{ color: currentColors.main }}>
+              {isComplete ? 'MODULO CONCLUÍDO ✓' : 'MÓDULO EM PROGRESSO'}
             </p>
+            <h3 className="unit-title-v4">
+              {unit.title}
+            </h3>
+          </div>
 
-            <div className="unit-tags-row-v2">
-              {Array.isArray(unit.descriptors) && unit.descriptors.map(tag => (
-                <span key={tag} className="unit-tag-v2" style={{ background: currentColors.light, color: currentColors.dark }}>
-                  {tag}
-                </span>
-              ))}
+          <div className="unit-info-v4">
+            <p className="unit-meta-v4">{unit.sub?.split('·')[0]}</p>
+            
+            <div className="unit-footer-v4">
+              <div className="unit-progress-bar-v4">
+                <div className="unit-progress-fill-v4" style={{ width: `${(questionsDone/unit.questions.length)*100}%`, background: currentColors.main }}></div>
+              </div>
+              <span className="unit-progress-text-v4">{questionsDone}/{unit.questions.length}</span>
             </div>
           </div>
+        </div>
+        
+        <div className="unit-chevron-v4">
+           <ChevronDown size={24} className={`chev-v4 ${isExpanded ? 'open' : ''}`} />
         </div>
       </div>
 
