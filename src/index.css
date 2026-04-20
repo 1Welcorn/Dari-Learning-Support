@@ -3607,3 +3607,52 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px;border-rad
   cursor: pointer;
 }
 
+
+/* --- WORD FALL GAME LAUNCHER & OVERLAY --- */
+.game-screen-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 5000;
+  background: #FDFBF7;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.game-launcher-card {
+  background: linear-gradient(135deg, #6C5CE7, #a29bfe);
+  border-radius: 28px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: white;
+  border: 4px solid white;
+  box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
+}
+
+.game-launcher-card:hover { transform: translateY(-4px); box-shadow: 0 15px 30px rgba(108, 92, 231, 0.3); }
+
+.game-icon-v4 { font-size: 40px; }
+.game-info-v4 { flex: 1; }
+.game-info-v4 h4 { margin: 0; font-size: 16px; font-weight: 900; letter-spacing: 0.05em; }
+.game-info-v4 p { margin: 4px 0 0; font-size: 13px; font-weight: 600; opacity: 0.9; }
+
+.play-game-btn-v4 {
+  background: #FFD93D;
+  color: #BA7517;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 14px;
+  font-weight: 900;
+  font-size: 13px;
+  box-shadow: 0 4px 0 #d9b832;
+}
+
+@keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+

@@ -5,6 +5,7 @@ import { ChevronDown, FileText, Edit2, Trash2, X, Check, Plus, CheckCircle, Chef
 import { QuestionBlock } from './QuestionBlock';
 import { useAuth } from '../../context/AuthContext';
 import { useStudentJourney } from '../../hooks/useStudentJourney';
+import WordFallGame from './WordFallGame';
 
 // Local QuestionBlock implementation removed in favor of shared component
 
@@ -17,6 +18,7 @@ interface UnitCardProps {
   onUpdateUnit?: (id: string, updates: Partial<Unit>) => Promise<boolean>;
   isExpanded: boolean;
   onToggle: () => void;
+  onStartGame?: () => void;
 }
 
 const getUnitIcon = (title: string) => {
@@ -30,7 +32,9 @@ const getUnitIcon = (title: string) => {
   return <GraduationCap size={36} strokeWidth={1.5} />;
 };
 
-export const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSaveSession, isAdmin, onUpdateUnit, isExpanded, onToggle }) => {
+export const UnitCard: React.FC<UnitCardProps> = ({ 
+  unit, answers, onSaveAnswer, onSaveSession, isAdmin, onUpdateUnit, isExpanded, onToggle, onStartGame 
+}) => {
   const [note, setNote] = useState('');
   const [isSavingSession, setIsSavingSession] = useState(false);
   const [sessionSuccess, setSessionSuccess] = useState(false);
@@ -150,8 +154,20 @@ export const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer,
         </div>
       </div>
 
-      {isExpanded && (
+        {isExpanded && (
         <div className="unit-body">
+          {/* GAME LAUNCHER */}
+          {!isAdmin && (
+            <div className="game-launcher-card" onClick={onStartGame}>
+               <div className="game-icon-v4">🎮</div>
+               <div className="game-info-v4">
+                  <h4>DESAFIO WORD FALL!</h4>
+                  <p>Pratique as palavras desta lição e ganhe estrelas!</p>
+               </div>
+               <button className="play-game-btn-v4">JOGAR AGORA!</button>
+            </div>
+          )}
+
           {unit.brief && (
             <div className="mediator-brief-container">
               <button 
@@ -361,6 +377,7 @@ export const Activities: React.FC<{
   onGameOver?: (score: number, words: number) => void;
 }> = ({ units, answers, onSaveAnswer, onSaveSession, isAdmin, onUpdateUnit, onCreateUnit, onGameOver }) => {
   const [expandedUnitId, setExpandedUnitId] = useState<string | null>(null);
+  const [activeGameUnitId, setActiveGameUnitId] = useState<string | null>(null);
   
   const handleCreateUnit = async () => {
     const title = window.prompt('Qual o título da nova unidade?');
@@ -383,9 +400,22 @@ export const Activities: React.FC<{
             onUpdateUnit={onUpdateUnit}
             isExpanded={expandedUnitId === unit.id}
             onToggle={() => setExpandedUnitId(expandedUnitId === unit.id ? null : unit.id)}
+            onStartGame={() => setActiveGameUnitId(unit.id)}
           />
         ))}
       </div>
+
+      {activeGameUnitId && (
+        <div className="game-screen-overlay">
+          <WordFallGame 
+            unitId={activeGameUnitId} 
+            onGameOver={(s, w) => {
+              if (onGameOver) onGameOver(s, w);
+            }}
+            onBack={() => setActiveGameUnitId(null)}
+          />
+        </div>
+      )}
 
       {isAdmin && (
         <div style={{ padding: '0 16px 40px' }}>
