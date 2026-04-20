@@ -1462,15 +1462,16 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px}
 /* Inline Admin Controls */
 .admin-inline-actions {
   position: absolute;
-  top: 10px;
-  right: 10px;
+  top: 16px;
+  right: 16px;
   display: flex;
-  gap: 6px;
-  z-index: 10;
-  background: rgba(255, 255, 255, 0.9);
-  padding: 4px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  gap: 8px;
+  z-index: 100;
+  background: #fff;
+  padding: 6px;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+  border: 1px solid var(--border);
 }
 
 .admin-inline-actions.on-embed {
@@ -1479,29 +1480,37 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px}
 }
 
 .admin-mini-btn {
-  background: var(--bg);
-  border: 1px solid var(--border);
-  color: var(--ink3);
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+  background: var(--teal-xlight);
+  border: 1.5px solid var(--teal-light);
+  color: var(--teal);
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .admin-mini-btn:hover {
-  background: var(--teal-light);
-  color: var(--teal);
+  background: var(--teal);
+  color: #fff;
   border-color: var(--teal);
+  transform: scale(1.1);
+}
+
+.admin-mini-btn.del {
+  color: var(--coral);
+  background: var(--coral-light);
+  border-color: var(--coral-light);
 }
 
 .admin-mini-btn.del:hover {
-  background: var(--coral-light);
-  color: var(--coral);
+  background: var(--coral);
+  color: #fff;
   border-color: var(--coral);
+  transform: scale(1.1);
 }
 
 .admin-inline-edit-box {
@@ -2366,10 +2375,12 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px}
 
 /* Admin Modern Editor */
 .admin-modern-editor {
-  background: var(--bg);
-  padding: 20px;
+  background: #fff;
+  padding: 24px;
   border-radius: 16px;
-  border: 2px dashed var(--teal);
+  border: 2px solid var(--teal);
+  box-shadow: 0 10px 30px rgba(29, 158, 117, 0.1);
+  margin: 10px 0;
 }
 
 .editor-row {

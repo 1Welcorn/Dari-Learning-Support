@@ -15,17 +15,18 @@ interface QuestionBlockProps {
   isAdmin?: boolean;
   onEdit?: (newQ: Question) => void;
   onDelete?: () => void;
+  isNew?: boolean;
 }
 
 const QuestionBlock: React.FC<QuestionBlockProps> = ({ 
-  question, index, color, isDone, savedAnswer, onSaveAnswer, isAdmin, onEdit, onDelete 
+  question, index, color, isDone, savedAnswer, onSaveAnswer, isAdmin, onEdit, onDelete, isNew 
 }) => {
   const [showMediatorGuide, setShowMediatorGuide] = useState(false);
   const [tempAnswer, setTempAnswer] = useState(savedAnswer);
   const [isSaving, setIsSaving] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   
-  const [isEditing, setIsEditing] = useState(false);
+  const [isEditing, setIsEditing] = useState(isNew || false);
   const [editQ, setEditQ] = useState(question.q);
   const [editType, setEditType] = useState<QuestionType>(question.type);
   const [editOpts, setEditOpts] = useState<string[]>(question.opts || []);
@@ -444,9 +445,31 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
                 isAdmin={isAdmin}
                 onEdit={(newQ) => editQuestion(i, newQ)}
                 onDelete={() => deleteQuestion(i)}
+                isNew={q.q === 'Nova Pergunta'}
               />
             );
           })}
+
+          {isAdmin && (
+            <div style={{ padding: '0 20px 24px' }}>
+              <button 
+                className="admin-add-btn premium" 
+                onClick={() => {
+                  const newQs = [...unit.questions, { 
+                    q: 'Nova Pergunta', 
+                    type: 'mc', 
+                    opts: ['Opção 1'],
+                    mediator: 'Instrução para a mediadora...', 
+                    hint: 'Dica para a aluna...' 
+                  }];
+                  handleUpdateUnitContent({ questions: newQs });
+                }}
+                style={{ width: '100%', justifyContent: 'center', padding: '14px', borderStyle: 'dashed' }}
+              >
+                <Plus size={18} /> Adicionar Pergunta (Estilo Google Forms)
+              </button>
+            </div>
+          )}
 
           <div className="session-reporting-card">
             <div className="reporting-header">

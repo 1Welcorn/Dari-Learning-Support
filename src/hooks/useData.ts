@@ -229,6 +229,9 @@ export const useSarehData = () => {
       window.alert('Erro ao salvar no banco de dados: ' + error.message + '\nVerifique se você rodou o SQL de permissões.');
       return false;
     }
+    
+    // Optimistic update
+    setUnits(prev => prev.map(u => u.id === id ? { ...u, ...updates } : u));
     return true;
   };
 
