@@ -32,6 +32,7 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
   const [editOpts, setEditOpts] = useState<string[]>(question.opts || []);
   const [editMediator, setEditMediator] = useState(question.mediator || '');
   const [editHint, setEditHint] = useState(question.hint || '');
+  const [editCorrect, setEditCorrect] = useState(question.correctAnswer || '');
   
   const currentColors = COLORS[color] || COLORS.teal;
 
@@ -59,7 +60,8 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
       type: editType, 
       opts: ['mc', 'checkbox'].includes(editType) ? editOpts : undefined,
       mediator: editMediator,
-      hint: editHint
+      hint: editHint,
+      correctAnswer: editCorrect
     });
     setIsEditing(false);
   };
@@ -139,9 +141,18 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
 
             {['mc', 'checkbox'].includes(editType) && (
               <div className="admin-options-editor">
+                <label style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--teal)', marginBottom: '8px', display: 'block' }}>
+                  Marque a opção correta:
+                </label>
                 {editOpts.map((opt, i) => (
-                  <div key={i} className="admin-opt-row">
-                    {editType === 'mc' ? <Circle size={14} /> : <CheckSquare size={14} />}
+                  <div key={i} className={`admin-opt-row ${editCorrect === opt ? 'is-correct-row' : ''}`}>
+                    <button 
+                      className={`admin-correct-toggle ${editCorrect === opt ? 'active' : ''}`}
+                      onClick={() => setEditCorrect(opt)}
+                      title="Marcar como correta"
+                    >
+                      {editType === 'mc' ? <Circle size={14} /> : <CheckSquare size={14} />}
+                    </button>
                     <input 
                       type="text" 
                       value={opt} 
@@ -154,6 +165,19 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
                 <button className="admin-add-opt-btn" onClick={addOption}>
                   <Plus size={14} /> Adicionar opção
                 </button>
+              </div>
+            )}
+
+            {['text', 'paragraph'].includes(editType) && (
+              <div className="admin-form-group" style={{ marginTop: '12px' }}>
+                <label style={{ fontSize: '11px', fontWeight: 'bold', color: 'var(--teal)' }}>Gabarito (Resposta Esperada)</label>
+                <input 
+                  type="text"
+                  className="admin-input-full"
+                  value={editCorrect}
+                  onChange={(e) => setEditCorrect(e.target.value)}
+                  placeholder="Ex: 42, United Kingdom, etc..."
+                />
               </div>
             )}
 
@@ -201,6 +225,15 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
                   <Volume2 size={16} />
                 </button>
               )}
+              {tempAnswer && question.correctAnswer && (
+                <span className={`answer-feedback-tag ${tempAnswer === question.correctAnswer ? 'correct' : 'wrong'}`}>
+                  {tempAnswer === question.correctAnswer ? (
+                    <><CheckCircle size={14} /> Correto</>
+                  ) : (
+                    <><X size={14} /> Tente novamente</>
+                  )}
+                </span>
+              )}
             </div>
 
             <div className="q-input-container">
@@ -229,18 +262,26 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
 
               {question.type === 'mc' && (
                 <div className="modern-options-grid">
-                  {question.opts?.map((opt, i) => (
-                    <button 
-                      key={i}
-                      className={`modern-opt-btn ${tempAnswer === opt ? 'selected' : ''}`}
-                      onClick={() => { setTempAnswer(opt); handleSave(opt); }}
-                      style={{ '--brand': currentColors.main } as any}
-                      disabled={!onSaveAnswer}
-                    >
-                      <div className="opt-circle">{tempAnswer === opt && <div className="inner" />}</div>
-                      <span>{opt}</span>
-                    </button>
-                  ))}
+                  {question.opts?.map((opt, i) => {
+                    const isSelected = tempAnswer === opt;
+                    const isCorrect = opt === question.correctAnswer;
+                    const showResult = !!tempAnswer && !!question.correctAnswer;
+                    
+                    return (
+                      <button 
+                        key={i}
+                        className={`modern-opt-btn ${isSelected ? 'selected' : ''} ${showResult && isCorrect ? 'reveal-correct' : ''} ${showResult && isSelected && !isCorrect ? 'reveal-wrong' : ''}`}
+                        onClick={() => { setTempAnswer(opt); handleSave(opt); }}
+                        style={{ '--brand': currentColors.main } as any}
+                        disabled={!onSaveAnswer}
+                      >
+                        <div className="opt-circle">{isSelected && <div className="inner" />}</div>
+                        <span>{opt}</span>
+                        {showResult && isCorrect && <Check size={14} className="result-icon" />}
+                        {showResult && isSelected && !isCorrect && <X size={14} className="result-icon" />}
+                      </button>
+                    );
+                  })}
                 </div>
               )}
 

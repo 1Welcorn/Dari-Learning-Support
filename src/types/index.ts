@@ -7,6 +7,7 @@ export interface Question {
   hint?: string;
   mediator?: string;
   scaleMax?: number;
+  correctAnswer?: string;
 }
 
 export interface ExternalLink {
