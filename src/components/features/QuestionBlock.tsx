@@ -32,7 +32,10 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
   const [editOpts, setEditOpts] = useState<string[]>(question.opts || []);
   const [editMediator, setEditMediator] = useState(question.mediator || '');
   const [editHint, setEditHint] = useState(question.hint || '');
-  const [editCorrect, setEditCorrect] = useState(question.correctAnswer || '');
+  const [editCorrect, setEditCorrect] = useState<string[]>(
+    Array.isArray(question.correctAnswer) ? question.correctAnswer : 
+    (question.correctAnswer ? [question.correctAnswer] : [])
+  );
   const [editImage, setEditImage] = useState(question.imageUrl || '');
   const [editAudio, setEditAudio] = useState(question.audioUrl || '');
   
@@ -70,6 +73,14 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
     setIsEditing(false);
   };
 
+  const toggleCorrect = (opt: string) => {
+    if (editCorrect.includes(opt)) {
+      setEditCorrect(editCorrect.filter(o => o !== opt));
+    } else {
+      setEditCorrect([...editCorrect, opt]);
+    }
+  };
+
   const toggleCheckbox = (opt: string) => {
     let current = tempAnswer ? tempAnswer.split(', ') : [];
     if (current.includes(opt)) {
@@ -91,9 +102,13 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
   };
 
   const updateOption = (idx: number, val: string) => {
+    const oldVal = editOpts[idx];
     const next = [...editOpts];
     next[idx] = val;
     setEditOpts(next);
+    if (editCorrect.includes(oldVal)) {
+      setEditCorrect(editCorrect.map(c => c === oldVal ? val : c));
+    }
   };
 
   return (
@@ -149,11 +164,11 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
                   Marque a opção correta:
                 </label>
                 {editOpts.map((opt, i) => (
-                  <div key={i} className={`admin-opt-row ${editCorrect === opt ? 'is-correct-row' : ''}`}>
+                  <div key={i} className={`admin-opt-row ${editCorrect.includes(opt) ? 'is-correct-row' : ''}`}>
                     <button 
-                      className={`admin-correct-toggle ${editCorrect === opt ? 'active' : ''}`}
-                      onClick={() => setEditCorrect(opt)}
-                      title="Marcar como correta"
+                      className={`admin-correct-toggle ${editCorrect.includes(opt) ? 'active' : ''}`}
+                      onClick={() => toggleCorrect(opt)}
+                      title="Alternar como correta"
                     >
                       {editType === 'mc' ? <Circle size={14} /> : <CheckSquare size={14} />}
                     </button>
@@ -163,6 +178,11 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
                       onChange={(e) => updateOption(i, e.target.value)}
                       className="admin-opt-input"
                     />
+                    {editCorrect.includes(opt) && (
+                      <span style={{ fontSize: '10px', color: 'var(--teal)', fontWeight: 'bold', marginRight: '10px' }}>
+                        <Check size={12} style={{ verticalAlign: 'middle', marginRight: '2px' }} /> RESPOSTA CORRETA
+                      </span>
+                    )}
                     <button onClick={() => removeOption(i)} className="admin-opt-del"><X size={12} /></button>
                   </div>
                 ))}
@@ -267,8 +287,13 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
                 </button>
               )}
               {tempAnswer && question.correctAnswer && (
-                <span className={`answer-feedback-tag ${tempAnswer === question.correctAnswer ? 'correct' : 'wrong'}`}>
-                  {tempAnswer === question.correctAnswer ? (
+                <span className={`answer-feedback-tag ${
+                  Array.isArray(question.correctAnswer) 
+                    ? question.correctAnswer.includes(tempAnswer) 
+                    : tempAnswer === question.correctAnswer 
+                  ? 'correct' : 'wrong'
+                }`}>
+                  {(Array.isArray(question.correctAnswer) ? question.correctAnswer.includes(tempAnswer) : tempAnswer === question.correctAnswer) ? (
                     <><CheckCircle size={14} /> Correto</>
                   ) : (
                     <><X size={14} /> Tente novamente</>
@@ -311,7 +336,9 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
                 <div className="modern-options-grid">
                   {question.opts?.map((opt, i) => {
                     const isSelected = tempAnswer === opt;
-                    const isCorrect = opt === question.correctAnswer;
+                    const isCorrect = Array.isArray(question.correctAnswer) 
+                      ? question.correctAnswer.includes(opt) 
+                      : opt === question.correctAnswer;
                     const showResult = !!tempAnswer && !!question.correctAnswer;
                     
                     return (

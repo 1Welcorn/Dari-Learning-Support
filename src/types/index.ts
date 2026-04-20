@@ -7,7 +7,7 @@ export interface Question {
   hint?: string;
   mediator?: string;
   scaleMax?: number;
-  correctAnswer?: string;
+  correctAnswer?: string | string[];
   imageUrl?: string;
   audioUrl?: string;
 }
