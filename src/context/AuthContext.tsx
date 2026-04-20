@@ -7,6 +7,7 @@ interface AuthContextType {
   role: UserRole;
   user: User | null;
   loading: boolean;
+  authError: string | null;
   signInWithGoogle: () => Promise<void>;
   loginWithRole: (role: UserRole) => void;
   logout: () => Promise<void>;
@@ -21,6 +22,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [role, setRole] = useState<UserRole>(null);
   const [loading, setLoading] = useState(true);
+  const [authError, setAuthError] = useState<string | null>(null);
 
   useEffect(() => {
     console.log("AuthProvider: Initializing...");
@@ -59,6 +61,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         console.warn("AuthContext: Unauthorized email:", user.email);
         setRole(null);
         localStorage.removeItem('sareh_role');
+        setAuthError(`O e-mail ${user.email} não está autorizado a acessar este sistema.`);
+        supabase.auth.signOut();
       }
     } else {
       setRole(null);
@@ -67,6 +71,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const signInWithGoogle = async () => {
+    setAuthError(null);
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -90,7 +95,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ role, user, loading, signInWithGoogle, loginWithRole, logout }}>
+    <AuthContext.Provider value={{ role, user, loading, authError, signInWithGoogle, loginWithRole, logout }}>
       {children}
     </AuthContext.Provider>
   );

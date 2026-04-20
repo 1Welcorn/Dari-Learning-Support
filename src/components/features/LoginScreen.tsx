@@ -4,7 +4,8 @@ import { useAuth } from '../../context/AuthContext';
 export const LoginScreen: React.FC<{ settings: any }> = () => {
   const { 
     signInWithGoogle, 
-    loading
+    loading,
+    authError
   } = useAuth();
 
   return (
@@ -13,6 +14,20 @@ export const LoginScreen: React.FC<{ settings: any }> = () => {
         <div className="login-logo">SAREH · Domiciliar · 2026</div>
         <h1 className="login-title">Bem-vinda</h1>
         <p className="login-sub">Colégio Est. N. Sra. de Lourdes<br />Atendimento domiciliar — Ione Jordão</p>
+
+        {authError && (
+          <div className="auth-error-message" style={{ 
+            backgroundColor: '#fee2e2', 
+            color: '#b91c1c', 
+            padding: '12px', 
+            borderRadius: '8px', 
+            fontSize: '13px', 
+            marginBottom: '20px',
+            border: '1px solid #fecaca'
+          }}>
+            {authError}
+          </div>
+        )}
 
         {loading ? (
           <div className="loader-spinner" style={{ margin: '0 auto' }}></div>
