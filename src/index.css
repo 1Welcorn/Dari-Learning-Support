@@ -2684,7 +2684,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px}
   to { transform: rotate(360deg); }
 }
 
-/* --- PROGRESSIVE CARD GRID V2 --- */
+/* --- PROGRESSIVE CARD GRID V2 (WATERMARK STYLE) --- */
 
 .activities-screen {
   padding-bottom: 80px;
@@ -2694,7 +2694,7 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px}
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
 @media (min-width: 768px) {
@@ -2705,139 +2705,118 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px}
 
 .unit-card-v2 {
   background: #fff;
-  border: 2px solid var(--border);
-  border-radius: 20px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-  height: fit-content;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
 }
 
 .unit-card-v2:hover {
   transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
 
 .unit-card-v2.expanded {
   grid-column: 1 / -1;
-  transform: none;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+  transform: none !important;
 }
 
 .unit-hdr-v2 {
-  padding: 24px;
+  padding: 32px;
   cursor: pointer;
+  position: relative;
+  min-height: 180px;
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  min-height: 160px;
-  justify-content: flex-start;
+}
+
+.unit-watermark {
+  position: absolute;
+  right: -16px;
+  bottom: -16px;
+  opacity: 0.03;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.unit-watermark svg {
+  width: 140px;
+  height: 140px;
+}
+
+.unit-card-v2:hover .unit-watermark {
+  opacity: 0.12;
+  transform: scale(1.1) rotate(-5deg);
+}
+
+.unit-content-v2 {
+  position: relative;
+  z-index: 2;
 }
 
 .unit-header-top {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 4px;
+  align-items: flex-start;
+  margin-bottom: 8px;
 }
 
 .unit-title-group {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
-.unit-title-text {
-  font-family: 'DM Sans', sans-serif; /* Changed back to DM Sans for title weight as per snippet */
-  font-size: 18px;
+.unit-title-v3 {
+  font-family: 'Fraunces', serif;
+  font-size: 20px;
+  font-weight: 900;
+  color: #1e293b; /* Slate 800 */
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.unit-progress-pill-v2 {
+  background: #f1f5f9; /* Slate 100 */
+  color: #475569; /* Slate 600 */
   font-weight: 700;
-  color: var(--ink);
-}
-
-.unit-meta-right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.unit-status-pill {
+  padding: 4px 12px;
+  border-radius: 9999px;
   font-size: 12px;
-  padding: 4px 10px;
-  border-radius: 99px;
-  font-weight: 700;
 }
 
-.chev-v2 {
-  color: #ccc;
-  transition: all 0.3s;
+.unit-subtitle-v2 {
+  color: #475569; /* Slate 600 */
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 4px;
 }
 
-.unit-card-v2:hover .chev-v2 {
-  color: var(--ink3);
-}
-
-.chev-v2.open {
-  transform: rotate(180deg);
-}
-
-.unit-header-mid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-
-.unit-sub-text-v2 {
+.unit-meta-v2 {
+  color: #94a3b8; /* Slate 400 */
   font-size: 14px;
-  color: var(--ink3);
-  max-width: 80%;
-  line-height: 1.4;
-  opacity: 0.8;
+  margin-bottom: 16px;
 }
 
-.descriptor-pills-v2 {
+.unit-tags-row-v2 {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.desc-pill-v3 {
+.unit-tag-v2 {
+  font-weight: 700;
   font-size: 10px;
-  padding: 2px 8px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  color: var(--ink4);
-  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 6px;
   text-transform: uppercase;
-  background: transparent;
-}
-
-.unit-icon-decor-v2 {
-  position: absolute;
-  bottom: 24px;
-  right: 24px;
-  opacity: 0.15;
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-.unit-card-v2:hover .unit-icon-decor-v2 {
-  opacity: 1;
-  transform: scale(1.1) rotate(-5deg);
 }
 
 .unit-card-v2 .unit-body {
   border-top: 1px solid var(--border);
   background: #fff;
-  animation: slideDown 0.3s ease-out;
-}
-
-@keyframes slideDown {
-  from { opacity: 0; transform: translateY(-10px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Ensure QuestionBlock looks good in the new card */
-.unit-card-v2 .q-block {
-  padding: 24px;
+  padding-top: 0;
 }

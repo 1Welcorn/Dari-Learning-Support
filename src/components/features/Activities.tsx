@@ -100,36 +100,40 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
   const isComplete = questionsDone === unit.questions.length;
 
   return (
-    <div className={`unit-card-v2 ${isExpanded ? 'expanded' : ''}`} style={{ borderColor: currentColors.main }}>
+    <div className={`unit-card-v2 ${isExpanded ? 'expanded' : ''}`} style={{ borderColor: isExpanded ? currentColors.main : 'var(--border)' }}>
       <div className="unit-hdr-v2" onClick={onToggle}>
-        <div className="unit-header-top">
-          <div className="unit-title-group">
-            <div className="unit-dot" style={{ background: currentColors.main }}></div>
-            <div className="unit-title-text">{unit.title}</div>
-          </div>
-          <div className="unit-meta-right">
-            <div className="unit-status-pill" style={{ background: currentColors.light, color: currentColors.dark }}>
+        {/* Watermark Icon */}
+        <div className="unit-watermark" style={{ color: currentColors.main }}>
+          {getUnitIcon(unit.title)}
+        </div>
+
+        <div className="unit-content-v2">
+          <div className="unit-header-top">
+            <div className="unit-title-group">
+              <div className="unit-dot" style={{ background: currentColors.main }}></div>
+              <h3 className="unit-title-v3">
+                {unit.title}
+              </h3>
+            </div>
+            <span className="unit-progress-pill-v2">
               {questionsDone}/{unit.questions.length}
             </div>
-            <ChevronDown size={18} className={`chev-v2 ${isExpanded ? 'open' : ''}`} />
           </div>
-        </div>
-        
-        <div className="unit-header-mid">
-          <div className="unit-sub-text-v2">{unit.sub}</div>
-          {Array.isArray(unit.descriptors) && unit.descriptors.length > 0 && (
-            <div className="descriptor-pills-v2">
-              {unit.descriptors.map(d => (
-                <span key={d} className="desc-pill-v3">
-                  {d}
+
+          <div className="unit-info-body">
+            <p className="unit-subtitle-v2">{unit.sub?.split('·')[0]?.trim() || unit.sub}</p>
+            <p className="unit-meta-v2">
+              {unit.sub?.split('·').slice(1).join(' • ') || ''}
+            </p>
+
+            <div className="unit-tags-row-v2">
+              {Array.isArray(unit.descriptors) && unit.descriptors.map(tag => (
+                <span key={tag} className="unit-tag-v2" style={{ background: currentColors.light, color: currentColors.dark }}>
+                  {tag}
                 </span>
               ))}
             </div>
-          )}
-        </div>
-
-        <div className="unit-icon-decor-v2" style={{ color: currentColors.main }}>
-          {getUnitIcon(unit.title)}
+          </div>
         </div>
       </div>
 
