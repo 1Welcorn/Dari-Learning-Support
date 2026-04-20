@@ -2607,35 +2607,33 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px}
   border-radius: 8px;
   cursor: pointer;
 }
-.admin-save-small, .admin-cancel-small {
+.admin-save-tiny, .admin-cancel-tiny {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
   border: none;
-}
-
-.admin-save-small {
-  background: var(--teal2);
   color: white;
 }
 
-.admin-save-small:hover {
+.admin-save-tiny {
+  background: var(--teal2);
+}
+
+.admin-save-tiny:hover {
   background: var(--teal);
-  transform: translateY(-1px);
+  transform: scale(1.05);
 }
 
-.admin-cancel-small {
-  background: var(--bg3);
-  color: var(--ink3);
+.admin-cancel-tiny {
+  background: #ef4444; /* Red */
 }
 
-.admin-cancel-small:hover {
-  background: var(--bg2);
-  color: var(--ink2);
+.admin-cancel-tiny:hover {
+  background: #dc2626;
+  transform: scale(1.05);
 }

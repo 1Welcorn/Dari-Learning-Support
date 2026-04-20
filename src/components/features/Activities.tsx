@@ -135,19 +135,19 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
                     )}
                   </div>
                   {isEditingBrief ? (
-                    <div className="admin-inline-edit-box" style={{ marginTop: '8px' }}>
+                    <div className="admin-inline-edit-box" style={{ display: 'flex', gap: '12px', marginTop: '8px', alignItems: 'flex-start' }}>
                       <textarea 
                         className="admin-inline-input" 
-                        style={{ minHeight: '80px', width: '100%', marginBottom: '8px' }}
+                        style={{ minHeight: '80px', flex: 1 }}
                         value={tempBrief}
                         onChange={(e) => setTempBrief(e.target.value)}
                       />
-                      <div style={{ display: 'flex', gap: '8px' }}>
-                        <button className="admin-save-small" onClick={() => { handleUpdateUnitContent({ brief: tempBrief }); setIsEditingBrief(false); }}>
-                          <Check size={14} /> Salvar
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <button className="admin-save-tiny" onClick={() => { handleUpdateUnitContent({ brief: tempBrief }); setIsEditingBrief(false); }} title="Salvar">
+                          <Check size={18} />
                         </button>
-                        <button className="admin-cancel-small" onClick={() => setIsEditingBrief(false)}>
-                          <X size={14} /> Cancelar
+                        <button className="admin-cancel-tiny" onClick={() => setIsEditingBrief(false)} title="Cancelar">
+                          <X size={18} />
                         </button>
                       </div>
                     </div>
