@@ -129,7 +129,12 @@ class SpeechService {
       // Add text before the tag (use auto-detect), stripping any lone tags
       const before = this.stripTags(text.substring(lastIndex, match.index));
       if (before) {
-        chunks.push({ text: before, lang: this.detectLanguage(before) });
+        // If 'before' is just punctuation, try to merge with previous chunk
+        if (/^[?!\.,\s]+$/.test(before) && chunks.length > 0) {
+          chunks[chunks.length - 1].text += before;
+        } else {
+          chunks.push({ text: before, lang: this.detectLanguage(before) });
+        }
       }
       
       const lang = match[1].toUpperCase() === 'PT' ? 'pt-BR' : 'en-US';
@@ -144,7 +149,11 @@ class SpeechService {
     // Add remaining text, stripping any lone tags
     const after = this.stripTags(text.substring(lastIndex));
     if (after) {
-      chunks.push({ text: after, lang: this.detectLanguage(after) });
+      if (/^[?!\.,\s]+$/.test(after) && chunks.length > 0) {
+        chunks[chunks.length - 1].text += after;
+      } else {
+        chunks.push({ text: after, lang: this.detectLanguage(after) });
+      }
     }
 
     if (chunks.length === 0 && text) {
