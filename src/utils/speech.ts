@@ -47,19 +47,25 @@ class SpeechService {
     if (!this.synth) return null;
     if (this.voices.length === 0) this.voices = this.synth.getVoices();
 
-    const priorities = lang.startsWith('pt')
+    // Browser lang codes can be 'pt-BR', 'pt_BR', 'pt'
+    const langPrefix = lang.split(/[-_]/)[0].toLowerCase();
+
+    const priorities = langPrefix === 'pt'
       ? ['Google português do Brasil', 'Luciana', 'Maria', 'Daniela', 'Heloisa', 'Portuguese']
       : ['Google US English', 'Samantha', 'Microsoft Zira', 'Aria', 'English'];
 
+    // Try finding by priority name AND lang prefix
     for (const p of priorities) {
       const voice = this.voices.find(v => 
-        v.lang.toLowerCase().startsWith(lang.split('-')[0].toLowerCase()) && 
+        v.lang.toLowerCase().startsWith(langPrefix) && 
         v.name.toLowerCase().includes(p.toLowerCase())
       );
       if (voice) return voice;
     }
 
-    return this.voices.find(v => v.lang.toLowerCase().startsWith(lang.split('-')[0].toLowerCase())) || null;
+    // Fallback: just find by lang prefix
+    const fallback = this.voices.find(v => v.lang.toLowerCase().startsWith(langPrefix)) || null;
+    return fallback;
   }
 
   /**
@@ -83,28 +89,26 @@ class SpeechService {
     if (!cleanedText) return;
 
     const chunks = this.parseChunks(cleanedText);
+    console.log('TTS Chunks:', chunks);
     
     // Small delay to ensure previous speech is fully cancelled
     setTimeout(() => {
       this.speakSequential(chunks);
-    }, 50);
+    }, 100);
   }
 
   private parseChunks(text: string): { text: string; lang: 'pt-BR' | 'en-US' }[] {
-    // Regex to match [PT]...[/PT] or [EN]...[/EN]
     const regex = /\[(PT|EN)\](.*?)\[\/\1\]/gi;
     const chunks: { text: string; lang: 'pt-BR' | 'en-US' }[] = [];
     let lastIndex = 0;
     let match;
 
     while ((match = regex.exec(text)) !== null) {
-      // Add text before the tag (use auto-detect)
       const before = text.substring(lastIndex, match.index).trim();
       if (before) {
         chunks.push({ text: before, lang: this.detectLanguage(before) });
       }
       
-      // Add tagged text
       const lang = match[1].toUpperCase() === 'PT' ? 'pt-BR' : 'en-US';
       const content = match[2].trim();
       if (content) {
@@ -114,13 +118,11 @@ class SpeechService {
       lastIndex = regex.lastIndex;
     }
 
-    // Add remaining text
     const after = text.substring(lastIndex).trim();
     if (after) {
       chunks.push({ text: after, lang: this.detectLanguage(after) });
     }
 
-    // If no tags were found, we have one chunk from the start
     if (chunks.length === 0 && text) {
       chunks.push({ text: text, lang: this.detectLanguage(text) });
     }
@@ -132,20 +134,29 @@ class SpeechService {
     if (!this.synth || chunks.length === 0) return;
 
     const current = chunks[0];
+    if (!current.text.trim()) {
+      this.speakSequential(chunks.slice(1));
+      return;
+    }
+
     const utterance = new SpeechSynthesisUtterance(current.text);
     utterance.lang = current.lang;
-    utterance.voice = this.getBestVoice(current.lang);
+    const voice = this.getBestVoice(current.lang);
+    if (voice) utterance.voice = voice;
+    
     utterance.rate = 0.8;
     utterance.pitch = 1.0;
     utterance.volume = 1.0;
 
+    utterance.onstart = () => console.log(`Speaking (${current.lang}): ${current.text}`);
+    
     utterance.onend = () => {
-      // Speak next chunk
       this.speakSequential(chunks.slice(1));
     };
 
     utterance.onerror = (e) => {
-      console.error('Speech error:', e);
+      console.error(`Speech error (${current.lang}):`, e);
+      // Skip to next chunk if error
       this.speakSequential(chunks.slice(1));
     };
 
