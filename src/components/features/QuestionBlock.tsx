@@ -198,8 +198,8 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
                 <input 
                   type="text"
                   className="admin-input-full"
-                  value={editCorrect}
-                  onChange={(e) => setEditCorrect(e.target.value)}
+                  value={editCorrect[0] || ''}
+                  onChange={(e) => setEditCorrect([e.target.value])}
                   placeholder="Ex: 42, United Kingdom, etc..."
                 />
               </div>
