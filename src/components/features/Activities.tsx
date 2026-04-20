@@ -215,32 +215,7 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
             </div>
           )}
 
-          {Array.isArray(unit.external_links) && unit.external_links.length > 0 && (
-            <div style={{ padding: '12px 18px', borderBottom: '1px solid var(--border)', background: 'var(--bg)' }}>
-              <div className="brief-label">Atividades Externas (Canva, Docs, etc.)</div>
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '8px' }}>
-                {unit.external_links.map((link, idx) => (
-                  <a 
-                    key={idx} 
-                    href={link.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer"
-                    className="save-note-btn"
-                    style={{ 
-                      display: 'flex', 
-                      alignItems: 'center', 
-                      gap: '6px', 
-                      textDecoration: 'none',
-                      fontSize: '11px',
-                      padding: '6px 12px'
-                    }}
-                  >
-                    <ExternalLink size={12} /> {link.label}
-                  </a>
-                ))}
-              </div>
-            </div>
-          )}
+
 
           {unit.questions.map((q, i) => (
             <QuestionBlock 
