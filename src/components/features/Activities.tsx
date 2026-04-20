@@ -185,17 +185,15 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
                       </div>
                       
                       <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '8px' }}>
-                        {isMediator && (
-                          <label className="embed-check-label" style={{ fontSize: '11px', color: 'var(--ink4)', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
-                            <span>Concluída?</span>
-                            <input 
-                              type="checkbox" 
-                              checked={!!answers[`${unit.id}-${1000 + idx}`]?.is_done}
-                              onChange={(e) => onSaveAnswer(1000 + idx, e.target.checked ? 'COMPLETA' : '')}
-                              style={{ width: '16px', height: '16px', accentColor: currentColors.main }}
-                            />
-                          </label>
-                        )}
+                        <label className="embed-check-label" style={{ fontSize: '11px', color: 'var(--ink4)', display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer' }}>
+                          <span title="Este campo é para uso da Mediadora/Professor">Concluída? (Mediadora)</span>
+                          <input 
+                            type="checkbox" 
+                            checked={!!answers[`${unit.id}-${1000 + idx}`]?.is_done}
+                            onChange={(e) => onSaveAnswer(1000 + idx, e.target.checked ? 'COMPLETA' : '')}
+                            style={{ width: '16px', height: '16px', accentColor: currentColors.main }}
+                          />
+                        </label>
 
                         {isAdmin && (
                           <div style={{ display: 'flex', gap: '6px' }}>
