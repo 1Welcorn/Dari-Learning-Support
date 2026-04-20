@@ -278,5 +278,3 @@ export const Activities: React.FC<{ units: Unit[]; answers: Record<string, any>;
     </div>
   );
 };
-/ /   B u i l d   t r i g g e r :   c l e a n u p  
- 
