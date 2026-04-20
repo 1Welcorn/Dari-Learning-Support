@@ -3490,3 +3490,22 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px;border-rad
   border: 0;
 }
 
+
+/* --- SKILL BADGES --- */
+.unit-tags-row-v4 {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.skill-badge-v4 {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 6px 12px;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.03);
+}
+

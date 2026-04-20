@@ -128,6 +128,14 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
           <div className="unit-info-v4">
             <p className="unit-meta-v4">{unit.sub?.split('·')[0]}</p>
             
+            <div className="unit-tags-row-v4">
+              {Array.isArray(unit.descriptors) && unit.descriptors.map(tag => (
+                <span key={tag} className="skill-badge-v4" style={{ background: currentColors.light, color: currentColors.dark }}>
+                  {getSkillBadge(tag)}
+                </span>
+              ))}
+            </div>
+
             <div className="unit-footer-v4">
               <div className="unit-progress-bar-v4">
                 <div className="unit-progress-fill-v4" style={{ width: `${(questionsDone/unit.questions.length)*100}%`, background: currentColors.main }}></div>
@@ -329,6 +337,17 @@ const UnitCard: React.FC<UnitCardProps> = ({ unit, answers, onSaveAnswer, onSave
       )}
     </div>
   );
+};
+
+// Local helper for skill badges mapping
+const getSkillBadge = (tag: string) => {
+  const map: Record<string, string> = {
+    'D2': 'Vocabulário 🍎',
+    'D3': 'Gramática ✍️',
+    'D5': 'Escuta 🎧',
+    'D10': 'Conversa 🗣️'
+  };
+  return map[tag] || tag;
 };
 
 export const Activities: React.FC<{ 
