@@ -47,30 +47,27 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div className="dashboard-top-row">
         <div className="profile-hero-mini">
           <div className="avatar-mini-container">
-            <div className="avatar-mini">I</div>
-            <div className="level-tag">Nível 1</div>
+            <img 
+              src="https://api.dicebear.com/7.x/avataaars/svg?seed=Ione" 
+              alt="Avatar" 
+              className="avatar-mini-img"
+            />
+            <div className="level-tag">LVL 1</div>
           </div>
           <div className="profile-mini-text">
-            <span className="profile-mini-tag">ESTUDANTE EXPLORADORA</span>
             <h1 className="profile-mini-title">Olá, Ione! 👋</h1>
-            <p className="profile-mini-sub">Você já conquistou 50% de nass per unida!</p>
+            <p className="profile-mini-sub">Você já conquistou {completedPct}% da sua jornada!</p>
           </div>
         </div>
 
         <div className="stats-mini-bar">
-          <div className="stat-item">
-            <div className="stat-icon-bg stars"><Star size={24} fill="#fbbf24" color="#fbbf24" /></div>
-            <div className="stat-val-group">
-              <span className="stat-label">Estrelas</span>
-              <span className="stat-value">{sessionsCount * 10} Estrelas</span>
-            </div>
+          <div className="stat-pill-v2">
+            <Star className="text-yellow-400 fill-yellow-400" size={20} />
+            <span className="font-black text-slate-700">{sessionsCount * 10} Estrelas</span>
           </div>
-          <div className="stat-item">
-            <div className="stat-icon-bg streak"><Flame size={24} fill="#f97316" color="#f97316" /></div>
-            <div className="stat-val-group">
-              <span className="stat-label">Streak</span>
-              <span className="stat-value">3 dias!</span>
-            </div>
+          <div className="stat-pill-v2">
+            <Flame className="text-orange-500" size={20} />
+            <span className="font-black text-slate-700">3 dias!</span>
           </div>
         </div>
       </div>
@@ -116,22 +113,21 @@ export const Dashboard: React.FC<DashboardProps> = ({
                 onClick={() => !isLocked && onNavigate('activities')}
               >
                 <div className="node-connector"></div>
-                <div className="journey-card">
-                  <div className="node-icon-visual">
-                    {isDone ? <CheckCircle2 size={24} color="#10b981" /> : <div className="node-circle"></div>}
+                <div className="journey-card-v3">
+                  <div className="node-icon-bg-v3" style={{ background: isDone ? '#dcfce7' : '#f1f5f9' }}>
+                    {isDone ? <ChefHat size={32} color="#10b981" /> : <Trophy size={32} color="#94a3b8" />}
                   </div>
                   
                   <div className="journey-node-info">
-                    <span className="node-unit-tag">UNID. {idx + 1}</span>
-                    <h3 className="node-card-title">{unit.title}</h3>
-                    <p className="node-card-sub">{unit.sub?.split('·')[0]}</p>
-                    <span className="node-card-stat">{questionsDone}/{totalQuestions} Atividades</span>
+                    <p className="node-status-tag">{isDone ? 'ETAPA ' + (idx + 1) + ' • CONCLUÍDO' : 'ETAPA ' + (idx + 1) + ' • BLOQUEADO'}</p>
+                    <h3 className="node-card-title-v3">{unit.title}</h3>
+                    <p className="node-card-stat-v3">{questionsDone}/{totalQuestions} Atividades</p>
                   </div>
 
                   <div className="journey-node-visual">
-                     {idx === 0 && <img src={pan3d} alt="Pan" className="node-3d-img" />}
-                     {isLocked && <div className="node-lock">🔒</div>}
-                     {isDone && <div className="node-done-check">2/2</div>}
+                     {idx === 0 && <img src={pan3d} alt="Pan" className="node-3d-img-multiply" />}
+                     {!isDone && !isLocked && <div className="node-lock-v3">🔓</div>}
+                     {isDone && <div className="node-done-check-v3">COMPLETO</div>}
                   </div>
                 </div>
               </div>
