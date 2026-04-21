@@ -23,7 +23,7 @@ export const useDashboardData = (userId: string) => {
       }
 
       // 2. Fetch progress for this specific user
-      const { data: progressData, error: progError } = await supabase
+      const { data: progressData } = await supabase
         .from('student_progress')
         .select('unit_id, status')
         .eq('profile_id', userId);
