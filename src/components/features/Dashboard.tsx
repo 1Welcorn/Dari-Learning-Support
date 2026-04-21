@@ -94,7 +94,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   </div>
                   <div className="trail-card-info-v4">
                     <span className="unit-idx-v4">AULA {idx + 1}</span>
-                    <h3 className="unit-title-v4">{unit.unit_title}</h3>
+                    <h3 className="unit-title-v4">{unit.unit_sub || unit.unit_title}</h3>
                   </div>
                   {isDone && <div className="unit-done-tag">✓</div>}
                 </div>
