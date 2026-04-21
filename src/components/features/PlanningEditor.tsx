@@ -12,6 +12,7 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack }) => {
   const [loading, setLoading] = useState(true);
   const [unitData, setUnitData] = useState<any>(null);
   const [newWord, setNewWord] = useState("");
+  const [tempEmbed, setTempEmbed] = useState("");
   const [isPreviewing, setIsPreviewing] = useState(false);
 
   useEffect(() => {
@@ -102,7 +103,52 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack }) => {
 
         {/* Vocabulary Manager Section */}
         <div className="editor-side-col">
-          <section className="editor-section-card h-full">
+          <section className="editor-section-card">
+            <h3 className="section-title-v4">
+              <Plus className="text-pink" size={20} /> Atividades Externas (Canva, HTML, Jogos)
+            </h3>
+            <p className="field-help">Cole aqui os links de incorporação (embed) para aparecerem como janelas interativas.</p>
+            
+            <div className="vocab-input-group">
+              <input 
+                type="text" 
+                className="vocab-input-v4"
+                placeholder="Link da atividade (https://...)"
+                value={tempEmbed}
+                onChange={(e) => setTempEmbed(e.target.value)}
+              />
+              <button 
+                onClick={() => {
+                  if (!tempEmbed.trim()) return;
+                  const currentUrls = Array.isArray(unitData.embed_urls) ? unitData.embed_urls : [];
+                  setUnitData({ ...unitData, embed_urls: [...currentUrls, tempEmbed.trim()] });
+                  setTempEmbed("");
+                }} 
+                className="vocab-add-btn-v4"
+              >
+                <Plus size={24} />
+              </button>
+            </div>
+
+            <div className="embed-list-editor">
+              {(unitData.embed_urls || []).map((url: string, i: number) => (
+                <div key={i} className="embed-item-mini">
+                  <div className="embed-url-text" title={url}>{url}</div>
+                  <button 
+                    onClick={() => {
+                      const filtered = unitData.embed_urls.filter((_: any, index: number) => index !== i);
+                      setUnitData({ ...unitData, embed_urls: filtered });
+                    }}
+                    className="embed-remove-btn"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="editor-section-card">
             <h3 className="section-title-v4">
               <BookOpen className="text-emerald" size={20} /> Banco de Palavras (Word Fall)
             </h3>
@@ -560,6 +606,49 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack }) => {
           border-color: #6366f1;
           color: #6366f1;
           background: #f5f3ff;
+        }
+
+        .embed-list-editor {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-top: 16px;
+        }
+
+        .embed-item-mini {
+          background: #f8fafc;
+          padding: 12px 16px;
+          border-radius: 12px;
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          gap: 10px;
+          border: 1px solid #e2e8f0;
+        }
+
+        .embed-url-text {
+          font-size: 12px;
+          color: #64748b;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          flex: 1;
+        }
+
+        .embed-remove-btn {
+          background: none;
+          border: none;
+          color: #94a3b8;
+          cursor: pointer;
+        }
+
+        .embed-remove-btn:hover { color: #ef4444; }
+
+        .field-help {
+          font-size: 12px;
+          color: #94a3b8;
+          margin-bottom: 12px;
+          font-weight: 500;
         }
       `}</style>
     </div>
