@@ -264,6 +264,14 @@ export const Planning: React.FC<PlanningProps> = ({ units, isAdmin, settings, on
     window.print();
   };
 
+  const sortedUnits = React.useMemo(() => {
+    return [...units].sort((a, b) => {
+      const numA = parseInt(a.title.match(/\d+/)?.[0] || '999');
+      const numB = parseInt(b.title.match(/\d+/)?.[0] || '999');
+      return numA - numB;
+    });
+  }, [units]);
+
   return (
     <div className="screen">
       <div className="plan-header-card no-print">
@@ -318,7 +326,7 @@ export const Planning: React.FC<PlanningProps> = ({ units, isAdmin, settings, on
             </tr>
           </thead>
           <tbody>
-            {units.map((unit) => (
+            {sortedUnits.map((unit) => (
               <tr key={unit.id}>
                 <td 
                   contentEditable={isAdmin}
@@ -376,7 +384,7 @@ export const Planning: React.FC<PlanningProps> = ({ units, isAdmin, settings, on
           </p>
           
           <div className="admin-units-grid">
-            {units.map(unit => (
+            {sortedUnits.map(unit => (
               <AdminUnitResourceRow 
                 key={unit.id} 
                 unit={unit} 
