@@ -6,41 +6,44 @@ export const useDashboardData = (userId: string) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getProgress = async () => {
+    const getData = async () => {
       if (!userId) return;
+      setLoading(true);
       
-      // Fetching from the VIEW we created in Supabase!
-      // This view should join 'units' with 'student_progress'
-      const { data, error } = await supabase
-        .from('student_dashboard_view')
-        .select('*')
+      // 1. Fetch all units first
+      const { data: allUnits, error: unitsError } = await supabase
+        .from('units')
+        .select('id, title, sub')
+        .order('id');
+
+      if (unitsError) {
+        console.error('Error fetching units:', unitsError);
+        setLoading(false);
+        return;
+      }
+
+      // 2. Fetch progress for this specific user
+      const { data: progressData, error: progError } = await supabase
+        .from('student_progress')
+        .select('unit_id, status')
         .eq('profile_id', userId);
 
-      if (!error && data && data.length > 0) {
-        setUnits(data);
-      } else {
-        if (error) console.error('Error fetching dashboard view:', error);
-        // Fallback: Fetch directly from 'units' if view fails or is empty
-        const { data: unitsData, error: unitsError } = await supabase
-          .from('units')
-          .select('*')
-          .order('id');
-        
-        if (!unitsError) {
-          // Map to match the view's structure
-          const mapped = (unitsData || []).map(u => ({
-            ...u,
-            unit_id: u.id,
-            unit_title: u.title,
-            unit_status: 'not_started'
-          }));
-          setUnits(mapped);
-        }
-      }
+      // 3. Merge them
+      const merged = (allUnits || []).map(u => {
+        const prog = (progressData || []).find(p => p.unit_id === u.id);
+        return {
+          unit_id: u.id,
+          unit_title: u.title,
+          unit_sub: u.sub,
+          unit_status: prog ? prog.status : 'not_started'
+        };
+      });
+
+      setUnits(merged);
       setLoading(false);
     };
 
-    getProgress();
+    getData();
   }, [userId]);
 
   return { units, loading };
