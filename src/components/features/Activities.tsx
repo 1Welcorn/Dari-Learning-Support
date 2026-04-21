@@ -383,12 +383,16 @@ export const Activities: React.FC<{
 
   React.useEffect(() => {
     if (initialExpandedId) {
+      console.log('Expanding unit:', initialExpandedId);
       setExpandedUnitId(initialExpandedId);
-      // Optional: Scroll to the unit
-      setTimeout(() => {
+      // Ensure we scroll to it
+      const timer = setTimeout(() => {
         const element = document.getElementById(`unit-${initialExpandedId}`);
-        if (element) element.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 100);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 300);
+      return () => clearTimeout(timer);
     }
   }, [initialExpandedId]);
   
