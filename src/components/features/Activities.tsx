@@ -409,10 +409,18 @@ export const Activities: React.FC<{
     }
   };
 
+  const sortedUnits = useMemo(() => {
+    return [...units].sort((a, b) => {
+      const numA = parseInt(a.title.match(/\d+/)?.[0] || '999');
+      const numB = parseInt(b.title.match(/\d+/)?.[0] || '999');
+      return numA - numB;
+    });
+  }, [units]);
+
   return (
     <div className="screen activities-screen">
       <div className="unit-grid-container">
-        {units.map((unit) => (
+        {sortedUnits.map((unit) => (
           <UnitCard 
             key={unit.id} 
             id={`unit-${unit.id}`}
