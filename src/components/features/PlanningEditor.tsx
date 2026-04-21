@@ -144,6 +144,123 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack }) => {
         </div>
       </div>
 
+      <div className="editor-full-row" style={{ marginTop: '32px' }}>
+        <section className="editor-section-card">
+          <h3 className="section-title-v4">
+            <Plus className="text-purple" size={20} /> Questões Interativas (Estilo Google Forms)
+          </h3>
+          
+          <div className="questions-editor-list">
+            {(unitData.questions || []).map((q: any, idx: number) => (
+              <div key={idx} className="question-edit-item">
+                <div className="q-edit-header">
+                  <span className="q-number">Questão {idx + 1}</span>
+                  <button 
+                    onClick={() => {
+                      const newQs = [...unitData.questions];
+                      newQs.splice(idx, 1);
+                      setUnitData({ ...unitData, questions: newQs });
+                    }}
+                    className="q-delete-btn"
+                  >
+                    <Trash2 size={18} />
+                  </button>
+                </div>
+                
+                <div className="q-edit-body">
+                  <div className="q-field">
+                    <label>Pergunta</label>
+                    <input 
+                      type="text" 
+                      value={q.q} 
+                      onChange={(e) => {
+                        const newQs = [...unitData.questions];
+                        newQs[idx].q = e.target.value;
+                        setUnitData({ ...unitData, questions: newQs });
+                      }}
+                      placeholder="Ex: Qual a tradução de Spoon?"
+                    />
+                  </div>
+
+                  <div className="q-field-row">
+                    <div className="q-field">
+                      <label>Tipo</label>
+                      <select 
+                        value={q.type}
+                        onChange={(e) => {
+                          const newQs = [...unitData.questions];
+                          newQs[idx].type = e.target.value;
+                          setUnitData({ ...unitData, questions: newQs });
+                        }}
+                      >
+                        <option value="mc">Múltipla Escolha</option>
+                        <option value="text">Resposta Aberta</option>
+                        <option value="instruction">Somente Instrução</option>
+                      </select>
+                    </div>
+
+                    <div className="q-field">
+                      <label>Dica TTS (Áudio)</label>
+                      <input 
+                        type="text" 
+                        value={q.hint || ""} 
+                        onChange={(e) => {
+                          const newQs = [...unitData.questions];
+                          newQs[idx].hint = e.target.value;
+                          setUnitData({ ...unitData, questions: newQs });
+                        }}
+                        placeholder="Ex: [PT]Pense na cozinha...[/PT]"
+                      />
+                    </div>
+                  </div>
+
+                  {q.type === 'mc' && (
+                    <div className="q-field">
+                      <label>Opções (separadas por vírgula)</label>
+                      <input 
+                        type="text" 
+                        value={Array.isArray(q.opts) ? q.opts.join(', ') : ""} 
+                        onChange={(e) => {
+                          const newQs = [...unitData.questions];
+                          newQs[idx].opts = e.target.value.split(',').map(s => s.trim());
+                          setUnitData({ ...unitData, questions: newQs });
+                        }}
+                        placeholder="Opção 1, Opção 2, Opção 3"
+                      />
+                    </div>
+                  )}
+
+                  <div className="q-field">
+                    <label>Guia da Mediadora (Observação)</label>
+                    <textarea 
+                      rows={2}
+                      value={q.mediator || ""}
+                      onChange={(e) => {
+                        const newQs = [...unitData.questions];
+                        newQs[idx].mediator = e.target.value;
+                        setUnitData({ ...unitData, questions: newQs });
+                      }}
+                      placeholder="Ex: Peça para ela apontar para o objeto real."
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+            
+            <button 
+              className="add-question-full-btn"
+              onClick={() => {
+                const newQ = { q: '', type: 'mc', opts: [''], mediator: '', hint: '' };
+                const newQs = [...(unitData.questions || []), newQ];
+                setUnitData({ ...unitData, questions: newQs });
+              }}
+            >
+              <Plus size={20} /> ADICIONAR NOVA QUESTÃO
+            </button>
+          </div>
+        </section>
+      </div>
+
       {isPreviewing && (
         <div className="preview-overlay">
           <div className="preview-modal">
@@ -354,8 +471,95 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack }) => {
         }
         .vocab-tag-remove:hover { color: #ef4444; }
 
-        @media (max-width: 992px) {
-          .editor-grid { grid-template-columns: 1fr; }
+        .questions-editor-list {
+          display: flex;
+          flex-direction: column;
+          gap: 20px;
+        }
+
+        .question-edit-item {
+          background: #f8fafc;
+          border-radius: 24px;
+          padding: 24px;
+          border: 1px solid #e2e8f0;
+        }
+
+        .q-edit-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+        }
+
+        .q-number {
+          font-weight: 900;
+          color: #6366f1;
+          font-size: 14px;
+        }
+
+        .q-delete-btn {
+          background: #fee2e2;
+          color: #ef4444;
+          border: none;
+          padding: 8px;
+          border-radius: 12px;
+          cursor: pointer;
+        }
+
+        .q-edit-body {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+        }
+
+        .q-field {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+
+        .q-field label {
+          font-size: 12px;
+          font-weight: 800;
+          color: #94a3b8;
+          text-transform: uppercase;
+        }
+
+        .q-field input, .q-field select, .q-field textarea {
+          background: white;
+          border: 1px solid #e2e8f0;
+          border-radius: 14px;
+          padding: 12px 16px;
+          font-size: 14px;
+          color: #1e293b;
+          outline: none;
+        }
+
+        .q-field-row {
+          display: grid;
+          grid-template-columns: 200px 1fr;
+          gap: 16px;
+        }
+
+        .add-question-full-btn {
+          background: white;
+          border: 2px dashed #e2e8f0;
+          color: #64748b;
+          padding: 20px;
+          border-radius: 24px;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 12px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .add-question-full-btn:hover {
+          border-color: #6366f1;
+          color: #6366f1;
+          background: #f5f3ff;
         }
       `}</style>
     </div>
