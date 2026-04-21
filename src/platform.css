@@ -866,3 +866,97 @@
     color: var(--ink1);
   }
 }
+
+  /* Admin Tools inside QuestionBlock (FIXED) */
+  .admin-actions-v4 {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    gap: 8px;
+    z-index: 20;
+    opacity: 0.3;
+    transition: opacity 0.3s;
+  }
+
+  .q-block-v4:hover .admin-actions-v4 {
+    opacity: 1;
+  }
+
+  .admin-btn-v4 {
+    background: white;
+    border: 1px solid #e2e8f0;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #64748b;
+    transition: all 0.2s;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+  }
+
+  .admin-btn-v4:hover {
+    background: var(--unit-color);
+    color: white;
+    border-color: var(--unit-color);
+    transform: translateY(-2px);
+  }
+
+  .admin-btn-v4.del:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+  }
+
+  .admin-modern-editor {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    padding: 20px;
+    background: #f1f5f9;
+    border-radius: 24px;
+    margin-top: 20px;
+  }
+
+  .admin-inline-input {
+    width: 100%;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 16px 20px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: border-color 0.2s;
+  }
+
+  .admin-inline-input:focus {
+    outline: none;
+    border-color: var(--unit-color);
+  }
+
+  .admin-save-btn {
+    border: none;
+    border-radius: 16px;
+    padding: 14px 28px;
+    font-weight: 800;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    transition: transform 0.2s;
+  }
+
+  .admin-save-btn:hover {
+    transform: scale(1.05);
+  }
+
+  .admin-cancel-btn {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 14px 28px;
+    font-weight: 700;
+    cursor: pointer;
+  }
