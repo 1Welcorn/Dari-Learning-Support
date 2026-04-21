@@ -3,7 +3,8 @@ import type { Unit, Question } from '../../types';
 import { COLORS } from '../../constants';
 import { 
   CheckCircle2, Trophy, Sparkles, Plus, FileText, ChevronRight, ChevronDown, 
-  Trash2, Edit3, Save, X, Play, Volume2, Info, ClipboardList, Edit2 
+  Trash2, Edit3, Save, X, Play, Volume2, Info, ClipboardList, Edit2,
+  ChefHat, Headphones, User, Building2, Smartphone, BookOpen, GraduationCap, Check
 } from 'lucide-react';
 import { QuestionBlock } from './QuestionBlock';
 import { useAuth } from '../../context/AuthContext';
