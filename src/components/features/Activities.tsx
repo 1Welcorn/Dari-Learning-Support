@@ -1,7 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import type { Unit, Question } from '../../types';
 import { COLORS } from '../../constants';
-import { ChevronDown, FileText, Edit2, Trash2, X, Check, Plus, CheckCircle, ChefHat, Headphones, User, Building2, Smartphone, BookOpen, GraduationCap } from 'lucide-react';
+import { 
+  CheckCircle2, Trophy, Sparkles, Plus, FileText, ChevronRight, ChevronDown, 
+  Trash2, Edit3, Save, X, Play, Volume2, Info, ClipboardList, Edit2 
+} from 'lucide-react';
 import { QuestionBlock } from './QuestionBlock';
 import { useAuth } from '../../context/AuthContext';
 import { useStudentJourney } from '../../hooks/useStudentJourney';
@@ -273,25 +276,6 @@ export const UnitCard: React.FC<UnitCardProps> = ({
               </div>
             </div>
           )}
-          {isAdmin && (
-            <div style={{ padding: '0 20px 20px' }}>
-              <button 
-                className="admin-add-btn" 
-                onClick={() => {
-                  const url = window.prompt('Cole o link de incorporação (Canva, HTML, etc):');
-                  if (url) {
-                    const newUrls = [...(unit.embed_urls || []), url];
-                    handleUpdateUnitContent({ embed_urls: newUrls });
-                  }
-                }}
-                style={{ width: '100%', fontSize: '12px', padding: '12px', borderStyle: 'dashed' }}
-              >
-                <Plus size={16} /> Adicionar Atividade Interativa (Canva/HTML/Jogos)
-              </button>
-            </div>
-          )}
-
-
 
           {unit.questions.map((q, i) => {
             if (!isAdmin && (q.q === 'Nova Pergunta' || !q.q.trim())) return null;
@@ -315,9 +299,26 @@ export const UnitCard: React.FC<UnitCardProps> = ({
           })}
 
           {isAdmin && (
-            <div style={{ padding: '0 20px 24px' }}>
+            <div className="admin-quick-actions-v4">
               <button 
-                className="admin-add-btn premium" 
+                className="action-card-v4 purple" 
+                onClick={() => {
+                  const url = window.prompt('Cole o link de incorporação (Canva, HTML, etc):');
+                  if (url) {
+                    const newUrls = [...(unit.embed_urls || []), url];
+                    handleUpdateUnitContent({ embed_urls: newUrls });
+                  }
+                }}
+              >
+                <div className="action-icon-v4"><Plus size={20} /></div>
+                <div className="action-text-v4">
+                  <strong>Postar Atividade</strong>
+                  <span>Canva, HTML ou Jogos</span>
+                </div>
+              </button>
+
+              <button 
+                className="action-card-v4 blue" 
                 onClick={() => {
                   const newQ: Question = { 
                     q: 'Nova Pergunta', 
@@ -329,9 +330,12 @@ export const UnitCard: React.FC<UnitCardProps> = ({
                   const newQs = [...unit.questions, newQ];
                   handleUpdateUnitContent({ questions: newQs });
                 }}
-                style={{ width: '100%', justifyContent: 'center', padding: '14px', borderStyle: 'dashed' }}
               >
-                <Plus size={18} /> Adicionar Pergunta (Estilo Google Forms)
+                <div className="action-icon-v4"><ClipboardList size={20} /></div>
+                <div className="action-text-v4">
+                  <strong>Nova Questão</strong>
+                  <span>Estilo Google Forms</span>
+                </div>
               </button>
             </div>
           )}
