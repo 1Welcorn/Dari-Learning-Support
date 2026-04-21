@@ -526,42 +526,42 @@
   .unit-hdr-v4 {
     display: flex;
     align-items: center;
-    gap: 24px;
-    padding: 40px;
+    gap: 20px;
+    padding: 24px 40px;
     cursor: pointer;
     background: linear-gradient(135deg, white 0%, #f8fafc 100%);
     position: relative;
   }
 
   .unit-icon-island {
-    width: 90px;
-    height: 90px;
-    border-radius: 30px;
+    width: 64px;
+    height: 64px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
     flex-shrink: 0;
-    font-size: 40px;
+    font-size: 28px;
     transition: all 0.3s;
   }
 
   .unit-title-v4 {
-    font-size: 32px;
+    font-size: 26px;
     font-weight: 900;
     color: #0f172a;
-    margin: 4px 0;
+    margin: 2px 0;
     letter-spacing: -0.04em;
     line-height: 1.1;
   }
 
   .unit-status-text {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 900;
     text-transform: uppercase;
-    letter-spacing: 0.25em;
+    letter-spacing: 0.2em;
     opacity: 0.6;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
   }
 
   .unit-meta-v4 {
@@ -986,20 +986,21 @@
 
   /* Step Navigation (One Card at a Time) */
   .unit-body-v4 {
-    padding: 20px 40px 60px;
+    padding: 10px 40px 60px;
   }
 
   .step-nav-v4 {
     display: flex;
     flex-direction: column;
-    gap: 40px;
+    gap: 24px;
   }
 
   .step-progress-v4 {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px;
     align-items: center;
+    margin-bottom: 10px;
   }
 
   .step-progress-track {
