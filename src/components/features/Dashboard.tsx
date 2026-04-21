@@ -22,6 +22,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
   const { stats, loading: statsLoading } = useStudentJourney(user?.id || '');
   const { units, loading: journeyLoading } = useDashboardData(user?.id || '');
 
+  console.log('Dashboard units data:', units);
+
   // Dynamic values from Supabase stats
   const currentLevel = stats?.level || 1;
   const currentStreak = stats?.streak || 0;

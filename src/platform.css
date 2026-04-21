@@ -368,19 +368,21 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px 0;
+    min-height: 300px;
   }
 
   .trail-grid-v4 {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
     width: 100%;
-    max-width: 1000px;
+    max-width: 900px;
   }
 
   .trail-card-v4 {
-    background: white;
-    border: 2px solid var(--border);
+    background: #fff;
+    border: 2px solid #f1f5f9;
     border-radius: 24px;
     padding: 24px;
     display: flex;
@@ -389,8 +391,11 @@
     text-align: center;
     gap: 12px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.3s ease;
     position: relative;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+    min-height: 160px;
+    justify-content: center;
   }
 
   .trail-card-v4:hover {
