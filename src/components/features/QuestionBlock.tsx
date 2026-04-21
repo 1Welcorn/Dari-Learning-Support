@@ -183,7 +183,8 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
     }
   };
 
-  ret    <div className={`q-block-v4 ${isDone ? 'is-done' : ''}`} style={{ '--unit-color': currentColors.main, '--unit-bg': currentColors.light } as any}>
+  return (
+    <div className={`q-block-v4 ${isDone ? 'is-done' : ''}`} style={{ '--unit-color': currentColors.main, '--unit-bg': currentColors.light } as any}>
       {isAdmin && (
         <div className="admin-actions-v4">
           <button className="admin-btn-v4" onClick={() => setIsEditing(!isEditing)} title="Editar">
