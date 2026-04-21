@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../services/supabase';
-import { Save, Plus, Trash2, BookOpen, Target, Lightbulb, ChevronLeft, Eye, X, Globe, Link } from 'lucide-react';
+import { Save, Plus, Trash2, BookOpen, Target, Lightbulb, ChevronLeft, Eye, X, Globe } from 'lucide-react';
 import { UnitCard } from './Activities';
 import { COLORS } from '../../constants';
 
@@ -14,6 +14,8 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack }) => {
   const [unitData, setUnitData] = useState<any>(null);
   const [newWord, setNewWord] = useState("");
   const [tempEmbed, setTempEmbed] = useState("");
+  const [isSavingEmbed, setIsSavingEmbed] = useState(false);
+  const [embedSaved, setEmbedSaved] = useState(false);
   const [isPreviewing, setIsPreviewing] = useState(false);
 
   useEffect(() => {
@@ -43,37 +45,37 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack }) => {
     setNewWord("");
   };
 
-  const addEmbed = () => {
-    if (!tempEmbed.trim()) return;
+  const saveEmbedLink = async () => {
+    if (!tempEmbed.trim() || isSavingEmbed) return;
+    setIsSavingEmbed(true);
+    setEmbedSaved(false);
     const current = Array.isArray(unitData.embed_urls) ? unitData.embed_urls : [];
-    setUnitData({ ...unitData, embed_urls: [...current, tempEmbed.trim()] });
+    const nextEmbeds = [...current, tempEmbed.trim()];
+    const { data, error } = await supabase
+      .from('units')
+      .update({ embed_urls: nextEmbeds })
+      .eq('id', unitId)
+      .select('id, embed_urls')
+      .single();
+
+    setIsSavingEmbed(false);
+
+    if (error) {
+      console.error('Error saving embed link:', error);
+      alert('Erro ao salvar link: ' + error.message);
+      return;
+    }
+
+    const persistedEmbeds = Array.isArray(data?.embed_urls) ? data.embed_urls : nextEmbeds;
+    setUnitData({ ...unitData, embed_urls: persistedEmbeds });
     setTempEmbed("");
+    setEmbedSaved(true);
   };
 
   const removeEmbed = (idx: number) => {
     const current = [...(unitData.embed_urls || [])];
     current.splice(idx, 1);
     setUnitData({ ...unitData, embed_urls: current });
-  };
-
-  const addExternalLink = () => {
-    const current = Array.isArray(unitData.external_links) ? unitData.external_links : [];
-    setUnitData({ 
-      ...unitData, 
-      external_links: [...current, { label: "Novo Link", url: "https://" }] 
-    });
-  };
-
-  const updateExternalLink = (idx: number, field: string, val: string) => {
-    const next = [...(unitData.external_links || [])];
-    next[idx] = { ...next[idx], [field]: val };
-    setUnitData({ ...unitData, external_links: next });
-  };
-
-  const removeExternalLink = (idx: number) => {
-    const next = [...(unitData.external_links || [])];
-    next.splice(idx, 1);
-    setUnitData({ ...unitData, external_links: next });
   };
 
   if (loading) return (
@@ -145,11 +147,18 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack }) => {
                 className="editor-input-v4"
                 placeholder="Cole o link da atividade aqui..."
                 value={tempEmbed}
-                onChange={(e) => setTempEmbed(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && addEmbed()}
+                onChange={(e) => {
+                  setTempEmbed(e.target.value);
+                  setEmbedSaved(false);
+                }}
+                onKeyDown={(e) => e.key === 'Enter' && saveEmbedLink()}
               />
-              <button onClick={addEmbed} className="embed-add-btn-v4">
-                <Plus size={20} /> Adicionar
+              <button
+                onClick={saveEmbedLink}
+                className={`embed-add-btn-v4 ${embedSaved ? 'saved' : ''}`}
+                disabled={!tempEmbed.trim() || isSavingEmbed}
+              >
+                <Plus size={20} /> {isSavingEmbed ? 'Salvando...' : embedSaved ? 'Salvo' : 'Salvar'}
               </button>
             </div>
             <div className="embed-list-v4">
@@ -167,7 +176,6 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack }) => {
               ))}
             </div>
           </section>
-
           <section className="editor-section-card">
             <h3 className="section-title-v4">
               <Eye className="text-purple" size={20} /> Identidade Visual Pedagógica
@@ -217,39 +225,6 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack }) => {
 
         {/* Vocabulary Manager Section */}
         <div className="editor-side-col">
-          <section className="editor-section-card">
-            <h3 className="section-title-v4">
-              <Link className="text-orange" size={20} /> Links para Materiais (Canva/Docs)
-            </h3>
-            <p className="field-help">Adicione links externos para materiais de apoio ou scripts.</p>
-            <div className="link-list-v4">
-              {unitData.external_links?.map((link: any, i: number) => (
-                <div key={i} className="link-editor-item-v4">
-                  <input 
-                    type="text" 
-                    className="link-label-input"
-                    value={link.label}
-                    onChange={(e) => updateExternalLink(i, 'label', e.target.value)}
-                    placeholder="Nome do Material"
-                  />
-                  <input 
-                    type="text" 
-                    className="link-url-input"
-                    value={link.url}
-                    onChange={(e) => updateExternalLink(i, 'url', e.target.value)}
-                    placeholder="https://..."
-                  />
-                  <button className="embed-remove-btn" onClick={() => removeExternalLink(i)}>
-                    <Trash2 size={14} />
-                  </button>
-                </div>
-              ))}
-              <button className="add-link-btn-v4" onClick={addExternalLink}>
-                <Plus size={16} /> Novo Link
-              </button>
-            </div>
-          </section>
-
           <section className="editor-section-card">
             <h3 className="section-title-v4">
               <BookOpen className="text-emerald" size={20} /> Banco de Palavras (Word Fall)
@@ -885,6 +860,15 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack }) => {
           align-items: center;
           gap: 8px;
           cursor: pointer;
+        }
+
+        .embed-add-btn-v4:disabled {
+          opacity: 0.7;
+          cursor: not-allowed;
+        }
+
+        .embed-add-btn-v4.saved {
+          background: #059669;
         }
 
         .embed-list-v4 {
