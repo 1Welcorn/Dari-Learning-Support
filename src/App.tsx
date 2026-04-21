@@ -1,4 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
+// Build trigger: a452db8
 import { useAuth } from './context/AuthContext';
 import { Home, Library, BarChart3, ClipboardList, MessageCircle } from 'lucide-react';
 import { LoginScreen } from './components/features/LoginScreen';
