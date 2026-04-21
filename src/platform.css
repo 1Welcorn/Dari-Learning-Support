@@ -285,11 +285,16 @@
 /* --- SINGLE SCREEN DASHBOARD (DESKTOP) --- */
 @media (min-width: 768px) {
   .single-screen-desktop {
-    height: 100vh;
-    overflow: hidden;
+    height: 100vh !important;
+    overflow: hidden !important;
     padding: 24px !important;
     display: flex;
     flex-direction: column;
+  }
+
+  /* Prevent parent scrolling when dashboard is in single-screen mode */
+  body:has(.single-screen-desktop) .main-content-wrapper {
+    overflow: hidden !important;
   }
 
   .dashboard-grid-v4 {
