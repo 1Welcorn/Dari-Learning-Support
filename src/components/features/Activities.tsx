@@ -99,9 +99,17 @@ const StepNavigation: React.FC<{
 
         {current.type === 'brief' && (
           <div className="step-card-v4 brief">
-            <div className="step-header-v4">
-              <Info size={24} style={{ color: currentColors.main }} />
-              <h3>Guia de Estudo</h3>
+            <div className="step-header-v4" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <Info size={24} style={{ color: currentColors.main }} />
+                <h3>Guia de Estudo</h3>
+              </div>
+              {isAdmin && (
+                <button className="admin-btn-v4" onClick={() => {
+                  const val = window.prompt('Editar Guia da Mediadora:', unit.brief);
+                  if (val !== null) handleUpdateUnitContent({ brief: val });
+                }}><Edit2 size={16} /></button>
+              )}
             </div>
             <div className="step-body-v4 brief-text">
               {unit.brief}
@@ -111,9 +119,30 @@ const StepNavigation: React.FC<{
 
         {current.type === 'embed' && (
           <div className="step-card-v4 embed">
-            <div className="step-header-v4">
-              <Sparkles size={24} style={{ color: currentColors.main }} />
-              <h3>Atividade Interativa {current.idx + 1}</h3>
+            <div className="step-header-v4" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                <Sparkles size={24} style={{ color: currentColors.main }} />
+                <h3>Atividade Interativa {current.idx + 1}</h3>
+              </div>
+              {isAdmin && (
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  <button className="admin-btn-v4" onClick={() => {
+                    const val = window.prompt('Editar Link da Atividade:', current.url);
+                    if (val !== null) {
+                      const next = [...(unit.embed_urls || [])];
+                      next[current.idx] = val;
+                      handleUpdateUnitContent({ embed_urls: next });
+                    }
+                  }}><Edit2 size={16} /></button>
+                  <button className="admin-btn-v4 del" onClick={() => {
+                    if (window.confirm('Excluir esta atividade?')) {
+                      const next = [...(unit.embed_urls || [])];
+                      next.splice(current.idx, 1);
+                      handleUpdateUnitContent({ embed_urls: next });
+                    }
+                  }}><Trash2 size={16} /></button>
+                </div>
+              )}
             </div>
             <div className="iframe-responsive-v4">
               <iframe src={current.url} allowFullScreen />
@@ -172,14 +201,24 @@ const StepNavigation: React.FC<{
           <ChevronDown size={24} style={{ transform: 'rotate(90deg)' }} /> Voltar
         </button>
 
-        {isAdmin && (
-           <div className="admin-step-actions">
-              <button className="admin-add-btn-v4" onClick={() => {
-                const newQ: Question = { q: 'Nova Pergunta', type: 'mc', opts: ['Opção 1'], mediator: '', hint: '' };
-                handleUpdateUnitContent({ questions: [...unit.questions, newQ] });
-              }} title="Adicionar Questão"><Plus size={18} /></button>
-           </div>
-        )}
+        <div className="admin-step-actions">
+          {isAdmin && (
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <button className="nav-btn-v4 admin-plus" onClick={() => {
+                const type = window.confirm('Deseja adicionar uma QUESTÃO? (Cancelar para adicionar ATIVIDADE CANVA/LINK)') ? 'q' : 'e';
+                if (type === 'q') {
+                  const newQ: Question = { q: 'Nova Pergunta', type: 'mc', opts: ['Opção 1'], mediator: '', hint: '' };
+                  handleUpdateUnitContent({ questions: [...unit.questions, newQ] });
+                } else {
+                  const url = window.prompt('Cole o link da atividade (Canva/HTML):');
+                  if (url) handleUpdateUnitContent({ embed_urls: [...(unit.embed_urls || []), url] });
+                }
+              }} title="Adicionar Novo Item">
+                <Plus size={24} />
+              </button>
+            </div>
+          )}
+        </div>
 
         <button 
           className={`nav-btn-v4 next ${isLast ? 'disabled' : ''}`}
