@@ -1,4 +1,4 @@
-import { Star, CheckCircle2, Trophy, Sparkles, MessageCircle, Flame, Rocket, Play } from 'lucide-react';
+import { Star, CheckCircle2, Trophy, Sparkles, MessageCircle, Flame, Play } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useStudentJourney } from '../../hooks/useStudentJourney';
 import { useDashboardData } from '../../hooks/useDashboardData';
