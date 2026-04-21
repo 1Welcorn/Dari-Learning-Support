@@ -282,145 +282,217 @@
   font-size: 13px;
   color: var(--ink1);
 }
-/* --- SINGLE SCREEN DASHBOARD (DESKTOP) --- */
+/* --- SINGLE PAGE DASHBOARD (DESKTOP) --- */
 @media (min-width: 768px) {
-  .single-screen-desktop {
-    min-height: calc(100vh - 100px);
-    overflow: visible !important;
-    padding: 24px !important;
+  .single-page-mode {
+    height: 100vh !important;
+    overflow: hidden !important;
+    padding: 32px !important;
     display: flex;
     flex-direction: column;
+    gap: 32px;
   }
 
-  /* Allow main content to be visible but dashboard itself can manage layout */
-  body:has(.single-screen-desktop) .main-content-wrapper {
-    overflow-y: auto !important;
-  }
-
-  .dashboard-grid-v4 {
-    display: grid;
-    grid-template-columns: 320px 1fr;
-    gap: 24px;
-    align-items: start;
-  }
-
-  .dash-col-left {
+  /* Top Bar */
+  .dash-top-bar-v4 {
     display: flex;
-    flex-direction: column;
-    gap: 24px;
-    height: 100%;
-  }
-
-  .dash-col-right {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    height: 100%;
-    overflow: hidden;
-  }
-
-  .dash-col-left .adventure-header {
+    justify-content: space-between;
+    align-items: center;
     background: white;
-    padding: 24px;
+    padding: 16px 24px;
     border-radius: 24px;
     border: 1px solid var(--border);
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
+    box-shadow: var(--shadow-sm);
   }
 
-  .dash-col-left .kid-profile {
-    flex-direction: row;
+  .dash-profile-group {
+    display: flex;
+    align-items: center;
     gap: 16px;
   }
 
-  .dash-col-left .kid-stats {
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
+  .dash-stats-group {
+    display: flex;
     gap: 12px;
   }
 
-  .dash-col-left .kid-stat-pill {
-    width: 100%;
+  .dash-mission-mini {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--purple-xlight);
+    padding: 8px 16px;
+    border-radius: 16px;
+    cursor: pointer;
+    border: 1px solid var(--purple-light);
+    transition: all 0.2s;
+  }
+
+  .dash-mission-mini:hover {
+    transform: translateY(-2px);
+    background: var(--purple-light);
+  }
+
+  .mission-content-mini {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mission-tag-mini {
+    font-size: 9px;
+    font-weight: 800;
+    color: var(--purple);
+    letter-spacing: 0.05em;
+  }
+
+  .mission-title-mini {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ink1);
+  }
+
+  .mission-btn-mini {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--purple);
+    color: white;
+    display: flex;
+    align-items: center;
     justify-content: center;
   }
 
-  .dash-col-right .mission-island-container {
-    margin-bottom: 0;
-  }
-
-  .dash-col-right .mission-island {
-    padding: 24px;
-    min-height: auto;
-  }
-
-  .dash-col-right .adventure-trail-section {
-    background: #f8fafc;
-    border-radius: 24px;
-    border: 1px solid var(--border);
-    padding: 24px;
-  }
-
-  .compact-v4.adventure-path {
+  /* Main Trail Grid */
+  .dash-main-area-v4 {
+    flex: 1;
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
     align-items: center;
-    padding: 20px 0;
-    gap: 16px;
+    justify-content: center;
   }
 
-  .compact-v4 .path-line-main {
-    height: 4px;
+  .trail-grid-v4 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
     width: 100%;
-    top: 30px;
-    left: 0;
-    transform: none;
+    max-width: 1000px;
   }
 
-  .compact-v4 .adventure-node {
+  .trail-card-v4 {
+    background: white;
+    border: 2px solid var(--border);
+    border-radius: 24px;
+    padding: 24px;
+    display: flex;
     flex-direction: column;
-    width: auto;
-    margin: 0;
+    align-items: center;
     text-align: center;
+    gap: 12px;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .trail-card-v4:hover {
+    transform: translateY(-5px);
+    border-color: var(--unit-color);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+  }
+
+  .trail-card-v4.is-locked {
+    opacity: 0.6;
+    background: #f1f5f9;
+    cursor: not-allowed;
+  }
+
+  .trail-card-icon-v4 {
+    width: 56px;
+    height: 56px;
+    border-radius: 18px;
+    background: var(--unit-color);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .trail-card-info-v4 .unit-idx-v4 {
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--ink4);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .trail-card-info-v4 .unit-title-v4 {
+    font-size: 16px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .unit-done-tag {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: var(--teal);
+    color: white;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 800;
+  }
+
+  /* Bottom Bar */
+  .dash-bottom-bar-v4 {
+    display: flex;
+    justify-content: center;
+  }
+
+  .mediator-mini-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: white;
+    padding: 12px 24px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+  }
+
+  .med-avatar-mini {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--teal-light);
+    color: var(--teal2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+
+  .med-text-mini {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .med-text-mini strong { font-size: 14px; }
+  .med-text-mini span { font-size: 11px; color: var(--ink4); }
+
+  .med-btn-mini {
+    margin-left: 16px;
+    padding: 8px 16px;
+    background: #25D366;
+    color: white;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
     gap: 8px;
   }
-
-  .compact-v4 .adventure-node.left,
-  .compact-v4 .adventure-node.right {
-    transform: none;
-  }
-
-  .compact-v4 .island-node {
-    width: 60px;
-    height: 60px;
-  }
-
-  .compact-v4 .island-title {
-    font-size: 14px;
-  }
-
-  .desktop-only-v4 {
-    display: block !important;
-  }
-
-  .mobile-only-v4 {
-    display: none !important;
-  }
-}
-
-@media (max-width: 767px) {
-  .desktop-only-v4 {
-    display: none !important;
-  }
-  
-  .mobile-only-v4 {
-    display: block !important;
-  }
-}
-
-.dashboard-grid-v4 {
-  display: flex;
-  flex-direction: column;
 }
