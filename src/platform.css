@@ -285,24 +285,23 @@
 /* --- SINGLE SCREEN DASHBOARD (DESKTOP) --- */
 @media (min-width: 768px) {
   .single-screen-desktop {
-    height: 100vh !important;
-    overflow: hidden !important;
+    min-height: calc(100vh - 100px);
+    overflow: visible !important;
     padding: 24px !important;
     display: flex;
     flex-direction: column;
   }
 
-  /* Prevent parent scrolling when dashboard is in single-screen mode */
+  /* Allow main content to be visible but dashboard itself can manage layout */
   body:has(.single-screen-desktop) .main-content-wrapper {
-    overflow: hidden !important;
+    overflow-y: auto !important;
   }
 
   .dashboard-grid-v4 {
     display: grid;
     grid-template-columns: 320px 1fr;
-    gap: 32px;
-    height: 100%;
-    align-items: stretch;
+    gap: 24px;
+    align-items: start;
   }
 
   .dash-col-left {
@@ -357,17 +356,40 @@
   }
 
   .dash-col-right .adventure-trail-section {
-    flex: 1;
-    overflow-y: auto;
     background: #f8fafc;
     border-radius: 24px;
     border: 1px solid var(--border);
-    padding: 32px;
-    scrollbar-width: thin;
+    padding: 24px;
+  }
+
+  .compact-v4.adventure-path {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    padding: 20px 0;
+    gap: 16px;
+  }
+
+  .compact-v4 .path-line-main {
+    height: 4px;
+    width: 100%;
+    top: 30px;
+    left: 0;
+    transform: none;
   }
 
   .compact-v4 .adventure-node {
-    margin: 12px 0;
+    flex-direction: column;
+    width: auto;
+    margin: 0;
+    text-align: center;
+    gap: 8px;
+  }
+
+  .compact-v4 .adventure-node.left,
+  .compact-v4 .adventure-node.right {
+    transform: none;
   }
 
   .compact-v4 .island-node {
