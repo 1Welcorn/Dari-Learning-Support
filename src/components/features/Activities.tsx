@@ -365,9 +365,9 @@ export const UnitCard: React.FC<UnitCardProps> = ({
                   {isSavingSession ? (
                     <div className="loader-spinner" style={{ width: '18px', height: '18px' }}></div>
                   ) : sessionSuccess ? (
-                    <><CheckCircle size={18} /> Relatório Salvo!</>
+                    <><CheckCircle2 size={18} /> Relatório Salvo!</>
                   ) : (
-                    <><CheckCircle size={18} /> Finalizar e Salvar Relatório</>
+                    <><CheckCircle2 size={18} /> Finalizar e Salvar Relatório</>
                   )}
                 </button>
               </div>
