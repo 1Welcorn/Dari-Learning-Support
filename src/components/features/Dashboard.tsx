@@ -76,6 +76,12 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
       {/* CENTER: ADVENTURE TRAIL GRID */}
       <div className="dash-main-area-v4">
+        <div className="module-intro-v4">
+          <span className="module-tag-v4">JORNADA ATUAL</span>
+          <h2 className="module-title-v4">Módulo 1: Primeiros Passos</h2>
+          <p className="module-desc-v4">Complete as 12 aulas para ganhar o troféu de bronze!</p>
+        </div>
+
         {units.length > 0 ? (
           <div className="trail-grid-v4">
             {units.map((unit, idx) => {
@@ -92,7 +98,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   style={{ '--unit-color': color } as any}
                 >
                   <div className="trail-card-icon-v4">
-                    {isDone ? <CheckCircle2 size={24} /> : isLocked ? <Trophy size={24} /> : <Sparkles size={24} />}
+                    {isDone ? <CheckCircle2 size={32} /> : isLocked ? <Trophy size={32} /> : <Sparkles size={32} />}
                   </div>
                   <div className="trail-card-info-v4">
                     <span className="unit-idx-v4">AULA {idx + 1}</span>
