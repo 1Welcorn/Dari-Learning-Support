@@ -45,11 +45,24 @@ export const Dashboard: React.FC<DashboardProps> = ({
   return (
     <div className="dash-v5-container">
       {/* Header de Status do Aluno (Design Premium) */}
-      <header className="dash-v5-header" style={{ paddingTop: '40px' }}>
-        <div className="dash-v5-profile" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
-          <div className="dash-v5-avatar-wrapper" style={{ position: 'relative' }}>
-             <div className="dash-v5-avatar" style={{ width: '100px', height: '100px', borderRadius: '32px', background: '#f1f5f9', overflow: 'visible' }}>
-               <img src="https://i.ibb.co/PZNCmrTf/Captura-de-tela-2026-04-24-002158.png" alt="Ione Exploradora" style={{ width: '140%', position: 'absolute', bottom: 0, left: '-20%', zIndex: 10 }} />
+      <header className="dash-v5-header" style={{ minHeight: '160px', alignItems: 'flex-end', paddingTop: '60px' }}>
+        <div className="dash-v5-profile" style={{ display: 'flex', alignItems: 'center', gap: '20px', overflow: 'visible' }}>
+          <div className="dash-v5-avatar-wrapper" style={{ position: 'relative', width: '100px', height: '100px' }}>
+             <div className="dash-v5-avatar" style={{ width: '100%', height: '100%', borderRadius: '32px', background: '#f1f5f9', overflow: 'visible' }}>
+               <img 
+                 src="https://i.ibb.co/PZNCmrTf/Captura-de-tela-2026-04-24-002158.png" 
+                 alt="Ione Exploradora" 
+                 style={{ 
+                   width: '180%', 
+                   height: 'auto',
+                   position: 'absolute', 
+                   bottom: '0', 
+                   left: '50%', 
+                   transform: 'translateX(-50%)', 
+                   zIndex: 10,
+                   pointerEvents: 'none'
+                 }} 
+               />
              </div>
           </div>
           <div>
