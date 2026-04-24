@@ -1871,6 +1871,14 @@
     justify-content: center;
     font-size: 32px;
     margin-bottom: 16px;
+    overflow: hidden; /* Ensure images stay within bounds */
+  }
+
+  .lesson-img-v5 {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 12px;
   }
 
   .lesson-id-tag {

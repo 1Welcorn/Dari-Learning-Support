@@ -19,15 +19,36 @@ interface DashboardProps {
 
 const getTrailIcon = (title: string, sub: string, isLocked: boolean, isDone: boolean) => {
   const t = (sub || title || '').toLowerCase();
+  let base = '';
   let emoji = '📚';
-  if (t.includes('cozinha')) emoji = '👨‍🍳';
-  else if (t.includes('oral') || t.includes('escuta')) emoji = '🎧';
-  else if (t.includes('apresentação')) emoji = '🤝';
-  else if (t.includes('cotidiano')) emoji = '🤖';
-  else if (t.includes('digitais')) emoji = '📱';
-  else if (t.includes('receita')) emoji = '📖';
-  else if (t.includes('cores')) emoji = '🎨';
-  else if (t.includes('números')) emoji = '🔢';
+
+  // Logic to find the correct PNG base name
+  if (t.includes('cozinha')) { base = 'Aula 1 Vocabulário da Cozinha'; emoji = '👨‍🍳'; }
+  else if (t.includes('oral') || t.includes('escuta')) { base = 'Aula 2 Compreensão Oral'; emoji = '🎧'; }
+  else if (t.includes('apresentação')) { base = 'Aula 3 Apresentação Pessoal'; emoji = '🤝'; }
+  else if (t.includes('cotidiano')) { base = 'Aula 4 Inglês no Cotidiano'; emoji = '🤖'; }
+  else if (t.includes('digitais')) { base = 'Aula 5 Gêneros Digitais'; emoji = '📱'; }
+  else if (t.includes('receita')) { base = 'Aula 6 Receita'; emoji = '📖'; }
+  else if (t.includes('cores')) { base = 'Aula 7 Cores e Frutas'; emoji = '🎨'; }
+  else if (t.includes('números')) { base = 'Aula 8 Números e Quantidade'; emoji = '🔢'; }
+
+  if (base) {
+    const suffix = isLocked
+      ? (base === 'Aula 6 Receita' ? '-atividade não iniciada' : '-não iniciada')
+      : '';
+    return (
+      <img
+        src={`/unit-icons/${base}${suffix}.png`}
+        alt={title}
+        className="lesson-img-v5"
+        onError={(e) => {
+          // Fallback to emoji if image fails to load
+          (e.target as any).style.display = 'none';
+          (e.target as any).parentElement.innerHTML = `<span style="font-size: 32px">${emoji}</span>`;
+        }}
+      />
+    );
+  }
 
   if (isLocked) return <Lock className="text-slate-400" size={32} />;
   return <span style={{ fontSize: '32px' }}>{emoji}</span>;
