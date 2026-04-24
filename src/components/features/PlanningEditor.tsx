@@ -141,31 +141,53 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack }) => {
       <div className="editor-grid">
         {/* Core Info Section */}
         <div className="editor-main-col">
-          <section className="editor-section-card">
-            <h3 className="section-title-v4">
-              <BookOpen className="text-blue" size={20} /> Guia de Estudo (Estudante & Mediadora)
-            </h3>
-            <p className="field-help">Este texto aparece na primeira etapa da aula. Descreva o que será aprendido.</p>
-            <textarea 
-              className="editor-textarea"
-              rows={5}
-              value={unitData.brief || ""}
-              onChange={(e) => setUnitData({...unitData, brief: e.target.value})}
-              placeholder="Ex: Hoje falaremos dos objetos e ações que acontecem na cozinha..."
-            />
+          <section className="editor-section-card study-guide-editor">
+            <div className="section-header-v4">
+              <h3 className="section-title-v4">
+                <BookOpen className="text-blue" size={20} /> Guia de Estudo (Estudante & Mediadora)
+              </h3>
+              <div className="smart-badge-v4">Smart Renderer Ativo ✨</div>
+            </div>
+            
+            <div className="editor-field-wrapper">
+              <label className="field-label-v4">Texto de Introdução</label>
+              <p className="field-help">Este texto aparece na primeira etapa da aula. O sistema ajusta o tamanho da fonte automaticamente se houver mídias abaixo.</p>
+              <textarea 
+                className="editor-textarea-premium"
+                rows={6}
+                value={unitData.brief || ""}
+                onChange={(e) => setUnitData({...unitData, brief: e.target.value})}
+                placeholder="Ex: Hoje falaremos dos objetos e ações que acontecem na cozinha..."
+                style={{ 
+                  fontSize: unitData.external_links?.some((l: any) => l.label === 'media' || l.label === 'HTML') ? '16px' : '18px',
+                  fontWeight: unitData.external_links?.some((l: any) => l.label === 'media' || l.label === 'HTML') ? 500 : 700
+                }}
+              />
+            </div>
 
-            <div style={{ marginTop: '24px' }}>
-              <h4 style={{ fontSize: '14px', fontWeight: 900, marginBottom: '12px', color: 'var(--ink2)' }}>Mídias Adicionais (Imagens, Vídeos ou HTML)</h4>
-              <p className="field-help">Cole links de imagens, vídeos do YouTube ou código HTML para exibir logo abaixo do texto.</p>
+            <div className="media-management-v4" style={{ marginTop: '32px', padding: '24px', background: '#f8fafc', borderRadius: '24px', border: '1px solid #edf2f7' }}>
+              <h4 style={{ fontSize: '15px', fontWeight: 900, marginBottom: '8px', color: '#1e293b' }}>
+                Conteúdo Multimídia Abaixo do Texto
+              </h4>
+              <p className="field-help" style={{ marginBottom: '20px' }}>
+                Insira imagens (URL), vídeos (YouTube) ou código HTML. Eles aparecerão em sequência após o texto.
+              </p>
               
-              <div className="embed-input-group">
+              <div className="media-input-bar">
                 <input 
                   type="text" 
                   className="editor-input-v4"
-                  placeholder="Link da imagem, vídeo ou código HTML..."
+                  placeholder="Cole aqui o link (JPG, PNG, YouTube) ou código <HTML>..."
                   id="new-brief-media"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const btn = document.getElementById('add-media-btn');
+                      btn?.click();
+                    }
+                  }}
                 />
                 <button
+                  id="add-media-btn"
                   onClick={() => {
                     const input = document.getElementById('new-brief-media') as HTMLInputElement;
                     const val = input.value.trim();
@@ -177,30 +199,40 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack }) => {
                     setUnitData({ ...unitData, external_links: nextLinks });
                     input.value = '';
                   }}
-                  className="embed-add-btn-v4"
+                  className="media-add-btn-v4"
                 >
                   <Plus size={20} /> ADICIONAR
                 </button>
               </div>
 
-              <div className="media-list-v4" style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+              <div className="media-list-stack" style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {(unitData.external_links || []).filter((l: any) => l.label === 'media' || l.label === 'HTML').length === 0 && (
+                  <div className="empty-media-placeholder">
+                    <span>Nenhuma mídia adicionada. O texto ficará em destaque máximo.</span>
+                  </div>
+                )}
+                
                 {unitData.external_links?.filter((l: any) => l.label === 'media' || l.label === 'HTML').map((media: any, i: number) => (
-                  <div key={i} className="embed-item-v4" style={{ background: '#f8fafc', padding: '12px', borderRadius: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', overflow: 'hidden' }}>
-                      <span style={{ fontSize: '10px', background: media.label === 'HTML' ? '#f59e0b' : '#3b82f6', color: '#fff', padding: '2px 6px', borderRadius: '4px' }}>{media.label}</span>
-                      <span style={{ fontSize: '12px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{media.url}</span>
+                  <div key={i} className="media-item-card-v4">
+                    <div className="media-preview-mini">
+                      {media.label === 'HTML' ? '<b>HTML</b>' : (media.url.includes('youtube') ? '🎥' : '🖼️')}
+                    </div>
+                    <div className="media-info-mini">
+                      <span className="media-type-tag" style={{ background: media.label === 'HTML' ? '#f59e0b' : '#3b82f6' }}>{media.label}</span>
+                      <span className="media-url-mini">{media.url}</span>
                     </div>
                     <button 
-                      className="embed-remove-btn" 
+                      className="media-delete-btn" 
+                      title="Remover mídia"
                       onClick={() => {
-                        const next = unitData.external_links.filter((l: any, idx: number) => {
-                           const filtered = unitData.external_links.filter((item: any) => item.label === 'media' || item.label === 'HTML');
-                           return l !== filtered[idx];
-                        });
+                        // Encontrar o índice real no array original
+                        const filtered = unitData.external_links.filter((item: any) => item.label === 'media' || item.label === 'HTML');
+                        const targetItem = filtered[i];
+                        const next = unitData.external_links.filter((l: any) => l !== targetItem);
                         setUnitData({ ...unitData, external_links: next });
                       }}
                     >
-                      <Trash2 size={14} />
+                      <Trash2 size={16} />
                     </button>
                   </div>
                 ))}
@@ -928,14 +960,136 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack }) => {
           margin-top: 8px;
         }
 
-        .mini-color-btn {
-          width: 24px;
-          height: 24px;
-          border-radius: 50%;
-          border: 2px solid white;
-          box-shadow: 0 0 0 1px #e2e8f0;
+        .section-header-v4 {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 24px;
+        }
+
+        .smart-badge-v4 {
+          background: #f0fdfa;
+          color: #0d9488;
+          font-size: 11px;
+          font-weight: 900;
+          padding: 6px 12px;
+          border-radius: 99px;
+          border: 1px solid #ccfbf1;
+        }
+
+        .editor-textarea-premium {
+          width: 100%;
+          border: 2px solid #f1f5f9;
+          background: #fff;
+          border-radius: 24px;
+          padding: 24px;
+          font-size: 16px;
+          color: #1e293b;
+          line-height: 1.6;
+          outline: none;
+          resize: vertical;
+          transition: all 0.3s ease;
+          box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .editor-textarea-premium:focus {
+          border-color: #5b7cff;
+          box-shadow: 0 0 0 4px rgba(91, 124, 255, 0.1);
+        }
+
+        .media-input-bar {
+          display: flex;
+          gap: 12px;
+        }
+
+        .media-add-btn-v4 {
+          background: #1e293b;
+          color: white;
+          border: none;
+          padding: 0 24px;
+          border-radius: 16px;
+          font-weight: 800;
+          display: flex;
+          align-items: center;
+          gap: 10px;
           cursor: pointer;
-          transition: transform 0.2s;
+        }
+
+        .media-item-card-v4 {
+          background: white;
+          border: 1px solid #e2e8f0;
+          padding: 12px;
+          border-radius: 16px;
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          transition: all 0.2s;
+        }
+
+        .media-item-card-v4:hover {
+          border-color: #cbd5e1;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+        }
+
+        .media-preview-mini {
+          width: 44px;
+          height: 44px;
+          background: #f1f5f9;
+          border-radius: 10px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 20px;
+        }
+
+        .media-info-mini {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          overflow: hidden;
+        }
+
+        .media-type-tag {
+          font-size: 9px;
+          text-transform: uppercase;
+          font-weight: 900;
+          color: white;
+          padding: 2px 8px;
+          border-radius: 4px;
+          width: fit-content;
+        }
+
+        .media-url-mini {
+          font-size: 13px;
+          color: #64748b;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .media-delete-btn {
+          background: #fff1f2;
+          color: #e11d48;
+          border: none;
+          padding: 10px;
+          border-radius: 10px;
+          cursor: pointer;
+          transition: all 0.2s;
+        }
+
+        .media-delete-btn:hover {
+          background: #ffe4e6;
+        }
+
+        .empty-media-placeholder {
+          padding: 32px;
+          border: 2px dashed #e2e8f0;
+          border-radius: 16px;
+          text-align: center;
+          color: #94a3b8;
+          font-size: 14px;
+          font-weight: 600;
         }
 
         .mini-color-btn:hover {

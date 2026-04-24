@@ -79,7 +79,7 @@ const normalizeEmbedUrl = (rawUrl: string): string => {
 const StepNavigation: React.FC<{
   unit: Unit;
   answers: Record<string, any>;
-  onSaveAnswer: (unitId: string, qIdx: number, val: string) => Promise<boolean>;
+  onSaveAnswer: (qIdx: number, val: string) => Promise<boolean>;
   isAdmin?: boolean;
   editQuestion: (idx: number, newQ: Question) => void;
   deleteQuestion: (idx: number) => void;
@@ -220,35 +220,79 @@ const StepNavigation: React.FC<{
               display: 'flex', 
               flexDirection: 'column', 
               justifyContent: 'center', 
-              minHeight: '300px', 
+              minHeight: '400px', 
               textAlign: 'center', 
-              padding: '20px' 
+              padding: '40px',
+              position: 'relative',
+              background: 'linear-gradient(180deg, #ffffff 0%, #f8faff 100%)',
+              borderRadius: '24px'
             }}>
-              <h2 style={{ color: '#5b7cff', fontSize: '32px', marginBottom: '24px', fontWeight: 900 }}>Guia de Estudo 📚</h2>
+              {/* Admin Edit Button */}
+              {isAdmin && (
+                <button 
+                  className="admin-edit-brief-btn"
+                  onClick={() => {
+                    // Logic to open editor or handle update
+                    const newText = window.prompt('Editar Texto do Guia:', unit.brief);
+                    if (newText !== null) handleUpdateUnitContent({ brief: newText });
+                  }}
+                  style={{
+                    position: 'absolute',
+                    top: '20px',
+                    right: '20px',
+                    background: '#fff',
+                    border: '1px solid #e2e8f0',
+                    borderRadius: '50%',
+                    width: '40px',
+                    height: '40px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                    color: '#64748b'
+                  }}
+                >
+                  <Edit2 size={18} />
+                </button>
+              )}
+
+              <div style={{ marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px' }}>
+                <div style={{ background: '#eef2ff', padding: '10px', borderRadius: '12px', color: '#5b7cff' }}>
+                  <Info size={28} />
+                </div>
+                <h2 style={{ color: '#1e293b', fontSize: '32px', margin: 0, fontWeight: 900 }}>Guia de Estudo</h2>
+              </div>
               
-              {/* Text Content - Flexible sizing */}
-              <div style={{ flex: unit.external_links?.some(l => l.label === 'media' || l.label === 'HTML') ? '0 1 auto' : '1 1 auto', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {/* Text Content - Smart Sizing */}
+              <div style={{ 
+                flex: unit.external_links?.some(l => l.label.toLowerCase() === 'media' || l.label === 'HTML') ? '0 1 auto' : '1 1 auto', 
+                display: 'flex', 
+                alignItems: 'center', 
+                justifyContent: 'center' 
+              }}>
                 <p style={{ 
-                  color: '#64748b', 
-                  fontSize: unit.external_links?.length ? '18px' : '22px', 
-                  maxWidth: '700px', 
+                  color: '#475569', 
+                  fontSize: unit.external_links?.some(l => l.label.toLowerCase() === 'media' || l.label === 'HTML') ? '20px' : '28px', 
+                  maxWidth: '850px', 
                   margin: '0 auto', 
                   lineHeight: '1.6', 
-                  whiteSpace: 'pre-wrap' 
+                  whiteSpace: 'pre-wrap',
+                  fontWeight: unit.external_links?.some(l => l.label.toLowerCase() === 'media' || l.label === 'HTML') ? 500 : 700,
+                  transition: 'all 0.3s ease'
                 }}>
                   {unit.brief}
                 </p>
               </div>
 
-              {/* Dynamic Media Section - Only occupies space if items exist */}
+              {/* Dynamic Media Section */}
               {unit.external_links?.some(l => l.label.toLowerCase() === 'media' || l.label === 'HTML') && (
                 <div className="brief-media-container" style={{ 
                   display: 'flex', 
                   flexDirection: 'column', 
-                  gap: '24px', 
+                  gap: '32px', 
                   alignItems: 'center', 
-                  marginTop: '40px',
-                  marginBottom: '20px',
+                  marginTop: '48px',
                   width: '100%'
                 }}>
                   {unit.external_links.filter(l => l.label.toLowerCase() === 'media' || l.label === 'HTML').map((media, idx) => {
@@ -256,16 +300,38 @@ const StepNavigation: React.FC<{
                     if (url.includes('youtube.com') || url.includes('youtu.be')) {
                       const vidId = url.includes('v=') ? url.split('v=')[1].split('&')[0] : url.split('/').pop();
                       return (
-                        <div key={idx} style={{ width: '100%', maxWidth: '640px', aspectRatio: '16/9', boxShadow: '0 20px 40px rgba(0,0,0,0.1)', borderRadius: '20px', overflow: 'hidden' }}>
+                        <div key={idx} style={{ 
+                          width: '100%', 
+                          maxWidth: '800px', 
+                          aspectRatio: '16/9', 
+                          boxShadow: '0 30px 60px -12px rgba(0,0,0,0.25)', 
+                          borderRadius: '24px', 
+                          overflow: 'hidden',
+                          border: '4px solid #fff'
+                        }}>
                           <iframe width="100%" height="100%" src={`https://www.youtube.com/embed/${vidId}`} frameBorder="0" allowFullScreen></iframe>
                         </div>
                       );
                     }
                     if (url.match(/\.(jpeg|jpg|gif|png|webp)$/i) || url.includes('ibb.co')) {
-                      return <img key={idx} src={url} alt="Media" style={{ maxWidth: '100%', maxHeight: '400px', borderRadius: '20px', boxShadow: '0 15px 35px rgba(0,0,0,0.1)' }} />;
+                      return (
+                        <div key={idx} style={{ position: 'relative', width: '100%', maxWidth: '800px' }}>
+                          <img 
+                            src={url} 
+                            alt="Media" 
+                            style={{ 
+                              width: '100%', 
+                              height: 'auto', 
+                              borderRadius: '24px', 
+                              boxShadow: '0 20px 40px rgba(0,0,0,0.12)',
+                              border: '4px solid #fff'
+                            }} 
+                          />
+                        </div>
+                      );
                     }
                     if (media.label === 'HTML') {
-                      return <div key={idx} dangerouslySetInnerHTML={{ __html: url }} style={{ width: '100%' }} />;
+                      return <div key={idx} dangerouslySetInnerHTML={{ __html: url }} style={{ width: '100%', maxWidth: '1000px' }} />;
                     }
                     return null;
                   })}
@@ -274,8 +340,14 @@ const StepNavigation: React.FC<{
 
               {/* Glossary (Specifically for Kitchen) */}
               {(unit.title.toLowerCase().includes('cozinha') || unit.title.toLowerCase().includes('kitchen')) && (
-                 <div style={{ marginTop: '40px' }}>
-                   <div className="visual-glossary-v4" style={{ borderTop: 'none', marginTop: '0', justifyContent: 'center' }}>
+                 <div style={{ marginTop: '60px', width: '100%' }}>
+                   <div className="visual-glossary-v4" style={{ 
+                     borderTop: '1px solid #e2e8f0', 
+                     marginTop: '0', 
+                     paddingTop: '40px',
+                     justifyContent: 'center',
+                     gap: '24px'
+                   }}>
                       {[
                         { id: 1, obj: 'Knife', img: 'https://i.ibb.co/9kNp5Fpz/knife.png' },
                         { id: 2, obj: 'Pan', img: 'https://i.ibb.co/TMVCmd1s/pan.png' },
@@ -283,31 +355,45 @@ const StepNavigation: React.FC<{
                         { id: 4, obj: 'Fridge', img: 'https://i.ibb.co/0ygCvPkQ/fridge.png' },
                         { id: 5, obj: 'Spoon', img: 'https://i.ibb.co/v4Jjxfpv/spoon.png' }
                       ].map(item => (
-                        <div key={item.id} className="glossary-card-v4" style={{ background: '#fff', border: '1px solid #eef2ff' }}>
-                          <img src={item.img} alt={item.obj} />
-                          <span style={{ fontSize: '15px' }}>{item.obj}</span>
+                        <div key={item.id} className="glossary-card-v4" style={{ 
+                          background: '#fff', 
+                          border: '1px solid #eef2ff',
+                          padding: '16px',
+                          borderRadius: '20px',
+                          boxShadow: '0 8px 16px rgba(0,0,0,0.04)',
+                          width: '120px'
+                        }}>
+                          <img src={item.img} alt={item.obj} style={{ width: '60px', height: '60px', marginBottom: '8px' }} />
+                          <span style={{ fontSize: '14px', fontWeight: 800 }}>{item.obj}</span>
                         </div>
                       ))}
                    </div>
-                   
-                   <button 
-                     className="btn" 
-                     onClick={handleNext}
-                     style={{ 
-                       margin: '40px auto 0', 
-                       padding: '16px 40px', 
-                       fontSize: '22px', 
-                       background: 'linear-gradient(135deg, #7c3aed, #6366f1)',
-                       borderRadius: '20px',
-                       boxShadow: '0 10px 25px rgba(99, 102, 241, 0.3)',
-                       color: '#fff',
-                       fontWeight: 900
-                     }}
-                   >
-                     Começar Atividade ▶
-                   </button>
                  </div>
               )}
+
+              {/* Action Button */}
+              <button 
+                className="btn" 
+                onClick={handleNext}
+                style={{ 
+                  margin: '60px auto 0', 
+                  padding: '20px 48px', 
+                  fontSize: '20px', 
+                  background: 'linear-gradient(135deg, #5b7cff, #7c3aed)',
+                  borderRadius: '24px',
+                  boxShadow: '0 12px 30px rgba(91, 124, 255, 0.3)',
+                  color: '#fff',
+                  fontWeight: 900,
+                  border: 'none',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  transition: 'all 0.3s ease'
+                }}
+              >
+                Começar a Aula <ChevronRight size={24} />
+              </button>
             </div>
           </div>
         )}
@@ -364,7 +450,7 @@ const StepNavigation: React.FC<{
             color={unit.color}
             isDone={!!answers[`${unit.id}-${(current as QuestionStep).idx}`]?.is_done}
             savedAnswer={answers[`${unit.id}-${(current as QuestionStep).idx}`]?.answer_value || ''}
-            onSaveAnswer={(val) => onSaveAnswer(unit.id, (current as QuestionStep).idx, val)}
+            onSaveAnswer={(val) => onSaveAnswer((current as QuestionStep).idx, val)}
             isAdmin={isAdmin}
             onEdit={(newQ) => editQuestion((current as QuestionStep).idx, newQ)}
             onDelete={() => deleteQuestion((current as QuestionStep).idx)}
