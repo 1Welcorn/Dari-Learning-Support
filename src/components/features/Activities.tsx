@@ -95,6 +95,8 @@ const StepNavigation: React.FC<{
   const [note, setNote] = useState('');
   const [isSavingSession, setIsSavingSession] = useState(false);
   const [sessionSuccess, setSessionSuccess] = useState(false);
+  const [isEditingBrief, setIsEditingBrief] = useState(false);
+  const [tempBrief, setTempBrief] = useState(unit.brief || '');
   const [stepReward, setStepReward] = useState(false);
   const [/*hintPos*/, /*setHintPos*/] = useState<null>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -223,15 +225,14 @@ const StepNavigation: React.FC<{
                 <button 
                   className="admin-edit-brief-btn"
                   onClick={() => {
-                    // Logic to open editor or handle update
-                    const newText = window.prompt('Editar Texto do Guia:', unit.brief);
-                    if (newText !== null) handleUpdateUnitContent({ brief: newText });
+                    setTempBrief(unit.brief || '');
+                    setIsEditingBrief(true);
                   }}
                   style={{
                     position: 'absolute',
                     top: '20px',
                     right: '20px',
-                    background: '#fff',
+                    background: isEditingBrief ? '#f1f5f9' : '#fff',
                     border: '1px solid #e2e8f0',
                     borderRadius: '50%',
                     width: '40px',
@@ -241,7 +242,8 @@ const StepNavigation: React.FC<{
                     justifyContent: 'center',
                     cursor: 'pointer',
                     boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-                    color: '#64748b'
+                    color: '#64748b',
+                    zIndex: 10
                   }}
                 >
                   <Edit2 size={18} />
@@ -255,25 +257,68 @@ const StepNavigation: React.FC<{
                 <h2 style={{ color: '#1e293b', fontSize: '28px', margin: 0, fontWeight: 900 }}>Guia de Estudo</h2>
               </div>
               
-              {/* Text Content - Smart Sizing */}
+              {/* Text Content - Smart Sizing / Inline Editor */}
               <div style={{ 
                 flex: unit.external_links?.some(l => l.label.toLowerCase() === 'media' || l.label === 'HTML') ? '0 1 auto' : '1 1 auto', 
                 display: 'flex', 
+                flexDirection: 'column',
                 alignItems: 'center', 
-                justifyContent: 'center' 
+                justifyContent: 'center',
+                width: '100%'
               }}>
-                <p style={{ 
-                  color: '#475569', 
-                  fontSize: unit.external_links?.some(l => l.label.toLowerCase() === 'media' || l.label === 'HTML') ? '18px' : '24px', 
-                  maxWidth: '850px', 
-                  margin: '0 auto', 
-                  lineHeight: '1.5', 
-                  whiteSpace: 'pre-wrap',
-                  fontWeight: unit.external_links?.some(l => l.label.toLowerCase() === 'media' || l.label === 'HTML') ? 500 : 700,
-                  transition: 'all 0.3s ease'
-                }}>
-                  {unit.brief}
-                </p>
+                {isEditingBrief ? (
+                  <div style={{ width: '100%', maxWidth: '850px', position: 'relative' }}>
+                    <textarea 
+                      value={tempBrief}
+                      onChange={(e) => setTempBrief(e.target.value)}
+                      style={{
+                        width: '100%',
+                        minHeight: '200px',
+                        padding: '24px',
+                        fontSize: '20px',
+                        borderRadius: '20px',
+                        border: '2px solid #5b7cff',
+                        outline: 'none',
+                        color: '#1e293b',
+                        background: '#fff',
+                        lineHeight: '1.5',
+                        boxShadow: '0 10px 30px rgba(91, 124, 255, 0.1)',
+                        resize: 'vertical'
+                      }}
+                      autoFocus
+                    />
+                    <div style={{ display: 'flex', gap: '12px', marginTop: '16px', justifyContent: 'flex-end' }}>
+                      <button 
+                        onClick={() => setIsEditingBrief(false)}
+                        style={{ padding: '10px 24px', borderRadius: '12px', border: '1px solid #e2e8f0', background: '#fff', fontWeight: 800, cursor: 'pointer' }}
+                      >
+                        Cancelar
+                      </button>
+                      <button 
+                        onClick={async () => {
+                          const success = await handleUpdateUnitContent({ brief: tempBrief });
+                          if (success) setIsEditingBrief(false);
+                        }}
+                        style={{ padding: '10px 24px', borderRadius: '12px', border: 'none', background: '#5b7cff', color: '#fff', fontWeight: 800, cursor: 'pointer', boxShadow: '0 4px 12px rgba(91, 124, 255, 0.2)' }}
+                      >
+                        Salvar Alterações
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p style={{ 
+                    color: '#475569', 
+                    fontSize: unit.external_links?.some(l => l.label.toLowerCase() === 'media' || l.label === 'HTML') ? '18px' : '24px', 
+                    maxWidth: '850px', 
+                    margin: '0 auto', 
+                    lineHeight: '1.5', 
+                    whiteSpace: 'pre-wrap',
+                    fontWeight: unit.external_links?.some(l => l.label.toLowerCase() === 'media' || l.label === 'HTML') ? 500 : 700,
+                    transition: 'all 0.3s ease'
+                  }}>
+                    {unit.brief}
+                  </p>
+                )}
               </div>
 
               {/* Dynamic Media Section */}
