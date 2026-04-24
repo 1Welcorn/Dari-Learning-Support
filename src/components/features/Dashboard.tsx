@@ -106,7 +106,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
       {/* Título do Módulo */}
       <div className="module-intro-v5" style={{ textAlign: 'center', marginBottom: '40px' }}>
-         <span className="module-tag-v5" style={{ background: '#ccfbf1', color: '#0f766e', padding: '4px 12px', borderRadius: '20px', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase' }}>JORNADA</span>
+         <span className="module-tag-v5" style={{ background: '#ccfbf1', color: '#0f766e', padding: '6px 16px', borderRadius: '20px', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase' }}>JORNADA</span>
          <h2 className="module-title-v5" style={{ fontSize: '28px', fontWeight: 900, color: '#1e293b', margin: '12px 0 8px' }}>Mission: Módulo 1 — Primeiros Passos</h2>
          <p className="module-desc-v5" style={{ color: '#64748b', fontWeight: 600 }}>Complete as 12 aulas para ganhar o troféu de bronze!</p>
       </div>
