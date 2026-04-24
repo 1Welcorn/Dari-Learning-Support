@@ -117,37 +117,63 @@ export const App: React.FC = () => {
         </div>
       </div>
 
-      <nav className="bottom-nav" style={{ gridTemplateColumns: role === 'admin' ? 'repeat(5, 1fr)' : 'repeat(4, 1fr)' }}>
-        <div className="sidebar-profile">
-          <div className="side-avatar">{role === 'student' ? 'I' : 'G'}</div>
-          <div className="side-profile-info">
-             <div className="side-name">{role === 'student' ? 'Ione Ribeiro' : (settings?.med_name || 'Geocélia')}</div>
-             <div className="side-role">{role === 'student' ? 'Estudante' : 'Mediadora'}</div>
-          </div>
+      {/* Sidebar / Bottom Nav (Responsive) */}
+      <nav className="bottom-nav">
+        <div className="sidebar-header-v5">
+          <img src="/logo-aione.png" alt="Aione" className="sidebar-logo-v5" onError={(e) => (e.target as any).style.display = 'none'} />
+        </div>
+        
+        <div className="nav-group-v5">
+          <button 
+            className={`nav-btn-v5 home ${activeTab === 'home' ? 'active' : ''}`}
+            onClick={() => setActiveTab('home')}
+          >
+            <div className="nav-icon-v5"><Home size={22} /></div>
+            <span className="nav-label-v5">Início</span>
+          </button>
+
+          <button 
+            className={`nav-btn-v5 activities ${activeTab === 'activities' ? 'active' : ''}`}
+            onClick={() => setActiveTab('activities')}
+          >
+            <div className="nav-icon-v5"><BookOpen size={22} /></div>
+            <span className="nav-label-v5">Aulas</span>
+          </button>
+
+          <button 
+            className={`nav-btn-v5 progress ${activeTab === 'progress' ? 'active' : ''}`}
+            onClick={() => setActiveTab('progress')}
+          >
+            <div className="nav-icon-v5"><BarChart2 size={22} /></div>
+            <span className="nav-label-v5">Relat.</span>
+          </button>
+
+          <button 
+            className={`nav-btn-v5 planning ${activeTab === 'planning' ? 'active' : ''}`}
+            onClick={() => setActiveTab('planning')}
+          >
+            <div className="nav-icon-v5"><ClipboardList size={22} /></div>
+            <span className="nav-label-v5">Plano</span>
+          </button>
+
+          <button 
+            className={`nav-btn-v5 doubts ${activeTab === 'whatsapp' ? 'active' : ''}`}
+            onClick={() => setActiveTab('whatsapp')}
+          >
+            <div className="nav-icon-v5"><MessageCircle size={22} /></div>
+            <span className="nav-label-v5">Dúvidas</span>
+          </button>
         </div>
 
-        <button className={`nav-btn ${activeTab === 'home' ? 'active' : ''}`} onClick={() => { setActiveTab('home'); setTargetUnitId(null); }}>
-          <Home size={24} className="nav-icon" />
-          Início
-        </button>
-        <button className={`nav-btn ${activeTab === 'activities' ? 'active' : ''}`} onClick={() => { setActiveTab('activities'); setTargetUnitId(null); }}>
-          <Library size={24} className="nav-icon" />
-          Aulas
-        </button>
-        <button className={`nav-btn ${activeTab === 'progress' ? 'active' : ''}`} onClick={() => setActiveTab('progress')}>
-          <BarChart3 size={24} className="nav-icon" />
-          Relat.
-        </button>
         {role === 'admin' && (
-          <button className={`nav-btn ${activeTab === 'planning' ? 'active' : ''}`} onClick={() => setActiveTab('planning')}>
-            <ClipboardList size={24} className="nav-icon" />
-            Plano
+          <button 
+            className={`nav-btn-v5 admin ${activeTab === 'settings' ? 'active' : ''}`}
+            onClick={() => setActiveTab('settings')}
+          >
+            <div className="nav-icon-v5"><Lock size={20} /></div>
+            <span className="nav-label-v5">Admin</span>
           </button>
         )}
-        <button className={`nav-btn ${activeTab === 'whatsapp' ? 'active' : ''}`} onClick={() => setActiveTab('whatsapp')}>
-          <MessageCircle size={24} className="nav-icon" />
-          Zap
-        </button>
       </nav>
 
       <div className="main-content-wrapper">

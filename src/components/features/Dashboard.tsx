@@ -44,40 +44,61 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
   return (
     <div className="dash-v5-container">
-      {/* Header de Status do Aluno */}
+      {/* Header de Status do Aluno (Design Premium) */}
       <header className="dash-v5-header">
-        <div className="dash-v5-profile">
-          <div className="dash-v5-avatar">
-            {user?.email?.charAt(0).toUpperCase() || 'I'}
+        <div className="dash-v5-profile" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <div className="dash-v5-avatar-wrapper" style={{ position: 'relative' }}>
+             <div className="dash-v5-avatar" style={{ width: '80px', height: '80px', borderRadius: '24px', overflow: 'visible' }}>
+               <img src="/3d-avatar-kid.png" alt="Ione" style={{ width: '120%', position: 'absolute', bottom: 0, left: '-10%' }} onError={(e) => (e.target as any).src = "https://api.dicebear.com/7.x/avataaars/svg?seed=Ione"} />
+             </div>
           </div>
           <div>
-            <h1 style={{ fontSize: '24px', margin: 0 }}>Oi, Ione! 👋</h1>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '4px' }}>
-              <div style={{ width: '120px', height: '6px', background: '#f1f5f9', borderRadius: '3px', overflow: 'hidden' }}>
-                <div style={{ width: `${completedPct}%`, height: '100%', background: '#10b981' }} />
+            <h1 style={{ fontSize: '26px', fontWeight: 900, color: '#1e293b', margin: 0 }}>Oi, Ione! 🌟</h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '8px' }}>
+              <div style={{ flex: 1, minWidth: '150px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>
+                   <span style={{ fontSize: '11px', fontWeight: 900, color: '#64748b' }}>{completedPct}% da Jornada!</span>
+                   <span style={{ fontSize: '11px', fontWeight: 900, color: '#64748b' }}>XP: {stats?.xp || 120}/2000</span>
+                </div>
+                <div style={{ width: '100%', height: '10px', background: '#f1f5f9', borderRadius: '5px', overflow: 'hidden' }}>
+                  <div style={{ width: `${completedPct}%`, height: '100%', background: '#10b981' }} />
+                </div>
               </div>
-              <span style={{ fontSize: '10px', fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase' }}>
-                {completedPct}% da Jornada
-              </span>
+              
+              <div className="hexagon-badge-v5">
+                 <span style={{ fontSize: '10px', fontWeight: 900 }}>NÍVEL</span>
+                 <span style={{ fontSize: '18px', fontWeight: 900 }}>{currentLevel}</span>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="dash-v5-stats">
-          <StatBadge icon={<Flame className="text-orange-500" size={18} fill="#f97316" />} value={`${currentStreak} Dias`} label="Streak" />
-          <StatBadge icon={<Star className="text-yellow-500" size={18} fill="#f59e0b" />} value={totalStars.toString()} label="Estrelas" />
-          <StatBadge icon={<Trophy className="text-blue-500" size={18} fill="#3b82f6" />} value={`Lvl ${currentLevel}`} label="Rank" />
+        <div className="dash-v5-stats" style={{ display: 'flex', gap: '16px' }}>
+          <div className="stat-badge-v5 flame">
+            <Flame size={24} fill="#ef4444" stroke="none" />
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+               <span style={{ fontSize: '14px', fontWeight: 900, color: '#ef4444' }}>{currentStreak} Dias</span>
+               <span style={{ fontSize: '9px', fontWeight: 800, color: '#f87171', textTransform: 'uppercase' }}>Chama de Sequência</span>
+            </div>
+          </div>
+          <div className="stat-badge-v5 coins">
+            <img src="/coins-3d.png" alt="Coins" style={{ width: '24px' }} onError={(e) => (e.target as any).src = "https://cdn-icons-png.flaticon.com/512/10431/10431966.png"} />
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+               <span style={{ fontSize: '14px', fontWeight: 900, color: '#a16207' }}>{totalStars}</span>
+               <span style={{ fontSize: '9px', fontWeight: 800, color: '#ca8a04', textTransform: 'uppercase' }}>Coins</span>
+            </div>
+          </div>
         </div>
       </header>
 
       {/* Título do Módulo */}
-      <div className="module-intro-v5">
-         <span className="module-tag-v5">Jornada</span>
-         <h2 className="module-title-v5">Mission: Módulo 1 — Primeiros Passos</h2>
-         <p className="module-desc-v5">Complete as 12 aulas para ganhar o troféu de bronze!</p>
+      <div className="module-intro-v5" style={{ textAlign: 'center', marginBottom: '40px' }}>
+         <span className="module-tag-v5" style={{ background: '#ccfbf1', color: '#0f766e', padding: '4px 12px', borderRadius: '20px', fontSize: '10px', fontWeight: 900, textTransform: 'uppercase' }}>JORNADA</span>
+         <h2 className="module-title-v5" style={{ fontSize: '28px', fontWeight: 900, color: '#1e293b', margin: '12px 0 8px' }}>Mission: Módulo 1 — Primeiros Passos</h2>
+         <p className="module-desc-v5" style={{ color: '#64748b', fontWeight: 600 }}>Complete as 12 aulas para ganhar o troféu de bronze!</p>
       </div>
 
-      {/* Grid de Aulas (Trilha) */}
+      {/* Grid de Aulas (Trilha com Pontilhado) */}
       <div className="trail-grid-v5">
         {units.map((unit, idx) => {
           const isDone = unit.unit_status === 'completed';
@@ -114,21 +135,33 @@ export const Dashboard: React.FC<DashboardProps> = ({
           );
         })}
         
-        {/* Card Especial de Tesouro */}
-        <div className="treasure-card-v5">
-           <div style={{ fontSize: '32px', marginBottom: '8px' }}>🎁</div>
-           <span style={{ fontSize: '10px', fontWeight: 900, color: '#a16207' }}>PREMIAÇÃO</span>
+        {/* Card de Revisão (Final) */}
+        <div className="lesson-card-v5" style={{ background: '#fef3c7', borderColor: '#f59e0b' }}>
+           <img src="https://cdn-icons-png.flaticon.com/512/10431/10431713.png" alt="Review" style={{ width: '80px', marginBottom: '16px' }} />
+           <span className="lesson-id-tag">AULA 12</span>
+           <h3 className="lesson-title-v5">Revisão do Módulo 1</h3>
         </div>
       </div>
 
-      {/* Botão de Suporte Flutuante */}
-      <div className="zap-support-v5" onClick={handleSupportClick}>
-          <div className="zap-avatar-v5">{mediatorName.charAt(0)}</div>
-          <div className="zap-text-v5">
-              <p className="zap-name">Prof. {mediatorName}</p>
-              <p className="zap-label">Chamar no Zap</p>
-          </div>
-      </div>
+      {/* Footer com Inventário e Suporte */}
+      <footer className="dash-v5-footer">
+        <button className="inventory-btn-v5">
+           <img src="https://cdn-icons-png.flaticon.com/512/2901/2901197.png" alt="Bag" style={{ width: '32px' }} />
+           Inventário
+        </button>
+
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+           <span style={{ background: '#fef3c7', color: '#92400e', padding: '4px 16px', borderRadius: '20px', fontSize: '11px', fontWeight: 900 }}>Dica do Mestre</span>
+           <div className="zap-support-v5-static" onClick={handleSupportClick} style={{ background: 'white', padding: '10px 24px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '15px', border: '1px solid #f1f5f9', boxShadow: '0 4px 12px rgba(0,0,0,0.05)', cursor: 'pointer' }}>
+              <div style={{ width: '32px', height: '32px', background: '#f1f5f9', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyCenter: 'center', fontWeight: 900 }}>{mediatorName.charAt(0)}</div>
+              <div style={{ display: 'flex', flexDirection: 'column' }}>
+                 <span style={{ fontSize: '13px', fontWeight: 800 }}>Prof. {mediatorName}</span>
+                 <span style={{ fontSize: '10px', color: '#64748b' }}>Sua mediadora</span>
+              </div>
+              <button style={{ background: '#10b981', color: 'white', border: 'none', padding: '6px 12px', borderRadius: '12px', fontSize: '11px', fontWeight: 800 }}>Chamar no Zap</button>
+           </div>
+        </div>
+      </footer>
     </div>
   );
 };

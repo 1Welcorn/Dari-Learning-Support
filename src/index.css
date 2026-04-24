@@ -215,63 +215,77 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px;border-rad
 }
 
 @media (min-width: 768px) {
-  .bottom-nav {
-    position: sticky;
-    top: 0;
-    height: 100vh;
-    width: 240px;
-    grid-template-columns: 1fr !important; /* Stack vertically on desktop */
-    grid-template-rows: auto auto auto auto auto 1fr;
-    padding: 32px 16px;
-    border-top: none;
-    border-right: 1px solid var(--border);
-    background: #fff;
-    transform: none;
-    left: 0;
+  .sidebar-header-v5 {
+    padding: 24px;
+    margin-bottom: 24px;
   }
 
-  .sidebar-profile {
+  .sidebar-logo-v5 {
+    width: 100%;
+    max-width: 160px;
+    height: auto;
+  }
+
+  .nav-group-v5 {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 0 16px;
+  }
+
+  .nav-btn-v5 {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 16px;
-    margin-bottom: 24px;
-    background: #f8fafc;
-    border-radius: 20px;
-    border: 1px solid #f1f5f9;
+    padding: 12px 20px;
+    border-radius: 99px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    width: 100%;
+    color: #64748b;
   }
 
-  .side-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 16px;
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-    color: #fff;
+  .nav-icon-v5 {
+    width: 44px;
+    height: 44px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'Fraunces', serif;
-    font-size: 18px;
-    font-weight: 700;
+    background: #f1f5f9;
+    border-radius: 50%;
+    transition: inherit;
+    flex-shrink: 0;
   }
 
-  .side-profile-info {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .side-name {
+  .nav-label-v5 {
     font-size: 15px;
-    font-weight: 700;
-    color: var(--ink);
+    font-weight: 800;
   }
 
-  .side-role {
-    font-size: 11px;
-    color: var(--ink4);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    font-weight: 700;
+  /* Specific Colors from Image */
+  .nav-btn-v5.home.active { background: #e0f2fe; color: #0369a1; }
+  .nav-btn-v5.home.active .nav-icon-v5 { background: #0ea5e9; color: white; }
+
+  .nav-btn-v5.activities.active { background: #fef3c7; color: #92400e; }
+  .nav-btn-v5.activities.active .nav-icon-v5 { background: #f59e0b; color: white; }
+
+  .nav-btn-v5.progress.active { background: #f3e8ff; color: #7e22ce; }
+  .nav-btn-v5.progress.active .nav-icon-v5 { background: #a855f7; color: white; }
+
+  .nav-btn-v5.planning.active { background: #ecfdf5; color: #047857; }
+  .nav-btn-v5.planning.active .nav-icon-v5 { background: #10b981; color: white; }
+
+  .nav-btn-v5.doubts.active { background: #fce7f3; color: #be185d; }
+  .nav-btn-v5.doubts.active .nav-icon-v5 { background: #ec4899; color: white; }
+
+  .nav-btn-v5.admin.active { background: #f1f5f9; color: #1e293b; }
+  .nav-btn-v5.admin.active .nav-icon-v5 { background: #334155; color: white; }
+
+  .nav-btn-v5:hover:not(.active) {
+    background: #f8fafc;
+    color: #1e293b;
   }
 }
 

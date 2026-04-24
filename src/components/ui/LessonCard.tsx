@@ -23,6 +23,18 @@ export const LessonCard: React.FC<LessonCardProps> = ({ lesson, onClick, idx }) 
       className={`lesson-card-v5 ${isLocked ? 'is-locked' : ''} ${isCurrent ? 'is-current' : ''}`}
       onClick={onClick}
     >
+      {isCompleted && (
+        <div className="lesson-ribbon-v5">
+          <span>CONCLUÍDO!</span>
+        </div>
+      )}
+
+      {isCompleted && (
+        <div className="lesson-check-badge-v5">
+           <CheckCircle2 size={20} fill="#10b981" stroke="white" />
+        </div>
+      )}
+      
       <div className="lesson-icon-v5">
         {hasIcon ? (
           <img 
@@ -42,21 +54,23 @@ export const LessonCard: React.FC<LessonCardProps> = ({ lesson, onClick, idx }) 
         )}
       </div>
       
-      <span className="lesson-id-tag">Aula {idx + 1}</span>
-      <h3 className="lesson-title-v5">{lesson.title}</h3>
+      <div className="lesson-info-v5">
+        <span className="lesson-id-tag">AULA {idx + 1}</span>
+        <h3 className="lesson-title-v5">{lesson.title}</h3>
+      </div>
       
       {!isLocked && (
-        <div className="lesson-progress-v5">
-           <div className="lesson-bar-bg">
-              <div className="lesson-bar-fill" style={{ width: isCompleted ? '100%' : (isCurrent ? '30%' : '0%') }} />
+        <div className="lesson-footer-v5">
+           <div className="lesson-bar-v5">
+              <div className="lesson-bar-fill-v5" style={{ width: isCompleted ? '100%' : (isCurrent ? '20%' : '0%') }} />
            </div>
-           <span className="lesson-xp-tag">{lesson.xpValue} XP</span>
+           <span className="lesson-xp-v5">{lesson.xpValue}XP</span>
         </div>
       )}
       
       {isCurrent && (
-        <button className="lesson-play-btn">
-          COMEÇAR AGORA!
+        <button className="lesson-play-btn-v5">
+          Começar Agora!
         </button>
       )}
     </motion.div>
