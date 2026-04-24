@@ -165,46 +165,22 @@ input,textarea,select{font-family:'DM Sans',sans-serif;font-size:16px;border-rad
 }
 
 @media (min-width: 768px) {
-  .nav-btn {
-    flex-direction: row;
-    padding: 16px 24px;
-    gap: 16px;
-    font-size: 16px;
-    width: 100%;
-    margin-bottom: 12px;
-    justify-content: flex-start;
-    border-radius: 20px;
-    border: 1px solid transparent;
-  }
-  
-  .nav-btn .nav-icon {
-    width: 24px;
-    height: 24px;
-    transition: transform 0.2s;
-  }
-
-  .nav-btn.active {
-    background: #1e293b;
-    color: white;
-    box-shadow: 0 15px 30px rgba(30, 41, 59, 0.2);
-    border: 1px solid #1e293b;
-  }
-
-  .nav-btn.active::before {
-    content: '';
-    position: absolute;
-    left: -16px;
-    top: 15%;
-    height: 70%;
-    width: 6px;
-    background: #10b981;
-    border-radius: 0 4px 4px 0;
-  }
-
-  .nav-btn:hover:not(.active) {
+  .bottom-nav {
+    position: sticky;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px;
     background: white;
-    border-color: #e2e8f0;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    border-top: none;
+    border-right: 1px solid #f1f5f9;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    gap: 0;
+    z-index: 100;
+    box-shadow: none;
+    transform: none;
   }
 }
 
