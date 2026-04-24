@@ -49,7 +49,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="dash-v5-profile" style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
           <div className="dash-v5-avatar-wrapper" style={{ position: 'relative' }}>
              <div className="dash-v5-avatar" style={{ width: '80px', height: '80px', borderRadius: '24px', overflow: 'visible' }}>
-               <img src="/3d-avatar-kid.png" alt="Ione" style={{ width: '120%', position: 'absolute', bottom: 0, left: '-10%' }} onError={(e) => (e.target as any).src = "https://api.dicebear.com/7.x/avataaars/svg?seed=Ione"} />
+               <img src="https://i.ibb.co/PZNCmrTf/Captura-de-tela-2026-04-24-002158.png" alt="Ione Exploradora" style={{ width: '120%', position: 'absolute', bottom: 0, left: '-10%' }} />
              </div>
           </div>
           <div>
