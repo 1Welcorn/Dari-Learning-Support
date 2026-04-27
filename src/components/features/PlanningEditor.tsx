@@ -86,17 +86,24 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
     try {
       const descs = descText.split(',').map((v: string) => v.trim()).filter(Boolean);
       
-      // Criar um objeto de limpeza para evitar enviar campos desnecessários ou o ID (PK)
-      const { id, created_at, ...cleanData } = unitData;
-      
+      // Definir explicitamente apenas as colunas que existem no banco de dados
       const updates = { 
-        ...cleanData, 
+        title: unitData.title,
+        sub: unitData.sub,
+        brief: unitData.brief,
+        learning_objectives: unitData.learning_objectives,
+        methodology: unitData.methodology,
+        color: unitData.color,
+        is_locked: unitData.is_locked,
         descriptors: descs,
-        // Garantir que arrays sejam enviados corretamente
         questions: unitData.questions || [],
         game_words: unitData.game_words || [],
         embed_urls: unitData.embed_urls || [],
-        external_links: unitData.external_links || []
+        external_links: unitData.external_links || [],
+        plan_c: unitData.plan_c,
+        plan_h: unitData.plan_h,
+        plan_e: unitData.plan_e,
+        plan_a: unitData.plan_a
       };
       
       console.log('PlanningEditor: Saving changes...', updates);
