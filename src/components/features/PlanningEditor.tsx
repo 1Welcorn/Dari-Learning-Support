@@ -67,8 +67,18 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
   const fetchUnit = async () => {
     const { data } = await supabase.from('units').select('*').eq('id', unitId).single();
     if (data) {
-      setUnitData(data);
-      setDescText(data.descriptors?.join(', ') || '');
+      // Garantir que campos JSON sejam arrays/objetos mesmo que venham como string
+      const sanitized = {
+        ...data,
+        descriptors: typeof data.descriptors === 'string' ? JSON.parse(data.descriptors) : (data.descriptors || []),
+        embed_urls: typeof data.embed_urls === 'string' ? JSON.parse(data.embed_urls) : (data.embed_urls || []),
+        questions: typeof data.questions === 'string' ? JSON.parse(data.questions) : (data.questions || []),
+        external_links: typeof data.external_links === 'string' ? JSON.parse(data.external_links) : (data.external_links || []),
+        vocabulary_list: typeof data.vocabulary_list === 'string' ? JSON.parse(data.vocabulary_list) : (data.vocabulary_list || []),
+        embed_preview_images: typeof data.embed_preview_images === 'string' ? JSON.parse(data.embed_preview_images) : (data.embed_preview_images || []),
+      };
+      setUnitData(sanitized);
+      setDescText(sanitized.descriptors?.join(', ') || '');
     }
     setLoading(false);
   };
@@ -76,13 +86,27 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
   const handleSave = async () => {
     try {
       const descs = descText.split(',').map((v: string) => v.trim()).filter(Boolean);
-      const updates = { ...unitData, descriptors: descs };
+      
+      // Criar um objeto de limpeza para evitar enviar campos desnecessários ou o ID (PK)
+      const { id, created_at, ...cleanData } = unitData;
+      
+      const updates = { 
+        ...cleanData, 
+        descriptors: descs,
+        // Garantir que arrays sejam enviados corretamente
+        questions: unitData.questions || [],
+        vocabulary_list: unitData.vocabulary_list || [],
+        embed_urls: unitData.embed_urls || [],
+        external_links: unitData.external_links || []
+      };
       
       console.log('PlanningEditor: Saving changes...', updates);
       const result = await updateUnit(unitId, updates);
       
       if (result.success) {
         setIsDirty(false);
+        // Recarregar os dados do banco para garantir sincronia total
+        await fetchUnit();
         alert("Planejamento atualizado com sucesso! 🚀");
       } else {
         alert('Erro ao salvar: ' + result.error);
