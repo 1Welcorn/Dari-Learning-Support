@@ -172,6 +172,15 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
     }
   }, [gameState, score, highScore, unitTitle, onGameOver, wordsTyped]);
 
+  const speak = (text: string) => {
+    if (!window.speechSynthesis) return;
+    window.speechSynthesis.cancel(); // Para qualquer fala anterior
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    utterance.rate = 0.9; // Um pouco mais lento para clareza
+    window.speechSynthesis.speak(utterance);
+  };
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setInputValue(val);
@@ -186,6 +195,9 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
       setCombo(prev => prev + 1);
       setCorrectWordIds(prev => new Set(prev).add(match.id));
       setInputValue('');
+      
+      // Falar a palavra em inglês
+      speak(match.word.en);
 
       // Remove com um pequeno atraso para a animação de "pop"
       setTimeout(() => {
