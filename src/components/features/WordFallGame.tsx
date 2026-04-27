@@ -253,7 +253,7 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
                   pointerEvents: 'none'
                 }}
               >
-                <span style={{ fontSize: '32px' }}>{w.word.icon}</span>
+                <span style={{ fontSize: '32px' }}>{w.word.icon || '🏷️'}</span>
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                   <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>{w.word.pt}</span>
                   <span style={{ fontSize: '20px', fontWeight: 800, color: '#1e293b' }}>{w.word.en}</span>
