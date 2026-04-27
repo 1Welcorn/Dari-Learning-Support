@@ -54,7 +54,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <header className="dash-v5-header" style={{ minHeight: '100px', alignItems: 'center', paddingTop: '25px' }}>
         <div className="dash-v5-profile" style={{ display: 'flex', alignItems: 'center', gap: '20px', overflow: 'visible' }}>
           <div>
-            <h1 style={{ fontSize: '26px', fontWeight: 900, color: '#1e293b', margin: 0 }}>Oi, Ione! 🌟 <span style={{ fontSize: '10px', color: '#ef4444', verticalAlign: 'middle' }}>v5.5</span></h1>
+            <h1 style={{ fontSize: '26px', fontWeight: 900, color: '#1e293b', margin: 0 }}>Oi, Ione! 🌟 <span style={{ fontSize: '10px', color: '#ef4444', verticalAlign: 'middle' }}>v5.6</span></h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '8px' }}>
               <div style={{ flex: 1, minWidth: '150px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '4px' }}>

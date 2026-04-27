@@ -74,7 +74,7 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
         embed_urls: typeof data.embed_urls === 'string' ? JSON.parse(data.embed_urls) : (data.embed_urls || []),
         questions: typeof data.questions === 'string' ? JSON.parse(data.questions) : (data.questions || []),
         external_links: typeof data.external_links === 'string' ? JSON.parse(data.external_links) : (data.external_links || []),
-        game_words: typeof data.game_words === 'string' ? JSON.parse(data.game_words) : (data.game_words || []),
+        vocabulary_list: typeof data.vocabulary_list === 'string' ? JSON.parse(data.vocabulary_list) : (data.vocabulary_list || []),
       };
       setUnitData(sanitized);
       setDescText(sanitized.descriptors?.join(', ') || '');
@@ -97,13 +97,9 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
         is_locked: unitData.is_locked,
         descriptors: descs,
         questions: unitData.questions || [],
-        game_words: unitData.game_words || [],
+        vocabulary_list: unitData.vocabulary_list || [],
         embed_urls: unitData.embed_urls || [],
-        external_links: unitData.external_links || [],
-        plan_c: unitData.plan_c,
-        plan_h: unitData.plan_h,
-        plan_e: unitData.plan_e,
-        plan_a: unitData.plan_a
+        external_links: unitData.external_links || []
       };
       
       console.log('PlanningEditor: Saving changes...', updates);
@@ -125,8 +121,8 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
 
   const addWord = () => {
     if (!newWord.trim()) return;
-    const updatedVocab = [...(unitData.game_words || []), newWord.trim()];
-    setUnitData({ ...unitData, game_words: updatedVocab });
+    const updatedVocab = [...(unitData.vocabulary_list || []), newWord.trim()];
+    setUnitData({ ...unitData, vocabulary_list: updatedVocab });
     setNewWord("");
     setIsDirty(true);
   };
@@ -213,7 +209,7 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                 setUnitData({ 
                   ...unitData, 
                   embed_urls: [], 
-                  game_words: [],
+                  vocabulary_list: [],
                   external_links: (unitData.external_links || []).filter((l: any) => l.label !== 'media' && l.label !== 'HTML')
                 });
                 setIsDirty(true);
@@ -546,16 +542,16 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
             </div>
 
             <div className="vocab-list-v4">
-              {unitData.game_words?.length === 0 && (
+              {unitData.vocabulary_list?.length === 0 && (
                 <div className="empty-mini">Nenhuma palavra cadastrada para este jogo.</div>
               )}
-              {unitData.game_words?.map((word: string, i: number) => (
+              {unitData.vocabulary_list?.map((word: string, i: number) => (
                 <span key={i} className="vocab-tag-v4 group">
                   {word}
                   <button 
                     onClick={() => {
-                      const filtered = unitData.game_words.filter((_: any, index: number) => index !== i);
-                      setUnitData({ ...unitData, game_words: filtered });
+                      const filtered = unitData.vocabulary_list.filter((_: any, index: number) => index !== i);
+                      setUnitData({ ...unitData, vocabulary_list: filtered });
                     }}
                     className="vocab-tag-remove"
                   >

@@ -26,7 +26,7 @@ export const useSarehData = () => {
           embed_urls: typeof u.embed_urls === 'string' ? JSON.parse(u.embed_urls) : (u.embed_urls || []),
           questions: typeof u.questions === 'string' ? JSON.parse(u.questions) : (u.questions || []),
           external_links: typeof u.external_links === 'string' ? JSON.parse(u.external_links) : (u.external_links || []),
-          game_words: typeof u.game_words === 'string' ? JSON.parse(u.game_words) : (u.game_words || []),
+          vocabulary_list: typeof u.vocabulary_list === 'string' ? JSON.parse(u.vocabulary_list) : (u.vocabulary_list || []),
           is_locked: !!u.is_locked
         }));
         setUnits(sanitizedUnits);

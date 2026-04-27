@@ -1147,7 +1147,7 @@ export const Activities: React.FC<{
             return (
               <WordFallGame 
                 unitTitle={unit?.title || 'Desafio de Digitação'}
-                words={unit?.game_words && unit.game_words.length > 0 ? unit.game_words : fallbackWords} 
+                words={unit?.vocabulary_list && unit.vocabulary_list.length > 0 ? unit.vocabulary_list : fallbackWords} 
                 onGameOver={(s, w) => {
                   if (onGameOver) onGameOver(s, w);
                 }}
