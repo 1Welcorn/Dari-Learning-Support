@@ -74,8 +74,7 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
         embed_urls: typeof data.embed_urls === 'string' ? JSON.parse(data.embed_urls) : (data.embed_urls || []),
         questions: typeof data.questions === 'string' ? JSON.parse(data.questions) : (data.questions || []),
         external_links: typeof data.external_links === 'string' ? JSON.parse(data.external_links) : (data.external_links || []),
-        vocabulary_list: typeof data.vocabulary_list === 'string' ? JSON.parse(data.vocabulary_list) : (data.vocabulary_list || []),
-        embed_preview_images: typeof data.embed_preview_images === 'string' ? JSON.parse(data.embed_preview_images) : (data.embed_preview_images || []),
+        game_words: typeof data.game_words === 'string' ? JSON.parse(data.game_words) : (data.game_words || []),
       };
       setUnitData(sanitized);
       setDescText(sanitized.descriptors?.join(', ') || '');
@@ -95,7 +94,7 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
         descriptors: descs,
         // Garantir que arrays sejam enviados corretamente
         questions: unitData.questions || [],
-        vocabulary_list: unitData.vocabulary_list || [],
+        game_words: unitData.game_words || [],
         embed_urls: unitData.embed_urls || [],
         external_links: unitData.external_links || []
       };
@@ -119,8 +118,8 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
 
   const addWord = () => {
     if (!newWord.trim()) return;
-    const updatedVocab = [...(unitData.vocabulary_list || []), newWord.trim()];
-    setUnitData({ ...unitData, vocabulary_list: updatedVocab });
+    const updatedVocab = [...(unitData.game_words || []), newWord.trim()];
+    setUnitData({ ...unitData, game_words: updatedVocab });
     setNewWord("");
     setIsDirty(true);
   };
@@ -207,8 +206,7 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                 setUnitData({ 
                   ...unitData, 
                   embed_urls: [], 
-                  embed_preview_images: [], 
-                  vocabulary_list: [],
+                  game_words: [],
                   external_links: (unitData.external_links || []).filter((l: any) => l.label !== 'media' && l.label !== 'HTML')
                 });
                 setIsDirty(true);
@@ -421,22 +419,7 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                       }}
                     />
                     
-                    <div className="admin-embed-thumbnail-row" style={{ marginTop: '8px' }}>
-                      <input 
-                        className="admin-embed-url-input"
-                        style={{ fontSize: '12px', background: '#fefce8' }}
-                        value={unitData.embed_preview_images?.[i] || ''} 
-                        placeholder="URL da Imagem de Capa (Opcional)"
-                        onChange={(e) => {
-                          const nextImages = [...(unitData.embed_preview_images || [])];
-                          // Garantir que o array tem tamanho suficiente
-                          while(nextImages.length <= i) nextImages.push('');
-                          nextImages[i] = e.target.value;
-                          setUnitData({ ...unitData, embed_preview_images: nextImages });
-                          setIsDirty(true);
-                        }}
-                      />
-                    </div>
+
                     
                     <div className="admin-embed-width-row">
                       <span>Largura do Card:</span>
@@ -556,16 +539,16 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
             </div>
 
             <div className="vocab-list-v4">
-              {unitData.vocabulary_list?.length === 0 && (
+              {unitData.game_words?.length === 0 && (
                 <div className="empty-mini">Nenhuma palavra cadastrada para este jogo.</div>
               )}
-              {unitData.vocabulary_list?.map((word: string, i: number) => (
+              {unitData.game_words?.map((word: string, i: number) => (
                 <span key={i} className="vocab-tag-v4 group">
                   {word}
                   <button 
                     onClick={() => {
-                      const filtered = unitData.vocabulary_list.filter((_: any, index: number) => index !== i);
-                      setUnitData({ ...unitData, vocabulary_list: filtered });
+                      const filtered = unitData.game_words.filter((_: any, index: number) => index !== i);
+                      setUnitData({ ...unitData, game_words: filtered });
                     }}
                     className="vocab-tag-remove"
                   >
