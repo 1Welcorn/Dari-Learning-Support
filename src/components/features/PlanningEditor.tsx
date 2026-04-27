@@ -121,7 +121,16 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
 
   const addWord = () => {
     if (!newWord.trim()) return;
-    const updatedVocab = [...(unitData.vocabulary_list || []), newWord.trim()];
+    
+    // Suporte para formato "en / pt" ou apenas "en"
+    const parts = newWord.split('/').map(p => p.trim());
+    const wordObj = {
+      en: parts[0],
+      pt: parts[1] || parts[0],
+      icon: '🏷️'
+    };
+    
+    const updatedVocab = [...(unitData.vocabulary_list || []), wordObj];
     setUnitData({ ...unitData, vocabulary_list: updatedVocab });
     setNewWord("");
     setIsDirty(true);
@@ -545,20 +554,25 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
               {unitData.vocabulary_list?.length === 0 && (
                 <div className="empty-mini">Nenhuma palavra cadastrada para este jogo.</div>
               )}
-              {unitData.vocabulary_list?.map((word: string, i: number) => (
-                <span key={i} className="vocab-tag-v4 group">
-                  {word}
-                  <button 
-                    onClick={() => {
-                      const filtered = unitData.vocabulary_list.filter((_: any, index: number) => index !== i);
-                      setUnitData({ ...unitData, vocabulary_list: filtered });
-                    }}
-                    className="vocab-tag-remove"
-                  >
-                    <Trash2 size={14} />
-                  </button>
-                </span>
-              ))}
+              {unitData.vocabulary_list?.map((word: any, i: number) => {
+                const display = typeof word === 'string' ? word : word.en;
+                return (
+                  <span key={i} className="vocab-tag-v4 group">
+                    <span style={{ marginRight: '6px' }}>{typeof word === 'object' ? word.icon : '🏷️'}</span>
+                    {display}
+                    <button 
+                      onClick={() => {
+                        const filtered = unitData.vocabulary_list.filter((_: any, index: number) => index !== i);
+                        setUnitData({ ...unitData, vocabulary_list: filtered });
+                        setIsDirty(true);
+                      }}
+                      className="vocab-tag-remove"
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </span>
+                );
+              })}
             </div>
           </section>
         </div>

@@ -1144,10 +1144,16 @@ export const Activities: React.FC<{
               { pt: 'Pia', en: 'Sink', icon: '🚰' }
             ];
             
+            const rawWords = unit?.vocabulary_list && unit.vocabulary_list.length > 0 ? unit.vocabulary_list : fallbackWords;
+            const sanitizedWords = rawWords.map((w: any) => {
+              if (typeof w === 'string') return { en: w, pt: w, icon: '🏷️' };
+              return w;
+            });
+            
             return (
               <WordFallGame 
                 unitTitle={unit?.title || 'Desafio de Digitação'}
-                words={unit?.vocabulary_list && unit.vocabulary_list.length > 0 ? unit.vocabulary_list : fallbackWords} 
+                words={sanitizedWords} 
                 onGameOver={(s, w) => {
                   if (onGameOver) onGameOver(s, w);
                 }}
