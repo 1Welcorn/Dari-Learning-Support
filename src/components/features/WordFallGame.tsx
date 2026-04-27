@@ -45,23 +45,25 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
 
   // Lógica de Spawn Melhorada e mais Lenta
   const spawnWord = useCallback(() => {
-    if (!words || words.length === 0 || fallingWords.length >= 5) return;
-
-    const randomWord = words[Math.floor(Math.random() * words.length)];
+    if (!words || words.length === 0) return;
     
-    // Dificuldade Progressiva suave - Início quase parado para facilitar leitura
-    const speedDifficultyMultiplier = 1 + (score / 4000); 
-    const baseSpeed = 0.2 + Math.random() * 0.2; 
+    setFallingWords(prev => {
+      if (prev.length >= 5) return prev;
 
-    const newWord: FallingWord = {
-      id: Math.random(), 
-      word: randomWord,
-      x: 15 + Math.random() * 70, 
-      y: -80, 
-      speed: Math.min(baseSpeed * speedDifficultyMultiplier, 1.8) 
-    };
-    setFallingWords(prev => [...prev, newWord]);
-  }, [words, score, fallingWords.length]);
+      const randomWord = words[Math.floor(Math.random() * words.length)];
+      const speedDifficultyMultiplier = 1 + (score / 4000); 
+      const baseSpeed = 0.2 + Math.random() * 0.2; 
+
+      const newWord: FallingWord = {
+        id: Math.random(), 
+        word: randomWord,
+        x: 15 + Math.random() * 70, 
+        y: -100, // Começa bem acima para transição suave
+        speed: Math.min(baseSpeed * speedDifficultyMultiplier, 1.8) 
+      };
+      return [...prev, newWord];
+    });
+  }, [words, score]);
 
   const startGame = () => {
     setGameState('playing');
@@ -71,7 +73,7 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
     setCorrectWordIds(new Set());
     setCombo(0);
     setTimeLeft(90);
-    lastSpawnRef.current = performance.now();
+    lastSpawnRef.current = performance.now() - 5000; // Trigger immediate spawn
     setTimeout(() => inputRef.current?.focus(), 100);
   };
 
@@ -85,7 +87,9 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
       setFallingWords(prev => {
         const next = prev.map(w => {
            if (correctWordIds.has(w.id)) return w;
-           return { ...w, y: w.y + w.speed };
+           // Cai rápido até passar a barra (Y=80), depois usa a velocidade normal
+           const currentSpeed = w.y < 80 ? 6 : w.speed;
+           return { ...w, y: w.y + currentSpeed };
         });
         
         const missed = next.some(w => w.y > canvasHeight - 120 && !correctWordIds.has(w.id));
@@ -110,7 +114,7 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
     return () => {
       if (gameLoopRef.current !== null) cancelAnimationFrame(gameLoopRef.current);
     };
-  }, [gameState, spawnWord, score, correctWordIds]);
+  }, [gameState, spawnWord, score]); // Removido correctWordIds para evitar reinicializações desnecessárias
 
   // Timer
   useEffect(() => {
