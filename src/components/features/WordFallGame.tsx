@@ -18,9 +18,12 @@ interface WordFallGameProps {
 interface FallingWord {
   id: number;
   word: Word;
-  x: number;
+  baseX: number; // Posição horizontal original
+  x: number;     // Posição calculada com balanço
   y: number;
   speed: number;
+  phase: number; // Fase para o movimento senoidal
+  rotation: number; // Rotação para balanço
 }
 
 const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOver, onBack }) => {
@@ -57,9 +60,12 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
       const newWord: FallingWord = {
         id: Math.random(), 
         word: randomWord,
-        x: 15 + Math.random() * 70, 
-        y: -100, // Começa bem acima para transição suave
-        speed: Math.min(baseSpeed * speedDifficultyMultiplier, 1.8) 
+        baseX: 15 + Math.random() * 70, 
+        x: 15 + Math.random() * 70,
+        y: -100,
+        speed: Math.min(baseSpeed * speedDifficultyMultiplier, 1.8),
+        phase: Math.random() * Math.PI * 2,
+        rotation: 0
       };
       return [...prev, newWord];
     });
@@ -87,9 +93,21 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
       setFallingWords(prev => {
         const next = prev.map(w => {
            if (correctWordIds.has(w.id)) return w;
-           // Cai rápido até passar a barra (Y=80), depois usa a velocidade normal
+           
            const currentSpeed = w.y < 80 ? 6 : w.speed;
-           return { ...w, y: w.y + currentSpeed };
+           const newY = w.y + currentSpeed;
+           
+           // Movimento mais natural: balanço horizontal e rotação leve
+           // Só aplica balanço depois de sair da barra superior
+           const sway = newY > 80 ? Math.sin((time / 1000) + w.phase) * 1.5 : 0;
+           const rotation = newY > 80 ? Math.cos((time / 1500) + w.phase) * 4 : 0;
+           
+           return { 
+             ...w, 
+             y: newY, 
+             x: w.baseX + sway,
+             rotation: rotation
+           };
         });
         
         const missed = next.some(w => w.y > canvasHeight - 120 && !correctWordIds.has(w.id));
@@ -216,7 +234,7 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
                   position: 'absolute',
                   left: `${w.x}%`,
                   top: `${w.y}px`,
-                  transform: 'translateX(-50%)',
+                  transform: `translateX(-50%) rotate(${w.rotation}deg)`,
                   background: 'rgba(255, 255, 255, 0.95)',
                   padding: '16px 28px',
                   borderRadius: '22px',
@@ -227,7 +245,7 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
                   minWidth: '200px',
                   border: correctWordIds.has(w.id) ? '3px solid #10b981' : '1px solid #e2e8f0',
                   backdropFilter: 'blur(4px)',
-                  transition: correctWordIds.has(w.id) ? 'none' : 'top 0.1s linear',
+                  transition: correctWordIds.has(w.id) ? 'none' : 'top 0.1s linear, left 0.1s linear, transform 0.1s linear',
                   zIndex: correctWordIds.has(w.id) ? 100 : 1
                 }}
               >
