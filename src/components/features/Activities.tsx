@@ -42,6 +42,7 @@ interface EmbedStep extends BaseStep {
   title?: string;
   width?: string;
   maskIcon?: string;
+  maskSize?: number;
 }
 
 interface QuestionStep extends BaseStep {
@@ -250,6 +251,7 @@ const StepNavigation: React.FC<{
       title: item.title,
       width: item.width,
       maskIcon: item.maskIcon,
+      maskSize: (item as any).maskSize,
       idx: i
     };
   }).filter(e => e.url.trim());
@@ -554,6 +556,7 @@ const StepNavigation: React.FC<{
                      title={(current as EmbedStep).title || `Atividade ${(current as EmbedStep).idx + 1}`}
                      thumbnailUrl={unit.embed_preview_images?.[(current as EmbedStep).idx]}
                      maskIcon={(current as EmbedStep).maskIcon || ((current as EmbedStep).idx === 0 ? memoryGameImg : undefined)}
+                     maskSize={(current as EmbedStep).maskSize}
                    />
                 </div>
                 <div className="mission-footer-v7">

@@ -7,8 +7,8 @@ export type EmbedPreviewHandle = {
   close: () => void;
 };
 
-const EmbedPreview = React.forwardRef<EmbedPreviewHandle, { url: string; title?: string; thumbnailUrl?: string; maskIcon?: string }>((props, ref) => {
-  const { url, title, thumbnailUrl, maskIcon } = props;
+const EmbedPreview = React.forwardRef<EmbedPreviewHandle, { url: string; title?: string; thumbnailUrl?: string; maskIcon?: string; maskSize?: number }>((props, ref) => {
+  const { url, title, thumbnailUrl, maskIcon, maskSize } = props;
   const [open, setOpen] = useState(false);
   const modalRef = useRef<HTMLDivElement | null>(null);
 
@@ -72,7 +72,15 @@ const EmbedPreview = React.forwardRef<EmbedPreviewHandle, { url: string; title?:
             <div className="embed-placeholder-solid">
               <div className="solid-play-circle">
                 {maskIcon ? (
-                  <img src={maskIcon} alt="Mask" style={{ width: '70%', height: '70%', objectFit: 'contain' }} />
+                  <img 
+                    src={maskIcon} 
+                    alt="Mask" 
+                    style={{ 
+                      width: maskSize ? `${maskSize}px` : '70%', 
+                      height: maskSize ? `${maskSize}px` : '70%', 
+                      objectFit: 'contain' 
+                    }} 
+                  />
                 ) : (
                   <Play size={64} fill="currentColor" />
                 )}

@@ -29,6 +29,7 @@ export interface EmbedActivity {
   width?: string;
   thumbnailUrl?: string;
   maskIcon?: string;
+  maskSize?: number;
 }
 
 export interface GameWord {

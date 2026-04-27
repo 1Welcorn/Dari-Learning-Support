@@ -10,6 +10,7 @@ interface EmbedActivity {
   title: string;
   width: string;
   maskIcon?: string;
+  maskSize?: number;
 }
 
 interface PlanningEditorProps {
@@ -447,21 +448,113 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                       <span className="width-label">{item.width || '100%'}</span>
                     </div>
 
-                    <div className="admin-embed-mask-row" style={{ marginTop: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '13px', fontWeight: 700, color: '#475569' }}>
-                        <input 
-                          type="checkbox" 
-                          checked={!!item.maskIcon} 
-                          onChange={(e) => {
-                            const next = [...unitData.embed_urls];
-                            next[i] = { ...item, maskIcon: e.target.checked ? '/src/assets/memory_game.png' : undefined };
-                            setUnitData({ ...unitData, embed_urls: next });
-                            setIsDirty(true);
-                          }}
-                        />
-                        <span>Usar Ícone de Mistério (Esconder conteúdo)</span>
-                      </label>
-                      {item.maskIcon && <img src={item.maskIcon} alt="Icon" style={{ width: '24px', height: '24px', objectFit: 'contain' }} />}
+                    <div className="admin-embed-mask-row" style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: '#475569' }}>
+                          <input 
+                            type="checkbox" 
+                            checked={!!item.maskIcon} 
+                            onChange={(e) => {
+                              const next = [...unitData.embed_urls];
+                              next[i] = { 
+                                ...item, 
+                                maskIcon: e.target.checked ? 'pending' : undefined,
+                                maskSize: e.target.checked ? 64 : undefined
+                              };
+                              setUnitData({ ...unitData, embed_urls: next });
+                              setIsDirty(true);
+                            }}
+                          />
+                          <span>Usar Ícone de Mistério (Esconder conteúdo)</span>
+                        </label>
+                        
+                        {item.maskIcon && (
+                          <div style={{ position: 'relative' }}>
+                            <label 
+                              htmlFor={`mask-file-${i}`}
+                              title="Clique para trocar o ícone"
+                              style={{
+                                width: '48px',
+                                height: '48px',
+                                borderRadius: '16px',
+                                background: 'white',
+                                border: '2px dashed #3b82f6',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                cursor: 'pointer',
+                                overflow: 'hidden',
+                                transition: 'all 0.2s',
+                                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.15)'
+                              }}
+                            >
+                              <img 
+                                src={item.maskIcon} 
+                                alt="Mistery Icon" 
+                                style={{ width: '80%', height: '80%', objectFit: 'contain' }}
+                                onError={(e) => {
+                                  e.currentTarget.style.display = 'none';
+                                  const parent = e.currentTarget.parentElement;
+                                  if (parent && !parent.querySelector('.upload-placeholder')) {
+                                    const span = document.createElement('span');
+                                    span.className = 'upload-placeholder';
+                                    span.innerHTML = '📤';
+                                    span.style.fontSize = '20px';
+                                    parent.appendChild(span);
+                                  }
+                                }}
+                              />
+                            </label>
+                            <input 
+                              type="file" 
+                              id={`mask-file-${i}`} 
+                              style={{ display: 'none' }} 
+                              accept="image/*"
+                              onChange={(e) => {
+                                 const file = e.target.files?.[0];
+                                 if (file) {
+                                   const reader = new FileReader();
+                                   reader.onload = () => {
+                                      const next = [...unitData.embed_urls];
+                                      next[i] = { ...item, maskIcon: reader.result as string };
+                                      setUnitData({ ...unitData, embed_urls: next });
+                                      setIsDirty(true);
+                                   };
+                                   reader.readAsDataURL(file);
+                                 }
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      {item.maskIcon && (
+                        <div style={{ 
+                          padding: '16px', 
+                          background: '#f8fafc', 
+                          borderRadius: '20px', 
+                          border: '1px solid #edf2f7',
+                          display: 'flex',
+                          flexDirection: 'column',
+                          gap: '8px'
+                        }}>
+                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                             <span style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', textTransform: 'uppercase', minWidth: '80px' }}>Tamanho:</span>
+                             <input 
+                               type="range" min="32" max="256" step="8"
+                               value={item.maskSize || 64}
+                               onChange={(e) => {
+                                 const next = [...unitData.embed_urls];
+                                 next[i] = { ...item, maskSize: parseInt(e.target.value) };
+                                 setUnitData({ ...unitData, embed_urls: next });
+                                 setIsDirty(true);
+                               }}
+                               style={{ flex: 1, accentColor: '#3b82f6' }}
+                             />
+                             <span style={{ fontSize: '12px', fontWeight: 900, color: '#1e293b', width: '45px', textAlign: 'right' }}>{item.maskSize || 64}px</span>
+                           </div>
+                        </div>
+                      )}
                     </div>
                   </div>
                 );
