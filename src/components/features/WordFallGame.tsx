@@ -62,7 +62,7 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
         word: randomWord,
         baseX: 15 + Math.random() * 70, 
         x: 15 + Math.random() * 70,
-        y: -40, // Começa atrás do header
+        y: 0, // Começa exatamente no topo, atrás do header
         speed: Math.min(baseSpeed * speedDifficultyMultiplier, 1.8),
         phase: Math.random() * Math.PI * 2,
         rotation: 0
@@ -94,7 +94,7 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
         const next = prev.map(w => {
            if (correctWordIds.has(w.id)) return w;
            
-           const currentSpeed = w.y < 80 ? 6 : w.speed;
+           const currentSpeed = w.y < 90 ? 12 : w.speed; // Cai MUITO rápido até sair do header
            const newY = w.y + currentSpeed;
            
            // Movimento mais natural: balanço horizontal e rotação leve
@@ -200,7 +200,7 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
               <button onClick={onBack} style={backBtnStyle}><ArrowLeft size={18} /></button>
               <h1 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b', margin: 0 }}>
-                  {unitTitle}
+                  {unitTitle} <span style={{ opacity: 0.3, fontSize: '10px' }}>v5.2</span>
               </h1>
           </div>
           <div style={statsStyle}>
