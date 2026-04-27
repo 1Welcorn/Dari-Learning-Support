@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Trophy, RotateCcw, ArrowLeft, Keyboard, Timer, Zap } from 'lucide-react';
 
-// Interface genérica para aceitar qualquer banco de palavras via props
 interface Word {
   pt: string;
   en: string;
@@ -9,8 +8,8 @@ interface Word {
 }
 
 interface WordFallGameProps {
-  unitTitle: string; // Ex: "Cozinha Profissional"
-  words: Word[];      // Recebe o banco de palavras dinamicamente
+  unitTitle: string;
+  words: Word[];
   onGameOver?: (score: number, wordsTyped: number) => void;
   onBack: () => void;
 }
@@ -18,12 +17,13 @@ interface WordFallGameProps {
 interface FallingWord {
   id: number;
   word: Word;
-  baseX: number; // Posição horizontal original
-  x: number;     // Posição calculada com balanço
+  baseX: number;
+  x: number;
   y: number;
   speed: number;
-  phase: number; // Fase para o movimento senoidal
-  rotation: number; // Rotação para balanço
+  phase: number;
+  rotation: number;
+  entryDelay: number; // Para aceleração gradual no início
 }
 
 const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOver, onBack }) => {
@@ -33,39 +33,41 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
   const [inputValue, setInputValue] = useState('');
   const [fallingWords, setFallingWords] = useState<FallingWord[]>([]);
   const [combo, setCombo] = useState(0);
-  // Aumentado para 90s para dar mais tempo de jogo e aprendizado
-  const [timeLeft, setTimeLeft] = useState(90); 
+  const [timeLeft, setTimeLeft] = useState(90);
   const [highScore, setHighScore] = useState<number>(() => {
     const saved = localStorage.getItem(`wordfall_high_${unitTitle}`);
     return saved ? parseInt(saved) : 0;
   });
   const [correctWordIds, setCorrectWordIds] = useState<Set<number>>(new Set());
-  
+
   const gameLoopRef = useRef<number | null>(null);
+  const lastTimeRef = useRef<number>(0);
   const lastSpawnRef = useRef<number>(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  // Lógica de Spawn Melhorada e mais Lenta
   const spawnWord = useCallback(() => {
     if (!words || words.length === 0) return;
-    
+
     setFallingWords(prev => {
-      if (prev.length >= 5) return prev;
+      if (prev.length >= 5) return prev; 
 
       const randomWord = words[Math.floor(Math.random() * words.length)];
-      const speedDifficultyMultiplier = 1 + (score / 4000); 
-      const baseSpeed = 0.2 + Math.random() * 0.2; 
+      
+      // Dificuldade progressiva baseada no score
+      const difficultyFactor = 1 + (score / 3000);
+      const baseSpeed = 0.4 + Math.random() * 0.4;
 
       const newWord: FallingWord = {
-        id: Math.random(), 
+        id: Math.random(),
         word: randomWord,
-        baseX: 15 + Math.random() * 70, 
-        x: 15 + Math.random() * 70,
-        y: 0, // Começa exatamente no topo, atrás do header
-        speed: Math.min(baseSpeed * speedDifficultyMultiplier, 1.8),
+        baseX: 15 + Math.random() * 70, // Evita as bordas extremas
+        x: 0,
+        y: 80, // COMEÇA EXATAMENTE ABAIXO DO HEADER (80px)
+        speed: Math.min(baseSpeed * difficultyFactor, 2.5),
         phase: Math.random() * Math.PI * 2,
-        rotation: 0
+        rotation: 0,
+        entryDelay: 0 
       };
       return [...prev, newWord];
     });
@@ -79,47 +81,56 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
     setCorrectWordIds(new Set());
     setCombo(0);
     setTimeLeft(90);
-    lastSpawnRef.current = performance.now() - 5000; // Trigger immediate spawn
+    lastSpawnRef.current = performance.now();
     setTimeout(() => inputRef.current?.focus(), 100);
   };
 
-  // Game Loop
   useEffect(() => {
     if (gameState !== 'playing') return;
 
     const update = (time: number) => {
+      if (!lastTimeRef.current) lastTimeRef.current = time;
+      const deltaTime = (time - lastTimeRef.current) / 16.67;
+      lastTimeRef.current = time;
+
       const canvasHeight = canvasRef.current?.clientHeight || 600;
 
       setFallingWords(prev => {
         const next = prev.map(w => {
-           if (correctWordIds.has(w.id)) return w;
-           
-           const currentSpeed = w.y < 90 ? 12 : w.speed; // Cai MUITO rápido até sair do header
-           const newY = w.y + currentSpeed;
-           
-           // Movimento mais natural: balanço horizontal e rotação leve
-           // Só aplica balanço depois de sair da barra superior
-           const sway = newY > 80 ? Math.sin((time / 1000) + w.phase) * 1.5 : 0;
-           const rotation = newY > 80 ? Math.cos((time / 1500) + w.phase) * 4 : 0;
-           
-           return { 
-             ...w, 
-             y: newY, 
-             x: w.baseX + sway,
-             rotation: rotation
-           };
+          if (correctWordIds.has(w.id)) return w;
+
+          // EFEITO ORGÂNICO:
+          // 1. Aceleração gradual: começa lento e atinge a velocidade total após descer um pouco
+          const acceleration = Math.min((w.y - 80) / 100, 1); 
+          const currentSpeed = (w.speed * 0.5) + (w.speed * 0.5 * acceleration);
+          
+          const newY = w.y + (currentSpeed * deltaTime);
+          
+          // 2. Balanço senoidal suave (Sway)
+          const sway = Math.sin((time / 1000) + w.phase) * 2;
+          
+          // 3. Rotação pendular baseada no balanço
+          const rotation = Math.cos((time / 1200) + w.phase) * 4;
+
+          return {
+            ...w,
+            y: newY,
+            x: w.baseX + sway,
+            rotation: rotation
+          };
         });
-        
-        const missed = next.some(w => w.y > canvasHeight - 120 && !correctWordIds.has(w.id));
-        if (missed) {
+
+        // Remove se passar do limite inferior (Game Over/Loss Combo)
+        const hitBottom = next.some(w => w.y > canvasHeight - 140 && !correctWordIds.has(w.id));
+        if (hitBottom) {
           setCombo(0);
-          return next.filter(w => w.y <= canvasHeight - 120 || correctWordIds.has(w.id));
+          return next.filter(w => w.y <= canvasHeight - 140 || correctWordIds.has(w.id));
         }
         return next;
       });
 
-      const spawnInterval = Math.max(5000 - (score * 0.5), 2000);
-
+      // Intervalo de spawn orgânico
+      const spawnInterval = Math.max(4500 - (score * 0.4), 2200);
       if (time - lastSpawnRef.current > spawnInterval) {
         spawnWord();
         lastSpawnRef.current = time;
@@ -130,62 +141,59 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
 
     gameLoopRef.current = requestAnimationFrame(update);
     return () => {
-      if (gameLoopRef.current !== null) cancelAnimationFrame(gameLoopRef.current);
+      if (gameLoopRef.current) cancelAnimationFrame(gameLoopRef.current);
+      lastTimeRef.current = 0;
     };
-  }, [gameState, spawnWord, score]); // Removido correctWordIds para evitar reinicializações desnecessárias
+  }, [gameState, spawnWord, score, correctWordIds]);
 
-  // Timer
+  // Timer e Finalização
   useEffect(() => {
     if (gameState !== 'playing') return;
-    
     const timer = setInterval(() => {
       setTimeLeft(prev => {
         if (prev <= 1) {
           setGameState('end');
-          
-          // Verificar recorde ao final
-          setHighScore(current => {
-             if (score > current) {
-                localStorage.setItem(`wordfall_high_${unitTitle}`, score.toString());
-                return score;
-             }
-             return current;
-          });
-
-          onGameOver?.(score, wordsTyped);
           return 0;
         }
         return prev - 1;
       });
     }, 1000);
-
     return () => clearInterval(timer);
-  }, [gameState, score, wordsTyped, onGameOver, unitTitle]);
+  }, [gameState]);
+
+  // Recorde
+  useEffect(() => {
+    if (gameState === 'end') {
+      if (score > highScore) {
+        setHighScore(score);
+        localStorage.setItem(`wordfall_high_${unitTitle}`, score.toString());
+      }
+      onGameOver?.(score, wordsTyped);
+    }
+  }, [gameState, score, highScore, unitTitle, onGameOver, wordsTyped]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value;
     setInputValue(val);
 
     const match = fallingWords.find(
-      w => w.word.en.toLowerCase() === val.toLowerCase().trim() && !correctWordIds.has(w.id)
+      w => w.word.en.toLowerCase().trim() === val.toLowerCase().trim() && !correctWordIds.has(w.id)
     );
-    
+
     if (match) {
       setScore(prev => prev + (10 * (combo + 1)));
       setWordsTyped(prev => prev + 1);
       setCombo(prev => prev + 1);
-      
-      // Inicia animação de acerto
       setCorrectWordIds(prev => new Set(prev).add(match.id));
       setInputValue('');
 
-      // Remove da lista após animação
+      // Remove com um pequeno atraso para a animação de "pop"
       setTimeout(() => {
         setFallingWords(prev => prev.filter(w => w.id !== match.id));
         setCorrectWordIds(prev => {
-           const next = new Set(prev);
-           next.delete(match.id);
-           return next;
+          const next = new Set(prev);
+          next.delete(match.id);
+          return next;
         });
       }, 300);
     }
@@ -193,15 +201,13 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
 
   return (
     <div className="wordfall-container" style={containerStyle}>
-      {/* ÁREA DE JOGO (Canvas) */}
       <div ref={canvasRef} className="game-canvas" style={canvasStyle}>
-        {/* HEADER: Limpo e Informativo */}
+        
+        {/* HEADER: Z-INDEX alto para ficar sempre por cima */}
         <div className="game-header" style={headerStyle}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-              <button onClick={onBack} style={backBtnStyle}><ArrowLeft size={18} /></button>
-              <h1 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b', margin: 0 }}>
-                  {unitTitle} <span style={{ opacity: 0.3, fontSize: '10px' }}>v5.2</span>
-              </h1>
+            <button onClick={onBack} style={backBtnStyle}><ArrowLeft size={18} /></button>
+            <h1 style={{ fontSize: '18px', fontWeight: 700, color: '#1e293b', margin: 0 }}>{unitTitle}</h1>
           </div>
           <div style={statsStyle}>
             <div style={pillStyle}><Timer size={16} /> {timeLeft}s</div>
@@ -213,61 +219,50 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
         </div>
 
         {gameState === 'start' && (
-          <div className="game-overlay" style={overlayStyle}>
-            <div style={mascotContainerStyle}>🚀</div>
-            <h2 style={{ fontSize: '32px', fontWeight: 900, marginBottom: '10px' }}>Chuva de Palavras</h2>
-            <p style={{ color: '#64748b', marginBottom: '30px', maxWidth: '400px' }}>
-                Digite as palavras em <strong style={{color: '#10b981'}}>Inglês</strong> que aparecem na tela antes que elas caiam!
-            </p>
-            <button onClick={startGame} style={startBtnStyle}>COMEÇAR DESAFIO</button>
+          <div style={overlayStyle}>
+            <div style={{fontSize: '60px', marginBottom: '20px'}}>🌊</div>
+            <h2 style={{ fontSize: '28px', fontWeight: 900 }}>Chuva de Palavras</h2>
+            <p style={{ color: '#64748b', marginBottom: '30px' }}>As palavras vão escorregar pela tela.<br/>Não deixe elas caírem!</p>
+            <button onClick={startGame} style={startBtnStyle}>COMEÇAR</button>
           </div>
         )}
 
         {gameState === 'playing' && (
           <>
             {fallingWords.map(w => (
-              /* CARD DA PALAVRA: Otimizado para Legibilidade */
               <div 
                 key={w.id} 
-                className={`word-card-v7 word-entrance ${correctWordIds.has(w.id) ? 'word-pop' : ''}`}
                 style={{
                   position: 'absolute',
                   left: `${w.x}%`,
                   top: `${w.y}px`,
-                  transform: `translateX(-50%) rotate(${w.rotation}deg)`,
-                  background: 'rgba(255, 255, 255, 0.95)',
-                  padding: '16px 28px',
-                  borderRadius: '22px',
-                  boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
+                  transform: `translateX(-50%) rotate(${w.rotation}deg) scale(${correctWordIds.has(w.id) ? 1.2 : 1})`,
+                  background: 'white',
+                  padding: '14px 24px',
+                  borderRadius: '20px',
+                  boxShadow: '0 10px 25px rgba(0,0,0,0.08)',
                   display: 'flex',
                   alignItems: 'center',
-                  gap: '16px',
-                  minWidth: '200px',
-                  border: correctWordIds.has(w.id) ? '3px solid #10b981' : '1px solid #e2e8f0',
-                  backdropFilter: 'blur(4px)',
-                  transition: correctWordIds.has(w.id) ? 'none' : 'top 0.1s linear, left 0.1s linear, transform 0.1s linear',
-                  zIndex: correctWordIds.has(w.id) ? 100 : 1
+                  gap: '12px',
+                  minWidth: '180px',
+                  border: '1px solid #e2e8f0',
+                  borderColor: correctWordIds.has(w.id) ? '#10b981' : '#e2e8f0',
+                  opacity: correctWordIds.has(w.id) ? 0 : 1,
+                  transition: correctWordIds.has(w.id) ? 'all 0.3s ease-out' : 'transform 0.1s linear, top 0.1s linear',
+                  zIndex: correctWordIds.has(w.id) ? 10 : 1,
+                  pointerEvents: 'none'
                 }}
               >
-                {/* Ícone 1/3 maior */}
-                <span style={{ fontSize: '38px' }}>{w.word.icon}</span>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
-                  {/* Tradução 1/3 maior */}
-                  <span style={{ fontSize: '14px', color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '2px' }}>
-                    {w.word.pt}
-                  </span>
-                  {/* Inglês 1/3 maior */}
-                  <span style={{ fontSize: '27px', fontWeight: 900, color: '#1e293b', lineHeight: '1.2' }}>
-                    {w.word.en}
-                  </span>
+                <span style={{ fontSize: '32px' }}>{w.word.icon}</span>
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  <span style={{ fontSize: '11px', color: '#94a3b8', fontWeight: 700, textTransform: 'uppercase' }}>{w.word.pt}</span>
+                  <span style={{ fontSize: '20px', fontWeight: 800, color: '#1e293b' }}>{w.word.en}</span>
                 </div>
               </div>
             ))}
 
-            {/* ÁREA DE INPUT: Fixa na parte inferior segura */}
-            <div className="input-container" style={inputAreaStyle}>
-               <Keyboard size={24} style={{ color: '#10b981' }} />
+            <div style={inputAreaStyle}>
+               <Keyboard size={20} style={{ color: '#10b981' }} />
                <input 
                  ref={inputRef}
                  type="text" 
@@ -275,42 +270,23 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
                  onChange={handleInputChange}
                  placeholder="Digite em Inglês..."
                  style={inputStyle}
+                 autoComplete="off"
+                 spellCheck="false"
                />
             </div>
           </>
         )}
 
         {gameState === 'end' && (
-          <div className="game-overlay" style={overlayStyle}>
-            <div style={mascotContainerStyle}>{score >= highScore ? '🥳' : '🏆'}</div>
-            <h2 style={{ fontSize: '32px', fontWeight: 900 }}>
-                {score >= highScore ? 'NOVO RECORDE!' : 'BOM TRABALHO!'}
-            </h2>
-            
-            <div style={{ margin: '25px 0', textAlign: 'center', background: '#f0fdfa', padding: '20px 40px', borderRadius: '25px', border: '2px solid #10b981', boxShadow: '0 10px 20px rgba(16,185,129,0.1)' }}>
+          <div style={overlayStyle}>
+            <h2 style={{ fontSize: '32px', fontWeight: 900 }}>{score >= highScore ? 'NOVO RECORDE!' : 'FIM DE JOGO'}</h2>
+            <div style={scoreBoxStyle}>
                <p style={{ fontSize: '48px', fontWeight: 900, color: '#10b981', margin: 0 }}>{score}</p>
-               <p style={{ color: '#64748b', margin: '0 0 10px 0', fontWeight: 600 }}>Pontos nesta rodada</p>
-               
-               <div style={{ borderTop: '1px solid #ccfbf1', paddingTop: '10px', marginTop: '5px' }}>
-                  <p style={{ color: '#0f766e', fontSize: '14px', fontWeight: 700 }}>
-                     MELHOR RECORDE: <span style={{ color: '#10b981' }}>{highScore}</span>
-                  </p>
-               </div>
+               <p style={{ color: '#64748b', fontSize: '14px' }}>Pontos</p>
             </div>
-
-            <p style={{ color: '#64748b', marginBottom: '30px', maxWidth: '350px', fontStyle: 'italic' }}>
-                {score >= highScore 
-                  ? "Incrível, Ione! Você superou seus limites. Que tal tentar bater esse novo recorde agora?"
-                  : "Quase lá! Você está cada vez mais rápida. Pratique mais uma vez para superar seu recorde!"}
-            </p>
-
             <div style={{ display: 'flex', gap: '15px' }}>
-                <button onClick={startGame} style={{...startBtnStyle, background: '#14b8a6', boxShadow: '0 8px 0 #0f766e'}}>
-                    <RotateCcw size={20} /> TENTAR NOVAMENTE
-                </button>
-                <button onClick={onBack} style={{ ...startBtnStyle, background: '#64748b', boxShadow: '0 8px 0 #475569' }}>
-                    VOLTAR AO CURSO
-                </button>
+                <button onClick={startGame} style={startBtnStyle}>NOVO JOGO</button>
+                <button onClick={onBack} style={{ ...startBtnStyle, background: '#64748b', boxShadow: '0 6px 0 #475569' }}>SAIR</button>
             </div>
           </div>
         )}
@@ -319,59 +295,21 @@ const WordFallGame: React.FC<WordFallGameProps> = ({ unitTitle, words, onGameOve
   );
 };
 
-// --- ESTILOS INLINE ATUALIZADOS (Limpos e Modernos) ---
-const containerStyle: React.CSSProperties = {
-  width: '100%', height: '100%', background: '#f8fafc', 
-  position: 'relative', fontFamily: '"Outfit", "Inter", sans-serif', overflow: 'hidden'
+// --- Estilos Inline ---
+const containerStyle: React.CSSProperties = { width: '100%', height: '100%', background: '#f8fafc', overflow: 'hidden', position: 'relative' };
+const headerStyle: React.CSSProperties = { 
+    height: '70px', padding: '0 20px', display: 'flex', justifyContent: 'space-between', 
+    alignItems: 'center', background: 'white', borderBottom: '1px solid #e2e8f0', 
+    position: 'absolute', top: 0, left: 0, right: 0, zIndex: 100 
 };
-
-const headerStyle: React.CSSProperties = {
-  padding: '12px 20px', display: 'flex', justifyContent: 'space-between', 
-  alignItems: 'center', background: 'rgba(255, 255, 255, 0.9)', backdropFilter: 'blur(8px)',
-  borderBottom: '1px solid #e2e8f0', zIndex: 20, position: 'relative'
-};
-
-const pillStyle: React.CSSProperties = {
-    display: 'flex', alignItems: 'center', gap: '6px', background: '#f1f5f9',
-    padding: '6px 14px', borderRadius: '20px', fontWeight: 700, color: '#475569', fontSize: '14px'
-};
-
-const backBtnStyle: React.CSSProperties = {
-  padding: '10px', borderRadius: '12px', border: 'none', background: '#f1f5f9',
-  color: '#64748b', cursor: 'pointer', display: 'flex', alignItems: 'center'
-};
-
-const statsStyle: React.CSSProperties = { display: 'flex', gap: '10px' };
-
-const canvasStyle: React.CSSProperties = {
-  position: 'absolute', inset: 0, background: 'linear-gradient(180deg, #e6fffa 0%, #ffffff 100%)', overflow: 'hidden',
-  display: 'flex', flexDirection: 'column',
-  // Área segura inferior para o input não cobrir as palavras no final
-  paddingBottom: '120px' 
-};
-
-const overlayStyle: React.CSSProperties = {
-  position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.97)',
-  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 30, padding: '40px', textAlign: 'center'
-};
-
-const mascotContainerStyle: React.CSSProperties = { fontSize: '80px', marginBottom: '10px' };
-
-const startBtnStyle: React.CSSProperties = {
-  padding: '16px 32px', borderRadius: '16px', border: 'none', background: '#10b981',
-  color: 'white', fontSize: '16px', fontWeight: 900, cursor: 'pointer', letterSpacing: '0.5px',
-  boxShadow: '0 8px 0 #059669', display: 'flex', alignItems: 'center', gap: '10px', transition: 'transform 0.1s'
-};
-
-const inputAreaStyle: React.CSSProperties = {
-  position: 'absolute', bottom: '30px', left: '50%', transform: 'translateX(-50%)',
-  width: '90%', maxWidth: '450px', background: 'white', padding: '15px 25px',
-  borderRadius: '40px', border: '3px solid #10b981', display: 'flex', alignItems: 'center',
-  gap: '15px', boxShadow: '0 15px 35px rgba(16, 185, 129, 0.2)'
-};
-
-const inputStyle: React.CSSProperties = {
-  flex: 1, border: 'none', outline: 'none', fontSize: '1.4rem', fontWeight: 700, color: '#1e293b'
-};
+const pillStyle: React.CSSProperties = { display: 'flex', alignItems: 'center', gap: '6px', background: '#f1f5f9', padding: '6px 12px', borderRadius: '12px', fontWeight: 700, fontSize: '14px', color: '#475569' };
+const statsStyle: React.CSSProperties = { display: 'flex', gap: '8px' };
+const canvasStyle: React.CSSProperties = { position: 'relative', width: '100%', height: '100%', background: 'linear-gradient(to bottom, #f0f9ff, #ffffff)' };
+const overlayStyle: React.CSSProperties = { position: 'absolute', inset: 0, background: 'rgba(255,255,255,0.95)', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', zIndex: 200, textAlign: 'center' };
+const startBtnStyle: React.CSSProperties = { padding: '16px 32px', borderRadius: '16px', border: 'none', background: '#10b981', color: 'white', fontWeight: 800, cursor: 'pointer', boxShadow: '0 6px 0 #059669' };
+const inputAreaStyle: React.CSSProperties = { position: 'absolute', bottom: '40px', left: '50%', transform: 'translateX(-50%)', width: '90%', maxWidth: '400px', background: 'white', padding: '12px 20px', borderRadius: '30px', border: '3px solid #10b981', display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', zIndex: 100 };
+const inputStyle: React.CSSProperties = { flex: 1, border: 'none', outline: 'none', fontSize: '1.2rem', fontWeight: 700, color: '#1e293b' };
+const scoreBoxStyle: React.CSSProperties = { margin: '20px 0', padding: '20px 40px', borderRadius: '20px', border: '2px solid #10b981', background: '#f0fdf4' };
+const backBtnStyle: React.CSSProperties = { border: 'none', background: '#f1f5f9', padding: '8px', borderRadius: '10px', cursor: 'pointer', color: '#64748b' };
 
 export default WordFallGame;
