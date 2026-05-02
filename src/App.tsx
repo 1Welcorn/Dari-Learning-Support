@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-// Build trigger: a452db8
+// Build trigger: TS_ERRORS_FIXED_V2
 import type { Unit } from './types';
 import { useAuth } from './context/AuthContext';
 import { BookOpen, BarChart2, ClipboardList, MessageCircle, Lock, Unlock } from 'lucide-react';
@@ -14,7 +14,7 @@ import { Progress } from './components/features/Progress';
 import { Planning } from './components/features/Planning';
 import PlanningEditor from './components/features/PlanningEditor';
 import { WhatsAppAssistant } from './components/features/WhatsAppAssistant';
-import { useSarehData } from './hooks/useData';
+import { useDariData } from './hooks/useData';
 import { useStudentJourney } from './hooks/useStudentJourney';
 import { speechService } from './utils/speech';
 
@@ -32,7 +32,7 @@ export const App: React.FC = () => {
   const {
     units, sessions, answers, settings, loading, syncStatus,
     saveAnswer, saveSession, updateSession, deleteSession, resetUnitAnswers, updateUnit, createUnit
-  } = useSarehData();
+  } = useDariData();
 
   // Student Journey Hook for rewards
   const { addStudentRewards } = useStudentJourney(user?.id || '');
@@ -86,9 +86,9 @@ export const App: React.FC = () => {
   if (loading) {
     return (
       <div id="loader">
-        <div className="loader-logo">SAREH · 2026</div>
+        <div className="loader-logo">Dari Project · 2026</div>
         <div className="loader-spinner"></div>
-        <div className="loader-msg">Conectando ao banco de dados...</div>
+        <div className="loader-msg">Carregando o sistema...</div>
       </div>
     );
   }
@@ -101,7 +101,7 @@ export const App: React.FC = () => {
   if (!units || units.length === 0) {
     return (
       <div style={{ padding: '40px 20px', textAlign: 'center', background: 'var(--bg)', minHeight: '100vh' }}>
-        <div className="loader-logo" style={{ marginBottom: '20px' }}>SAREH · 2026</div>
+        <div className="loader-logo" style={{ marginBottom: '20px' }}>Dari Project · 2026</div>
         <h3 style={{ color: 'var(--ink2)', marginBottom: '10px' }}>Nenhuma Aula Encontrada</h3>
         <p style={{ color: 'var(--ink4)', maxWidth: '400px', margin: '0 auto 24px' }}>
           As unidades de ensino não foram carregadas. Isso geralmente acontece se as permissões (RLS) no Supabase não foram atualizadas para o seu e-mail.
@@ -119,12 +119,14 @@ export const App: React.FC = () => {
 
       <div className="topbar">
         <div>
-          <div className="topbar-logo">SAREH · Domiciliar</div>
-          <div className="topbar-name">Ione Jordão Ribeiro</div>
+          <div className="topbar-logo">Dari Project · 2026</div>
+          <div className="topbar-name" style={{ direction: 'rtl', textAlign: 'left' }}>
+            {user?.user_metadata?.full_name || 'دانش‌آmuz (Estudante)'}
+          </div>
         </div>
         <div style={{ textAlign: 'right' }}>
           <span style={{ fontSize: '11px', color: 'var(--ink4)' }}>
-            {role === 'student' ? 'Ione Jordão Ribeiro' : (settings?.med_name || 'Geocélia')}
+            {role === 'student' ? (user?.user_metadata?.full_name || 'Estudante') : (settings?.med_name || 'Professor(a)')}
           </span>
         </div>
       </div>
@@ -198,17 +200,21 @@ export const App: React.FC = () => {
           </button>
         </div>
       )}
-      <aside className="sidebar-kids">
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <h2 style={{ color: '#00D2A1', fontSize: '2rem', filter: 'drop-shadow(2px 2px 0px #fff)' }}>Aione 🚀</h2>
+      <aside className="sidebar-kids" style={{ background: 'rgba(216, 180, 216, 0.1)', backdropFilter: 'var(--glass)', borderRight: '1px solid var(--border)' }}>
+        <div style={{ textAlign: 'center', marginBottom: '48px', padding: '24px 0' }}>
+          <h2 style={{ color: 'var(--sage)', fontSize: '2.5rem', fontWeight: 900, filter: 'drop-shadow(0 4px 6px rgba(107, 142, 107, 0.1))', fontFamily: 'Fraunces, serif' }}>Dari 🦋</h2>
+          <div style={{ fontSize: '10px', color: 'var(--ink3)', letterSpacing: '2px', textTransform: 'uppercase', marginTop: '-5px' }}>Learning Support</div>
         </div>
 
         <button 
           className={`nav-link-kids ${activeTab === 'adventure' ? 'active' : ''}`}
           onClick={() => { setActiveTab('adventure'); setActiveUnit(null); }}
         >
-          <div className="icon-wrapper">⭐</div>
-          <span>Minhas Aulas</span>
+          <div className="icon-wrapper" style={{ background: 'var(--lavender)' }}>✨</div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <span style={{ direction: 'rtl', fontSize: '16px', fontWeight: 800 }}>صنف‌های من</span>
+            <span style={{ fontSize: '11px', color: 'var(--ink3)', fontWeight: 500 }}>Minhas Aulas</span>
+          </div>
         </button>
 
         {!isPreviewMode && role === 'admin' && (
@@ -216,8 +222,11 @@ export const App: React.FC = () => {
             className={`nav-link-kids ${activeTab === 'planning' ? 'active' : ''}`}
             onClick={() => setActiveTab('planning')}
           >
-            <div className="icon-wrapper">🗺️</div>
-            <span>Meu Mapa</span>
+            <div className="icon-wrapper" style={{ background: 'var(--sage)' }}>🌿</div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+              <span style={{ direction: 'rtl', fontSize: '16px', fontWeight: 800 }}>نقشه من</span>
+              <span style={{ fontSize: '11px', color: 'var(--ink3)', fontWeight: 500 }}>Planejamento</span>
+            </div>
           </button>
         )}
 
@@ -225,9 +234,21 @@ export const App: React.FC = () => {
           className={`nav-link-kids ${activeTab === 'whatsapp' ? 'active' : ''}`}
           onClick={() => { setActiveTab('whatsapp'); setActiveUnit(null); }}
         >
-          <div className="icon-wrapper">🎈</div>
-          <span>Ajuda</span>
+          <div className="icon-wrapper" style={{ background: 'var(--sky-blue)' }}>☁️</div>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <span style={{ direction: 'rtl', fontSize: '16px', fontWeight: 800 }}>کمک</span>
+            <span style={{ fontSize: '11px', color: 'var(--ink3)', fontWeight: 500 }}>Ajuda (Help)</span>
+          </div>
         </button>
+
+        <div style={{ marginTop: 'auto', padding: '20px' }}>
+           <button 
+             onClick={() => setActiveTab('settings')}
+             style={{ width: '100%', padding: '12px', borderRadius: '16px', background: 'white', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', fontWeight: 700 }}
+           >
+             ⚙️ تنظیمات (Config)
+           </button>
+        </div>
       </aside>
 
       <div className="main-content-wrapper">
@@ -240,8 +261,8 @@ export const App: React.FC = () => {
               }}
               completedPct={completedPct}
               sessionsCount={sessions.length}
-              mediatorName={settings?.med_name || 'Geocélia'}
-              mediatorPhone={settings?.med_phone || '554391637162'}
+              mediatorName={settings?.med_name || 'Willians Antoniazzi'}
+              mediatorPhone={settings?.med_phone || '5543999567378'}
               units={sortedUnits}
               answers={answers}
               isAdmin={role === 'admin' && !isPreviewMode}
@@ -317,7 +338,7 @@ export const App: React.FC = () => {
               </div>
               <WhatsAppAssistant
                 units={units}
-                mediatorPhone={settings?.med_phone || '554391637162'}
+                mediatorPhone={settings?.med_phone || '5543999567378'}
               />
             </div>
           )}
@@ -330,7 +351,7 @@ export const App: React.FC = () => {
               <div className="settings-section">
                 <div className="settings-row">
                   <div className="settings-row-label">E-mail logado</div>
-                  <div className="settings-row-sub">{role === 'admin' ? 'Administrador' : 'Mediadora'}</div>
+                  <div className="settings-row-sub">{role === 'admin' ? 'Administrador' : 'Mediador'}</div>
                 </div>
               </div>
               <button className="logout-btn" onClick={logout}>Sair / Trocar perfil</button>

@@ -1,31 +1,28 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,500;0,900;1,300&family=Outfit:wght@300;400;500;700;900&display=swap');
 
 :root {
-  /* --- ADVENTURE COLOR SYSTEM --- */
-  --red: #FF6B6B;
-  --teal: #0D9488;
-  --teal-light: #F0FDFA;
-  --teal-xlight: #CCFBF1;
-  --yellow: #F59E0B;
-  --purple: #6366F1;
-  --orange: #F97316;
-  --green: #10B981;
-  --sky: #F1F5F9;
+  /* --- WHIMSICAL DREAM COLOR SYSTEM --- */
+  --lavender: #D8B4D8;
+  --cream: #FFF8F0;
+  --sage: #6B8E6B;
+  --sky-blue: #6A9AB0;
+  --rose: #E5989B;
+  
+  --bg: var(--cream);
+  --card: rgba(255, 255, 255, 0.6);
+  --ink: #2D3436;
+  --ink1: #2D3436;
+  --ink2: #4A5568;
+  --ink3: #718096;
+  --ink4: #A0AEC0;
+  --border: rgba(216, 180, 216, 0.3);
+  
+  --r-sm: 16px;
+  --r-md: 28px;
+  --r-lg: 48px;
 
-  --bg: #FDFBF7;
-  --ink: #0F172A;
-  --ink1: #0F172A;
-  --ink2: #1E293B;
-  --ink3: #334155;
-  --ink4: #475569;
-  --ink-light: #64748B;
-  --border: #CBD5E1;
-
-  --r-sm: 12px;
-  --r-md: 24px;
-  --r-lg: 40px;
-
-  --shadow-soft: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+  --shadow-soft: 0 10px 30px -5px rgba(216, 180, 216, 0.2);
+  --glass: blur(12px);
 }
 
 .admin-mode-light {
@@ -6469,8 +6466,8 @@ select {
 }
 
 .level-hexagon {
-  width: 54px;
-  height: 60px;
+  width: 60px;
+  height: 68px;
   background: #e67e22;
   clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
   display: flex;

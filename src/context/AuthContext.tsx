@@ -16,12 +16,9 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const ADMIN_EMAILS = ['willians.souza@escola.pr.gov.br']; 
-const MEDIATOR_EMAILS = [
-  'ione.ribeiro@escola.pr.gov.br', 
-  'geocelia.ribeiro@escola.pr.gov.br'
-]; 
-const STUDENT_EMAILS = [
-  'elesindra.moriinelli@gmail.com'
+const MEDIATOR_EMAILS: string[] = []; 
+const STUDENT_EMAILS: string[] = [
+  // Qualquer e-mail não listado acima será tratado como estudante
 ]; 
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -58,25 +55,19 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (ADMIN_EMAILS.includes(user.email)) {
         console.log("AuthContext: User is ADMIN");
         setRole('admin');
-        localStorage.setItem('sareh_role', 'admin');
+        localStorage.setItem('dari_role', 'admin');
       } else if (MEDIATOR_EMAILS.includes(user.email)) {
         console.log("AuthContext: User is MEDIATOR");
         setRole('mediator');
-        localStorage.setItem('sareh_role', 'mediator');
-      } else if (STUDENT_EMAILS.includes(user.email)) {
-        console.log("AuthContext: User is STUDENT");
-        setRole('student');
-        localStorage.setItem('sareh_role', 'student');
+        localStorage.setItem('dari_role', 'mediator');
       } else {
-        console.warn("AuthContext: Unauthorized email:", user.email);
-        setRole(null);
-        localStorage.removeItem('sareh_role');
-        setAuthError(`O e-mail ${user.email} não está autorizado a acessar este sistema.`);
-        supabase.auth.signOut();
+        console.log("AuthContext: User is STUDENT (default)");
+        setRole('student');
+        localStorage.setItem('dari_role', 'student');
       }
     } else {
       setRole(null);
-      localStorage.removeItem('sareh_role');
+      localStorage.removeItem('dari_role');
     }
   };
 
@@ -93,15 +84,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const loginWithRole = (newRole: UserRole) => {
     setRole(newRole);
-    if (newRole) localStorage.setItem('sareh_role', newRole);
-    else localStorage.removeItem('sareh_role');
+    if (newRole) localStorage.setItem('dari_role', newRole);
+    else localStorage.removeItem('dari_role');
   };
 
   const logout = async () => {
     await supabase.auth.signOut();
     setRole(null);
     setUser(null);
-    localStorage.removeItem('sareh_role');
+    localStorage.removeItem('dari_role');
   };
 
   return (

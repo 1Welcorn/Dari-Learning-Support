@@ -123,11 +123,12 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
   const addWord = () => {
     if (!newWord.trim()) return;
     
-    // Suporte para formato "en / pt" ou apenas "en"
+    // Suporte para formato "en / pt / dari" ou "en / pt" ou apenas "en"
     const parts = newWord.split('/').map(p => p.trim());
     const wordObj = {
       en: parts[0],
       pt: parts[1] || parts[0],
+      dari: parts[2] || undefined,
       icon: '🏷️'
     };
     
@@ -633,7 +634,7 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
               <input 
                 type="text" 
                 className="vocab-input-v4"
-                placeholder="Nova palavra..."
+                placeholder="Ex: Fridge / Geladeira / یخچال"
                 value={newWord}
                 onChange={(e) => setNewWord(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && addWord()}

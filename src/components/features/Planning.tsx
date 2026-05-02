@@ -80,7 +80,7 @@ const AdminUnitResourceRow: React.FC<{
           <button 
             onClick={() => setShowReports(!showReports)}
             className={`admin-report-btn ${showReports ? 'active' : ''}`}
-            title="Ver Relatórios da Mediadora"
+            title="Ver Relatórios do Mediador"
             style={{
               padding: '10px',
               borderRadius: '12px',
@@ -161,7 +161,7 @@ const AdminUnitResourceRow: React.FC<{
                        <div key={s.id} style={{ padding: '12px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #f1f5f9' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
                              <span style={{ fontSize: '10px', fontWeight: 800, color: '#10b981' }}>{s.session_date}</span>
-                             <span style={{ fontSize: '9px', color: '#94a3b8' }}>Professora Mediadora</span>
+                             <span style={{ fontSize: '9px', color: '#94a3b8' }}>Professor Mediador</span>
                           </div>
                           <p style={{ fontSize: '13px', color: '#475569', margin: 0, whiteSpace: 'pre-wrap' }}>{s.note}</p>
                        </div>
@@ -174,7 +174,7 @@ const AdminUnitResourceRow: React.FC<{
               <textarea 
                  value={newNote}
                  onChange={(e) => setNewNote(e.target.value)}
-                 placeholder="Escreva aqui o relatório da professora mediadora sobre esta atividade..."
+                 placeholder="Escreva aqui o relatório do professor mediador sobre esta atividade..."
                  style={{ 
                     width: '100%', 
                     height: '80px', 
@@ -241,7 +241,7 @@ export const Planning: React.FC<PlanningProps> = ({ units, sessions, isAdmin, se
             </div>
           </div>
           
-          <h2 className="doc-title">PLANO DE TRABALHO DOCENTE - SAREH/Domiciliar</h2>
+          <h2 className="doc-title">PLANO DE TRABALHO DOCENTE - DARI/Domiciliar</h2>
           
           <table className="meta-table">
             <tbody>

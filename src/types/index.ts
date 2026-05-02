@@ -61,6 +61,7 @@ export interface Unit {
   learning_objectives?: string;
   methodology?: string;
   is_locked?: boolean;
+  title_dari?: string;
 }
 
 export interface Session {
@@ -98,4 +99,5 @@ export interface Lesson {
   iconOutline: string; // Caminho para a imagem P&B
   icon3D: string;      // Caminho para a imagem colorida
   xpValue: number;
+  titleDari?: string;
 }

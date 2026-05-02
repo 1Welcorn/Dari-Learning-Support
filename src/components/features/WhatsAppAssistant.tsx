@@ -36,7 +36,7 @@ export const WhatsAppAssistant: React.FC<WhatsAppAssistantProps> = ({ units, med
   return (
     <div className="screen">
       <p style={{ fontSize: '13px', color: 'var(--ink3)', marginBottom: '16px', lineHeight: '1.6' }}>
-        Edite, copie e envie as instruções pré-formatadas para a mediadora antes de cada sessão.
+        Edite, copie e envie as instruções pré-formatadas para o mediador antes de cada sessão.
       </p>
 
       {units.map((unit) => (

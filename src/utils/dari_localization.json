@@ -1,0 +1,160 @@
+[
+  {
+    "module": "ui_navigation",
+    "terms": [
+      {
+        "original_en": "My Classes",
+        "target_dari": "صنف‌های من",
+        "target_pt_br": "Minhas Aulas",
+        "phonetic_dari": "Senf-ha-ye man",
+        "context_note": "Navegação da interface principal. O termo 'Senf' é amplamente entendido para turmas/aulas no contexto educacional afegão.",
+        "icon_suggestion": "⭐ (Star) ou 📚 (Books)"
+      },
+      {
+        "original_en": "Help",
+        "target_dari": "کمک",
+        "target_pt_br": "Ajuda",
+        "phonetic_dari": "Komak",
+        "context_note": "Botão de suporte. Simples, direto e sem ambiguidades.",
+        "icon_suggestion": "🎈 (Balloon) ou 🆘 (SOS) ou ❓ (Question)"
+      },
+      {
+        "original_en": "Completed",
+        "target_dari": "تکمیل شد!",
+        "target_pt_br": "Concluído!",
+        "phonetic_dari": "Takmil shod!",
+        "context_note": "Status de conclusão de uma aula."
+      },
+      {
+        "original_en": "Start Now",
+        "target_dari": "حالا شروع کنید!",
+        "target_pt_br": "Começar Agora!",
+        "phonetic_dari": "Hala shoro' konid!",
+        "context_note": "Botão de ação para iniciar uma aula."
+      }
+    ]
+  },
+  {
+    "module": "pedagogical_instructions",
+    "terms": [
+      {
+        "original_en": "Read the text",
+        "target_dari": "متن را بخوانید",
+        "target_pt_br": "Leia o texto",
+        "phonetic_dari": "Matn ra bekhanid",
+        "context_note": "Instrução pedagógica direta. Uso formal e respeitoso (Farsi-ye Dari).",
+        "icon_suggestion": "📖 (Open book)"
+      },
+      {
+        "original_en": "Choose the correct answer",
+        "target_dari": "جواب درست را انتخاب کنید",
+        "target_pt_br": "Escolha a resposta correta",
+        "phonetic_dari": "Jawab-e dorost ra entekhab konid",
+        "context_note": "Padrão para questões de múltipla escolha.",
+        "icon_suggestion": "✅ (Check mark)"
+      }
+    ]
+  },
+  {
+    "module": "unit_1_kitchen_survival",
+    "terms": [
+      {
+        "original_en": "Bread",
+        "target_dari": "نان",
+        "target_pt_br": "Pão",
+        "phonetic_dari": "Naan",
+        "context_note": "O pão no Brasil (pão francês) é bem diferente do Naan tradicional afegão, mas a equivalência linguística é vital para idas à padaria.",
+        "icon_suggestion": "🥖 (Baguette/Bread)"
+      },
+      {
+        "original_en": "Spoon",
+        "target_dari": "قاشق",
+        "target_pt_br": "Colher",
+        "phonetic_dari": "Qashoq",
+        "context_note": "No Brasil, usa-se garfo e faca para a maioria das refeições. No Afeganistão, a colher e o próprio pão (Naan) são os principais utensílios. Palavra crucial para refeitórios.",
+        "icon_suggestion": "🥄 (Spoon)"
+      },
+      {
+        "original_en": "Water",
+        "target_dari": "آب",
+        "target_pt_br": "Água",
+        "phonetic_dari": "Aab",
+        "context_note": "Palavra de sobrevivência fundamental.",
+        "icon_suggestion": "💧 (Water drop) ou 🚰 (Tap)"
+      },
+      {
+        "original_en": "Rice",
+        "target_dari": "برنج",
+        "target_pt_br": "Arroz",
+        "phonetic_dari": "Berenj",
+        "context_note": "Alimento base em ambas as culturas. No Afeganistão (Kabuli Pulao), no Brasil (Arroz com feijão). Excelente ponte cultural.",
+        "icon_suggestion": "🍚 (Bowl of rice)"
+      }
+    ]
+  },
+  {
+    "module": "lesson_titles",
+    "terms": [
+      {
+        "original_en": "Kitchen Vocabulary",
+        "target_dari": "لغات آشپزخانه",
+        "target_pt_br": "Vocabulário da Cozinha",
+        "phonetic_dari": "Loghat-e Ashpazkhana"
+      },
+      {
+        "original_en": "Oral Comprehension",
+        "target_dari": "درک شنوایی",
+        "target_pt_br": "Compreensão Oral",
+        "phonetic_dari": "Dark-e Shenawa-i"
+      },
+      {
+        "original_en": "Personal Presentation",
+        "target_dari": "معرفی خود",
+        "target_pt_br": "Apresentação Pessoal",
+        "phonetic_dari": "Mo'arrefi-ye khod"
+      },
+      {
+        "original_en": "English in Daily Life",
+        "target_dari": "انگلیسی در زندگی روزمره",
+        "target_pt_br": "Inglês no Cotidiano",
+        "phonetic_dari": "Inglisi dar zendegi-ye rozmarra"
+      },
+      {
+        "original_en": "Digital Genres",
+        "target_dari": "موضوعات دیجیتال",
+        "target_pt_br": "Gêneros Digitais",
+        "phonetic_dari": "Mozu'at-e digital"
+      },
+      {
+        "original_en": "Recipe",
+        "target_dari": "طرز تهیه غذا",
+        "target_pt_br": "Receita",
+        "phonetic_dari": "Tarz-e tahiya-ye ghaza"
+      },
+      {
+        "original_en": "Colors and Fruits",
+        "target_dari": "رنگ‌ها و میوه‌ها",
+        "target_pt_br": "Cores e Frutas",
+        "phonetic_dari": "Rang-ha wa mewa-ha"
+      },
+      {
+        "original_en": "Numbers and Quantity",
+        "target_dari": "اعداد و مقدار",
+        "target_pt_br": "Números e Quantidade",
+        "phonetic_dari": "A'dad wa miqdar"
+      },
+      {
+        "original_en": "My Family",
+        "target_dari": "خانواده من",
+        "target_pt_br": "Minhas Aulas",
+        "phonetic_dari": "Khanwada-ye man"
+      },
+      {
+        "original_en": "Body Parts",
+        "target_dari": "اعضای بدن",
+        "target_pt_br": "Partes do Corpo",
+        "phonetic_dari": "A'za-ye badan"
+      }
+    ]
+  }
+]

@@ -129,12 +129,13 @@ export const useSarehData = () => {
     }
   };
 
-  const resetUnitAnswers = async (unitId: string) => {
+  const resetUnitAnswers = async (unitId: string): Promise<boolean> => {
     try {
       const { error } = await supabase.from('answers').delete().eq('unit_id', unitId);
       if (error) {
         console.error('Error resetting unit answers:', error);
         setSyncStatus('err');
+        return false;
       } else {
         setSyncStatus('ok');
         // Atualiza estado local removendo as chaves dessa unidade
@@ -147,10 +148,12 @@ export const useSarehData = () => {
           });
           return next;
         });
+        return true;
       }
     } catch (err) {
       console.error('Exception in resetUnitAnswers:', err);
       setSyncStatus('err');
+      return false;
     }
   };
 

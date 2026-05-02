@@ -76,9 +76,10 @@ export const Progress: React.FC<ProgressProps> = ({
   const totalPct = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
   const exportReport = () => {
-    let report = `RELATÓRIO PEDAGÓGICO SAREH - ATENDIMENTO DOMICILIAR\n`;
+    let report = `RELATÓRIO PEDAGÓGICO DARI - ATENDIMENTO DOMICILIAR\n`;
     report += `====================================================\n`;
     report += `Estudante: Ione Jordão Ribeiro\n`;
+    report += `Professor: Willians Antoniazzi\n`;
     report += `Data de Emissão: ${new Date().toLocaleDateString('pt-BR')}\n`;
     report += `Total de Módulos Concluídos: ${completedCount} / ${totalCount} (${totalPct}%)\n`;
     report += `Total de Encontros Realizados: ${sessions.length}\n`;

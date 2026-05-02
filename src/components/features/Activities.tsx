@@ -18,7 +18,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useStudentJourney } from '../../hooks/useStudentJourney';
 import WordFallGame from './WordFallGame';
 
-type StepType = 'game' | 'brief' | 'embed' | 'question' | 'report';
+type StepType = 'game' | 'brief' | 'embed' | 'question' | 'report' | 'congratulations';
 
 interface BaseStep {
   type: StepType;
@@ -55,7 +55,11 @@ interface ReportStep extends BaseStep {
   type: 'report';
 }
 
-type StepContent = GameStep | BriefStep | EmbedStep | QuestionStep | ReportStep;
+interface CongratsStep extends BaseStep {
+  type: 'congratulations';
+}
+
+type StepContent = GameStep | BriefStep | EmbedStep | QuestionStep | ReportStep | CongratsStep;
 
 const normalizeEmbedUrl = (rawUrl: string): string => {
   const trimmed = rawUrl.trim();
@@ -166,6 +170,7 @@ const StepNavigation: React.FC<{
   const [isSavingSession, setIsSavingSession] = useState(false);
   const [sessionSuccess, setSessionSuccess] = useState(false);
   const [isEditingBrief, setIsEditingBrief] = useState(false);
+  const [showBriefViewer, setShowBriefViewer] = useState(false);
   const [tempBrief, setTempBrief] = useState(unit.brief || '');
   const [tempLinks, setTempLinks] = useState<any[]>([]);
   const [stepReward, setStepReward] = useState(false);
@@ -263,8 +268,12 @@ const StepNavigation: React.FC<{
     steps.push({ type: 'question', q, idx: i });
   });
   
-  // 5. Final Report
-  steps.push({ type: 'report' });
+  // 5. Final Step (Report for Admin/Mediator, Congrats for Student)
+  if (isAdmin || isMediator) {
+    steps.push({ type: 'report' });
+  } else {
+    steps.push({ type: 'congratulations' });
+  }
 
   const current = steps[activeStep] as StepContent;
   const isLast = activeStep === steps.length - 1;
@@ -275,7 +284,8 @@ const StepNavigation: React.FC<{
     brief: 'Missao: Leia o guia e descubra o foco da aula.',
     embed: 'Missao: Complete a atividade interativa com atencao.',
     question: 'Missao: Responda com calma e mostre o que aprendeu.',
-    report: 'Missao final: Conte como foi a aula de hoje.'
+    report: 'Missao final: Conte como foi a aula de hoje.',
+    congratulations: 'Missão completa!'
   };
 
   const mascotByStepType: Record<StepType, string> = {
@@ -283,7 +293,8 @@ const StepNavigation: React.FC<{
     brief: 'Vamos aprender!',
     embed: 'Hora da atividade!',
     question: 'Voce consegue!',
-    report: 'Mandou bem!'
+    report: 'Mandou bem!',
+    congratulations: 'Parabéns!'
   };
 
   useEffect(() => {
@@ -326,17 +337,20 @@ const StepNavigation: React.FC<{
       <div className="profile-header-image-style" style={{ margin: '20px auto' }}>
         <div className="avatar-and-name">
           <div className="user-text-v7">
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-               <h2 style={{ fontSize: '24px', margin: 0, fontWeight: 900 }}>Oi, Ione! ☀️</h2>
-            </div>
-            <div className="xp-bar-mini">
-               <div className="xp-fill-mini" style={{ width: '15%' }}></div>
-            </div>
-            <small style={{ fontSize: '12px', fontWeight: 800, color: '#94a3b8' }}>0% da Jornada | XP: 34/2000</small>
+             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <h2 style={{ fontSize: '22px', margin: 0, fontWeight: 900 }}>خوش آمدید (Oi)! ☀️</h2>
+             </div>
+             <div className="xp-bar-mini">
+                <div className="xp-fill-mini" style={{ width: '15%' }}></div>
+             </div>
+             <small style={{ fontSize: '12px', fontWeight: 800, color: '#94a3b8', direction: 'rtl' }}>پیشرفت <span style={{fontSize: '10px'}}>(0% da Jornada)</span> | XP: 34/2000</small>
           </div>
           <div className="level-hexagon">
-             <span>Nível</span>
-             1
+             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: '1.1', marginBottom: '2px' }}>
+               <span style={{ fontSize: '11px', fontWeight: 900, direction: 'rtl', textTransform: 'none' }}>سطح</span>
+               <span style={{ fontSize: '8px', fontWeight: 800 }}>(NÍVEL)</span>
+             </div>
+             <span style={{ fontSize: '18px' }}>1</span>
           </div>
         </div>
 
@@ -345,7 +359,7 @@ const StepNavigation: React.FC<{
             <button 
               className={`header-nav-btn-v7 ${showGlobalReport ? 'active' : ''}`}
               onClick={() => setShowGlobalReport(!showGlobalReport)}
-              title="Registrar Relatório da Mediadora"
+              title="Registrar Relatório do Mediador"
               style={{
                 marginRight: '8px',
                 background: showGlobalReport ? '#f0fdfa' : 'white',
@@ -385,7 +399,7 @@ const StepNavigation: React.FC<{
           boxShadow: '0 10px 25px rgba(16, 185, 129, 0.1)'
         }}>
            <h4 style={{ margin: '0 0 12px', fontSize: '14px', color: '#1e293b', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '8px' }}>
-              <ClipboardList size={18} /> Relatório da Professora Mediadora
+              <ClipboardList size={18} /> Relatório do Professor Mediador
            </h4>
            <textarea 
               value={note}
@@ -455,7 +469,7 @@ const StepNavigation: React.FC<{
                    background: isCompleted ? '#dcfce7' : '#f1f5f9', 
                    color: isCompleted ? '#16a34a' : '#475569' 
                 }}>
-                   {isCompleted ? 'MISSÃO COMPLETA' : 'MISSÃO EM ANDAMENTO'}
+                   {isCompleted ? 'ماموریت انجام شد (MISSÃO COMPLETA)' : 'ماموریت در حال انجام (MISSÃO EM ANDAMENTO)'}
                 </span>
                 {unit.title.includes('—') ? (
                    <>
@@ -467,10 +481,13 @@ const StepNavigation: React.FC<{
                 ) : (
                    <h1 className="mission-title-v7 side">{unit.title}</h1>
                 )}
-                <p className="mission-sub-v7 side">Pratique o conteúdo desta unidade e teste sua velocidade para ganhar bônus!</p>
+                <p className="mission-sub-v7 side" style={{ direction: 'rtl' }}>
+                   محتوای این درس را تمرین کنید و سرعت خود را بسنجید!<br/>
+                   <span style={{fontSize: '12px', opacity: 0.8}}>(Pratique o conteúdo desta unidade e teste sua velocidade para ganhar bônus!)</span>
+                </p>
                 <div className="mission-perks-v7">
-                   <div className="perk-item-v7">✨ +{current.xp || 200} XP de Bônus</div>
-                   <div className="perk-item-v7">🏆 Troféu de Conclusão</div>
+                   <div className="perk-item-v7">✨ +{current.xp || 200} XP (امتیاز اضافی)</div>
+                   <div className="perk-item-v7">🏆 Troféu (جام پایان)</div>
                 </div>
              </div>
 
@@ -480,10 +497,11 @@ const StepNavigation: React.FC<{
                    <img src={wordGameImg} alt="Word Game Skin" className="word-game-icon-3d" />
                 </div>
                 <div className="mission-footer-v7" style={{ marginTop: 0 }}>
-                   <h1 className="mission-footer-title">{current.title || 'Desafio da Unidade'}</h1>
+                   <h1 className="mission-footer-title" style={{ direction: 'rtl' }}>{current.title || 'چالش درس (Desafio)'}</h1>
                    <p className="mission-mechanic">Mecânica: {current.mechanic || 'Atividade Interativa'}</p>
-                   <button className="play-btn-v7-mission" onClick={onStartGame} style={{ background: currentColors.accent }}>
-                      Começar Missão!
+                   <button className="play-btn-v7-mission" onClick={onStartGame} style={{ background: currentColors.accent, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                      <span style={{ fontWeight: 900, fontSize: '15px' }}>شروع ماموریت</span>
+                      <span style={{ fontSize: '10px' }}>(Começar Missão!)</span>
                    </button>
                 </div>
              </div>
@@ -497,14 +515,17 @@ const StepNavigation: React.FC<{
                    background: isCompleted ? '#dcfce7' : '#fef3c7', 
                    color: isCompleted ? '#16a34a' : '#92400e' 
                 }}>
-                   {isCompleted ? 'MISSÃO COMPLETA' : 'GUIA DE ESTUDO'}
+                   {isCompleted ? 'ماموریت انجام شد (MISSÃO COMPLETA)' : 'راهنمای مطالعه (GUIA DE ESTUDO)'}
                 </span>
                 <div className="unit-label-badge-v7">{unit.title.split('—')[0].trim()}</div>
                 <h1 className="mission-subtitle-v7 main-theme">{unit.title.split('—')[1].trim()}</h1>
-                <p className="mission-sub-v7 side">Mergulhe no conteúdo teórico para se preparar para os desafios práticos.</p>
+                <p className="mission-sub-v7 side" style={{ direction: 'rtl' }}>
+                   محتوای تئوری را برای آماده شدن برای چالش‌های عملی مطالعه کنید.<br/>
+                   <span style={{fontSize: '12px', opacity: 0.8}}>(Mergulhe no conteúdo teórico para se preparar para os desafios práticos.)</span>
+                </p>
                 <div className="mission-perks-v7">
-                   <div className="perk-item-v7">📖 Leitura Atenta</div>
-                   <div className="perk-item-v7">💡 Dicas Importantes</div>
+                   <div className="perk-item-v7">📖 Leitura (مطالعه دقیق)</div>
+                   <div className="perk-item-v7">💡 Dicas (نکات مهم)</div>
                 </div>
              </div>
              
@@ -518,9 +539,13 @@ const StepNavigation: React.FC<{
                    })()}
                 </div>
                 <div className="mission-footer-v7">
-                   <h1 className="mission-footer-title">Guia da Unidade</h1>
-                   <button className="play-btn-v7-mission" onClick={() => setIsEditingBrief(!isEditingBrief)} style={{ background: '#f59e0b' }}>
-                      {isAdmin ? 'Editar Conteúdo' : 'Explorar Guia'}
+                   <h1 className="mission-footer-title" style={{ direction: 'rtl' }}>راهنمای درس (Guia)</h1>
+                   <button className="play-btn-v7-mission" onClick={() => {
+                       if (isAdmin) setIsEditingBrief(!isEditingBrief);
+                       else setShowBriefViewer(true);
+                   }} style={{ background: '#f59e0b', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                      <span style={{ fontWeight: 900, fontSize: '15px' }}>{isAdmin ? 'Editar Conteúdo' : 'مرور راهنما'}</span>
+                      <span style={{ fontSize: '10px' }}>{isAdmin ? '' : '(Explorar Guia)'}</span>
                    </button>
                 </div>
              </div>
@@ -603,7 +628,7 @@ const StepNavigation: React.FC<{
                    className="report-textarea-v7"
                    value={note}
                    onChange={(e) => setNote(e.target.value)}
-                   placeholder="Ex: Ione demonstrou facilidade com as cores..."
+                   placeholder="Ex: A aluna demonstrou facilidade..."
                 />
                 <button 
                    className={`finish-btn-v7 ${sessionSuccess ? 'success' : ''}`}
@@ -612,6 +637,34 @@ const StepNavigation: React.FC<{
                    style={{ background: sessionSuccess ? '#10b981' : currentColors.main }}
                  >
                    {isSavingSession ? 'Salvando...' : sessionSuccess ? 'Concluído! 🎉' : 'Finalizar e Salvar'}
+                </button>
+             </div>
+          </div>
+        )}
+
+        {current.type === 'congratulations' && (
+          <div className="mission-horizontal-v7 report-step">
+             <div className="mission-intro-section-v7 report-info" style={{ width: '100%', alignItems: 'center', textAlign: 'center' }}>
+                <span className="mission-tag-v7" style={{ background: '#dcfce7', color: '#16a34a' }}>
+                   ماموریت انجام شد (MISSÃO COMPLETA)
+                </span>
+                <div style={{ fontSize: '70px', margin: '20px 0' }}>🏆</div>
+                <h1 className="mission-title-v7 side" style={{ direction: 'rtl', margin: '0 0 10px 0' }}>
+                   آفرین! شما این درس را تمام کردید.
+                </h1>
+                <p style={{ color: '#64748b', fontSize: '16px', marginBottom: '30px' }}>
+                   (Parabéns! Você concluiu esta lição.)
+                </p>
+                <button 
+                   className="finish-btn-v7 success"
+                   onClick={async () => {
+                      await completeLesson(unit.id, 50);
+                      onToggle?.();
+                   }}
+                   style={{ background: '#10b981', padding: '16px 32px', borderRadius: '16px', color: 'white', fontWeight: 900, fontSize: '16px', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}
+                 >
+                   <span>پایان و بازگشت</span>
+                   <span style={{fontSize: '11px'}}>(Finalizar e Voltar)</span>
                 </button>
              </div>
           </div>
@@ -744,6 +797,30 @@ const StepNavigation: React.FC<{
              </div>
            </div>
         )}
+
+        {showBriefViewer && !isAdmin && (
+           <div className="brief-editor-v5-modern premium-overlay" style={{ background: 'rgba(255,255,255,0.95)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+             <div className="editor-container-v7" style={{ width: '90%', maxWidth: '800px', maxHeight: '85vh', overflowY: 'auto', background: 'white', borderRadius: '24px', padding: '40px', boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #f1f5f9', paddingBottom: '20px', marginBottom: '30px' }}>
+                   <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#1e293b', direction: 'rtl', margin: 0 }}>
+                     راهنمای مطالعه <span style={{ fontSize: '14px', color: '#64748b' }}>(Guia de Estudo)</span>
+                   </h2>
+                   <button onClick={() => setShowBriefViewer(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
+                      <X size={24} />
+                   </button>
+                </div>
+                <div 
+                   className="brief-content-viewer" 
+                   dangerouslySetInnerHTML={{ __html: unit.brief || '<p style="text-align:center; color:#94a3b8">Sem conteúdo.</p>' }} 
+                   style={{ fontSize: '18px', lineHeight: '1.6', color: '#334155' }}
+                />
+                <button onClick={() => setShowBriefViewer(false)} style={{ marginTop: '40px', width: '100%', padding: '16px', borderRadius: '16px', background: '#10b981', color: 'white', border: 'none', cursor: 'pointer', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                   <span style={{ fontWeight: 900, fontSize: '16px' }}>بستن راهنما</span>
+                   <span style={{ fontSize: '11px' }}>(FECHAR GUIA)</span>
+                </button>
+             </div>
+           </div>
+         )}
 
         {!unit.hide_nav && (
           <div className="step-counter-v7">
@@ -1046,29 +1123,35 @@ export const Activities: React.FC<{
               </div>
               <div className="user-text-v7">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                   <h2>Oi, Ione!</h2>
+                   <h2 style={{ fontSize: '22px', margin: 0, fontWeight: 900 }}>خوش آمدید (Oi)!</h2>
                    <span style={{ fontSize: '24px' }}>☀️</span>
                 </div>
                 <div className="xp-bar-mini">
                    <div className="xp-fill-mini" style={{ width: '15%' }}></div>
                 </div>
-                <small>0% da Jornada | XP: 34/2000</small>
+                <small style={{ direction: 'rtl' }}>پیشرفت <span style={{fontSize: '9px'}}>(0% da Jornada)</span> | XP: 34/2000</small>
               </div>
               <div className="level-hexagon">
-                 <span>Nível</span>
-                 1
+                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: '1.1', marginBottom: '2px' }}>
+                   <span style={{ fontSize: '11px', fontWeight: 900, direction: 'rtl', textTransform: 'none' }}>سطح</span>
+                   <span style={{ fontSize: '8px', fontWeight: 800 }}>(NÍVEL)</span>
+                 </div>
+                 <span style={{ fontSize: '18px' }}>1</span>
               </div>
             </div>
             <div className="stats-v7">
-              <div className="stats-pill-red">🔥 0 Dias <small style={{ fontSize: '8px', display: 'block', opacity: 0.7 }}>CHAMA DE SEQUÊNCIA</small></div>
-              <div className="stats-pill-yellow">💰 2 <small style={{ fontSize: '8px', display: 'block', opacity: 0.7 }}>COINS</small></div>
+              <div className="stats-pill-red">🔥 0 Dias <small style={{ fontSize: '8px', display: 'block', opacity: 0.7 }}>شعله (CHAMA)</small></div>
+              <div className="stats-pill-yellow">💰 2 <small style={{ fontSize: '8px', display: 'block', opacity: 0.7 }}>سکه (COINS)</small></div>
             </div>
           </div>
 
           <div className="mission-banner-v7">
-            <span className="jornada-badge-v7">JORNADA</span>
-            <h1>Mission: Módulo 1 — Primeiros Passos</h1>
-            <p>Complete as {sortedUnits.length} aulas para ganhar o troféu de bronze!</p>
+            <span className="jornada-badge-v7" style={{background: '#dbeafe', color: '#1e40af'}}>سفر یادگیری (JORNADA)</span>
+            <h1 style={{ direction: 'rtl', textAlign: 'right' }}>ماژول ۱ — اولین قدم‌ها <br/><span style={{fontSize: '14px', color: '#64748b'}}>(Módulo 1 — Primeiros Passos)</span></h1>
+            <p style={{ direction: 'rtl', textAlign: 'right' }}>
+               برای دریافت جام برنز، تمام {sortedUnits.length} درس را کامل کنید!<br/>
+               <span style={{fontSize: '12px'}}>(Complete as {sortedUnits.length} aulas para ganhar o troféu de bronze!)</span>
+            </p>
           </div>
 
           <div className="lessons-grid-v7">
@@ -1151,7 +1234,7 @@ export const Activities: React.FC<{
               <WordFallGame 
                 unitTitle={unit?.title || 'Desafio de Digitação'}
                 words={sanitizedWords} 
-                onGameOver={(s, w) => {
+                onGameOver={(s: number, w: number) => {
                   if (onGameOver) onGameOver(s, w);
                 }}
                 onBack={() => setActiveGameUnitId(null)}

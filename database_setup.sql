@@ -105,6 +105,7 @@ ALTER PUBLICATION supabase_realtime ADD TABLE units, sessions, answers, settings
 INSERT INTO settings (key, value) VALUES 
 ('admin_pin', '1234'),
 ('med_pin', '5678'),
-('med_name', 'Mediadora'),
+('med_name', 'Willians Antoniazzi'),
+('med_phone', '5543999567378'),
 ('student_email', 'ione.ribeiro@escola.pr.gov.br')
 ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value;
