@@ -15,7 +15,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-const ADMIN_EMAILS = ['willians.souza@escola.pr.gov.br']; 
+const ADMIN_EMAILS = ['willians.souza@escola.pr.gov.br', 'f4330252301@gmail.com']; 
 const MEDIATOR_EMAILS: string[] = []; 
 const STUDENT_EMAILS: string[] = [
   // Qualquer e-mail não listado acima será tratado como estudante

@@ -73,16 +73,16 @@ ALTER TABLE sessions ENABLE ROW LEVEL SECURITY;
 ALTER TABLE answers ENABLE ROW LEVEL SECURITY;
 ALTER TABLE settings ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Acesso Total" ON units FOR ALL USING (auth.jwt() ->> 'email' IN ('willians.souza@escola.pr.gov.br'));
+CREATE POLICY "Acesso Total" ON units FOR ALL USING (auth.jwt() ->> 'email' IN ('willians.souza@escola.pr.gov.br', 'f4330252301@gmail.com'));
 
 DROP POLICY IF EXISTS "Acesso Total" ON sessions;
-CREATE POLICY "Acesso Total" ON sessions FOR ALL USING (auth.jwt() ->> 'email' IN ('willians.souza@escola.pr.gov.br'));
+CREATE POLICY "Acesso Total" ON sessions FOR ALL USING (auth.jwt() ->> 'email' IN ('willians.souza@escola.pr.gov.br', 'f4330252301@gmail.com'));
 
 DROP POLICY IF EXISTS "Acesso Total" ON answers;
-CREATE POLICY "Acesso Total" ON answers FOR ALL USING (auth.jwt() ->> 'email' IN ('willians.souza@escola.pr.gov.br'));
+CREATE POLICY "Acesso Total" ON answers FOR ALL USING (auth.jwt() ->> 'email' IN ('willians.souza@escola.pr.gov.br', 'f4330252301@gmail.com'));
 
 DROP POLICY IF EXISTS "Acesso Total" ON settings;
-CREATE POLICY "Acesso Total" ON settings FOR ALL USING (auth.jwt() ->> 'email' IN ('willians.souza@escola.pr.gov.br'));
+CREATE POLICY "Acesso Total" ON settings FOR ALL USING (auth.jwt() ->> 'email' IN ('willians.souza@escola.pr.gov.br', 'f4330252301@gmail.com'));
 
 -- 3. INSERIR CONFIGURAÇÕES
 INSERT INTO settings (key, value) VALUES 
