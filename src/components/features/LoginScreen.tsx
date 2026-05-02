@@ -11,7 +11,7 @@ export const LoginScreen: React.FC<{ settings: any }> = () => {
   return (
     <div id="login-screen">
       <div className="login-card">
-        <div className="login-logo" style={{ marginBottom: '15px' }}>Dari Project</div>
+        <div className="login-logo" style={{ marginBottom: '15px', fontSize: '24px', textAlign: 'center' }}>Projeto Dari: Pontes de Esperança</div>
         <h1 className="login-title" style={{ direction: 'rtl', marginBottom: '8px' }}>
           خوش آمدید <br/><span style={{fontSize: '22px', color: '#64748b', fontWeight: 700}}>(Bem-vinda!)</span>
         </h1>
@@ -73,7 +73,7 @@ export const LoginScreen: React.FC<{ settings: any }> = () => {
         )}
 
         <div style={{ marginTop: '40px', fontSize: '11px', color: 'var(--ink4)', textAlign: 'center' }}>
-          Dari Project · 2026
+          Projeto Dari: Pontes de Esperança · 2026
         </div>
       </div>
     </div>
