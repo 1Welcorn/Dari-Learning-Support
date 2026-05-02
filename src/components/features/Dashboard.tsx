@@ -110,17 +110,22 @@ export const Dashboard: React.FC<DashboardProps> = ({
             
             const t = (unit.sub || unit.title || '').toLowerCase();
             let base = '';
-            if (t.includes('cozinha')) base = 'aula-1';
-            else if (t.includes('família')) base = 'aula-2';
-            else if (t.includes('cores')) base = 'aula-3';
-            else if (t.includes('números')) base = 'aula-4';
-            else if (t.includes('sentimentos')) base = 'aula-5';
-            else if (t.includes('rotina')) base = 'aula-6';
-            else if (t.includes('oral')) base = 'aula-2';
-            else if (t.includes('apresentação')) base = 'aula-3';
-            else if (t.includes('cotidiano')) base = 'aula-4';
-            else if (t.includes('digitais')) base = 'aula-5';
-            else if (t.includes('receita')) base = 'aula-6';
+            if (unit.id === 'u1') base = 'aula-1';
+            else if (unit.id === 'u2') base = 'aula-2';
+            else if (unit.id === 'u3') base = 'aula-3';
+            else if (unit.id === 'u4') base = 'aula-4';
+            else if (unit.id === 'u5') base = 'aula-5';
+            else if (unit.id === 'u6') base = 'aula-6';
+            else {
+              // Fallback por palavra caso o ID mude
+              const t = (unit.sub || unit.title || '').toLowerCase();
+              if (t.includes('cozinha')) base = 'aula-1';
+              else if (t.includes('família')) base = 'aula-2';
+              else if (t.includes('cores')) base = 'aula-3';
+              else if (t.includes('números')) base = 'aula-4';
+              else if (t.includes('sentimentos')) base = 'aula-5';
+              else if (t.includes('rotina')) base = 'aula-6';
+            }
 
             let titleDari = '';
             if (t.includes('cozinha')) titleDari = 'لغات آشپزخانه';
