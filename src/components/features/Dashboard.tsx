@@ -104,8 +104,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Grid de Aulas */}
         <div className="trail-grid-v5" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
           {units.map((unit, idx) => {
-            const isDone = unit.questions?.every((_: any, i: number) => answers[`${unit.id}-${i}`]?.is_done);
-            const isLocked = !isAdmin && (unit.is_locked || (idx > 0 && !units[idx-1].questions?.every((_: any, i: number) => answers[`${units[idx-1].id}-${i}`]?.is_done)));
+            const hasQuestions = unit.questions && unit.questions.length > 0;
+            const isDone = hasQuestions && unit.questions.every((_: any, i: number) => answers[`${unit.id}-${i}`]?.is_done);
+            const isLocked = !isAdmin && (unit.is_locked || (idx > 0 && (!units[idx-1].questions || units[idx-1].questions.length === 0 || !units[idx-1].questions.every((_: any, i: number) => answers[`${units[idx-1].id}-${i}`]?.is_done))));
             
             const t = (unit.sub || unit.title || '').toLowerCase();
             let base = '';
