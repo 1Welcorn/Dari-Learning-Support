@@ -9,6 +9,7 @@ import helpButton from './assets/help-button.png';
 import plansButton from './assets/plans-button.png';
 import { LoginScreen } from './components/features/LoginScreen';
 import { Dashboard } from './components/features/Dashboard';
+import tulipIcon from './assets/tulip icon.png';
 import { Activities } from './components/features/Activities';
 import { Progress } from './components/features/Progress';
 import { Planning } from './components/features/Planning';
@@ -202,8 +203,9 @@ export const App: React.FC = () => {
       )}
       <aside className="sidebar-kids" style={{ background: 'rgba(216, 180, 216, 0.1)', backdropFilter: 'var(--glass)', borderRight: '1px solid var(--border)' }}>
         <div style={{ textAlign: 'center', marginBottom: '48px', padding: '24px 0' }}>
-          <h2 style={{ color: 'var(--sage)', fontSize: '2.5rem', fontWeight: 900, filter: 'drop-shadow(0 4px 6px rgba(107, 142, 107, 0.1))', fontFamily: 'Fraunces, serif' }}>Dari 🦋</h2>
-          <div style={{ fontSize: '10px', color: 'var(--ink3)', letterSpacing: '2px', textTransform: 'uppercase', marginTop: '-5px' }}>Learning Support</div>
+          <img src={tulipIcon} alt="Tulip Logo" style={{ width: '64px', height: '64px', marginBottom: '10px' }} />
+          <h2 style={{ color: 'var(--lavender)', fontSize: '2rem', fontWeight: 900, filter: 'drop-shadow(0 4px 6px rgba(255, 183, 197, 0.2))', fontFamily: 'Fraunces, serif' }}>Projeto Dari</h2>
+          <div style={{ fontSize: '10px', color: 'var(--ink3)', letterSpacing: '2px', textTransform: 'uppercase', marginTop: '-5px' }}>Pontes de Esperança</div>
         </div>
 
         <button 
