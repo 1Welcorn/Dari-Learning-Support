@@ -3,7 +3,7 @@ import { supabase } from '../../services/supabase';
 import { Save, Plus, Trash2, BookOpen, Target, Lightbulb, ChevronLeft, Eye, X, Globe, Lock, Unlock } from 'lucide-react';
 import { UnitCard } from './Activities';
 import { COLORS } from '../../constants';
-import { useSarehData } from '../../hooks/useData';
+import { useDariData } from '../../hooks/useData';
 
 interface EmbedActivity {
   url: string;
@@ -50,7 +50,7 @@ const normalizeEmbedUrl = (rawUrl: string): string => {
 };
 
 const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateUnit }) => {
-  // const { updateUnit } = useSarehData(); - Removido para evitar conflito de canais realtime
+  // const { updateUnit } = useDariData(); - Removido para evitar conflito de canais realtime
   const [loading, setLoading] = useState(true);
   const [unitData, setUnitData] = useState<any>(null);
   const [newWord, setNewWord] = useState("");

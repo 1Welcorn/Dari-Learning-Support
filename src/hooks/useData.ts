@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../services/supabase';
 import type { Unit, Session, Answer, AppSettings } from '../types';
 
-export const useSarehData = () => {
+export const useDariData = () => {
   const [units, setUnits] = useState<Unit[]>([]);
   const [sessions, setSessions] = useState<Session[]>([]);
   const [answers, setAnswers] = useState<Record<string, Answer>>({});
@@ -55,7 +55,7 @@ export const useSarehData = () => {
     fetchData();
 
     // Inscrição em tempo real com nome único para evitar conflitos entre instâncias do hook
-    const channelId = `sareh-realtime-${Math.random().toString(36).substring(7)}`;
+    const channelId = `dari-realtime-${Math.random().toString(36).substring(7)}`;
     const channel = supabase.channel(channelId)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'units' }, fetchData)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'sessions' }, fetchData)

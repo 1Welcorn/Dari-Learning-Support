@@ -63,7 +63,7 @@ export const App: React.FC = () => {
       if (!sortedUnits || sortedUnits.length === 0) return 0;
       const completedUnits = sortedUnits.filter(u => {
         if (!u || !u.questions) return false;
-        return u.questions.every((_, i) => answers[`${u.id}-${i}`]?.is_done);
+        return u.questions.every((_: any, i: number) => answers[`${u.id}-${i}`]?.is_done);
       }).length;
       return Math.round((completedUnits / sortedUnits.length) * 100);
     } catch (e) {
@@ -76,7 +76,7 @@ export const App: React.FC = () => {
     const status: Record<string, boolean> = {};
     if (!sortedUnits) return status;
     sortedUnits.forEach(u => {
-      status[u.id] = u.questions.every((_, i) => answers[`${u.id}-${i}`]?.is_done);
+      status[u.id] = u.questions.every((_: any, i: number) => answers[`${u.id}-${i}`]?.is_done);
     });
     return status;
   }, [sortedUnits, answers]);
