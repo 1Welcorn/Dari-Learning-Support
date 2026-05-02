@@ -2,16 +2,16 @@
 
 :root {
   /* --- WHIMSICAL DREAM COLOR SYSTEM --- */
-  --lavender: #D8B4D8;
-  --cream: #FFF8F0;
-  --sage: #6B8E6B;
-  --sky-blue: #6A9AB0;
-  --rose: #E5989B;
+  --lavender: #FFB7C5;
+  --cream: #FFF5F5;
+  --sage: #95D5B2;
+  --sky-blue: #BDE0FE;
+  --rose: #FFC8DD;
   
   --bg: var(--cream);
   --card: rgba(255, 255, 255, 0.6);
-  --ink: #2D3436;
-  --ink1: #2D3436;
+  --ink: #4A304D;
+  --ink1: #4A304D;
   --ink2: #4A5568;
   --ink3: #718096;
   --ink4: #A0AEC0;
