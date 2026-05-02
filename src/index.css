@@ -2,20 +2,19 @@
 
 :root {
   /* --- WHIMSICAL DREAM COLOR SYSTEM --- */
-  --lavender: #FFB7C5;
-  --cream: #FFF5F5;
-  --sage: #95D5B2;
-  --sky-blue: #BDE0FE;
-  --rose: #FFC8DD;
+  --lavender: #FF8DA1; /* Rosa Tulipa mais vibrante para botões */
+  --cream: #FFF9FA;    /* Fundo quase branco para máxima clareza */
+  --sage: #2D6A4F;     /* Verde mais escuro para textos em fundo claro */
+  --sky-blue: #A2D2FF;
+  --rose: #FFAFCC;
   
   --bg: var(--cream);
-  --card: rgba(255, 255, 255, 0.6);
-  --ink: #4A304D;
-  --ink1: #4A304D;
-  --ink2: #4A5568;
-  --ink3: #718096;
-  --ink4: #A0AEC0;
-  --border: rgba(216, 180, 216, 0.3);
+  --card: #FFFFFF;
+  --ink1: #1A0F1A;     /* Texto quase preto para leitura perfeita */
+  --ink2: #3D2B3D;     /* Texto secundário escuro */
+  --ink3: #5C4B5C;
+  --ink4: #8B7A8B;
+  --border: #F0E2E5;
   
   --r-sm: 16px;
   --r-md: 28px;
