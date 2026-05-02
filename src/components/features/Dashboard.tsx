@@ -110,14 +110,17 @@ export const Dashboard: React.FC<DashboardProps> = ({
             
             const t = (unit.sub || unit.title || '').toLowerCase();
             let base = '';
-            if (t.includes('cozinha')) base = 'Aula 1 Vocabulário da Cozinha';
-            else if (t.includes('oral') || t.includes('escuta')) base = 'Aula 2 Compreensão Oral';
-            else if (t.includes('apresentação')) base = 'Aula 3 Apresentação Pessoal';
-            else if (t.includes('cotidiano')) base = 'Aula 4 Inglês no Cotidiano';
-            else if (t.includes('digitais')) base = 'Aula 5 Gêneros Digitais';
-            else if (t.includes('receita')) base = 'Aula 6 Receita';
-            else if (t.includes('cores')) base = 'Aula 7 Cores e Frutas';
-            else if (t.includes('números')) base = 'Aula 8 Números e Quantidade';
+            if (t.includes('cozinha')) base = 'aula-1';
+            else if (t.includes('família')) base = 'aula-2';
+            else if (t.includes('cores')) base = 'aula-3';
+            else if (t.includes('números')) base = 'aula-4';
+            else if (t.includes('sentimentos')) base = 'aula-5';
+            else if (t.includes('rotina')) base = 'aula-6';
+            else if (t.includes('oral')) base = 'aula-2';
+            else if (t.includes('apresentação')) base = 'aula-3';
+            else if (t.includes('cotidiano')) base = 'aula-4';
+            else if (t.includes('digitais')) base = 'aula-5';
+            else if (t.includes('receita')) base = 'aula-6';
 
             let titleDari = '';
             if (t.includes('cozinha')) titleDari = 'لغات آشپزخانه';
@@ -135,7 +138,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               id: unit.id,
               title: unit.sub || unit.title,
               status: isDone ? 'completed' : (isLocked ? 'locked' : 'not_started'),
-              iconOutline: base ? `/unit-icons/${base}-não iniciada.png` : '',
+              iconOutline: base ? `/unit-icons/${base}-off.png` : '',
               icon3D: base ? `/unit-icons/${base}.png` : '',
               xpValue: 100,
               titleDari: unit.title_dari || titleDari
