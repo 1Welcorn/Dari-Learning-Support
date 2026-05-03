@@ -16,8 +16,9 @@ import { Planning } from './components/features/Planning';
 import PlanningEditor from './components/features/PlanningEditor';
 import { WhatsAppAssistant } from './components/features/WhatsAppAssistant';
 import { useDariData } from './hooks/useData';
-import { useStudentJourney } from './hooks/useStudentJourney';
 import { speechService } from './utils/speech';
+import { DEFAULT_UNITS } from './constants';
+import { supabase } from './services/supabase';
 
 export const App: React.FC = () => {
   useEffect(() => {
@@ -32,8 +33,26 @@ export const App: React.FC = () => {
   const [editingUnitId, setEditingUnitId] = useState<string | null>(null);
   const {
     units, sessions, answers, settings, loading, syncStatus,
-    saveAnswer, saveSession, updateSession, deleteSession, resetUnitAnswers, updateUnit, createUnit
+    saveAnswer, saveSession, updateSession, deleteSession, resetUnitAnswers, updateUnit, createUnit, refresh
   } = useDariData();
+
+  // Auto-sync missing default units to Supabase
+  useEffect(() => {
+    const syncMissingUnits = async () => {
+      if (role === 'admin' && units && units.length > 0 && units.length < DEFAULT_UNITS.length) {
+        console.log("Syncing missing units to Supabase...");
+        for (const defaultUnit of DEFAULT_UNITS) {
+          const exists = units.find(u => u.id === defaultUnit.id);
+          if (!exists) {
+            console.log(`Adding missing unit: ${defaultUnit.title}`);
+            await supabase.from('units').insert(defaultUnit);
+          }
+        }
+        refresh?.();
+      }
+    };
+    syncMissingUnits();
+  }, [units, role, refresh]);
 
   // Student Journey Hook for rewards
   const { addStudentRewards } = useStudentJourney(user?.id || '');
