@@ -564,7 +564,6 @@ const StepNavigation: React.FC<{
                    })()}
                 </div>
                 <div className="mission-footer-v7">
-                   <h1 className="mission-footer-title" style={{ direction: 'rtl' }}>راهنمای درس (Guia)</h1>
                    <button className="play-btn-v7-mission" onClick={() => {
                        if (isAdmin) setIsEditingBrief(!isEditingBrief);
                        else handleNext();
