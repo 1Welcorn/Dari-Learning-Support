@@ -274,8 +274,7 @@ export const App: React.FC = () => {
           >
             <div className="icon-wrapper" style={{ background: 'var(--sage)' }}>🌿</div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <span style={{ direction: 'rtl', fontSize: '22px', fontWeight: 900 }}>نقشه من</span>
-              <span style={{ fontSize: '14px', fontWeight: 700, opacity: 0.9 }}>Planejamento</span>
+              <span style={{ fontSize: '18px', fontWeight: 900 }}>Planejamento</span>
             </div>
           </button>
         )}
