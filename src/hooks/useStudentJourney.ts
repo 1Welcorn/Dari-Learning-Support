@@ -14,15 +14,12 @@ export const useStudentJourney = (userId: string) => {
       // 1. Fetch Profile (XP, Level, Streak)
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('*')
+        .select('id, xp, level, streak, stars') // Request specific columns instead of *
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
       if (profileError) {
-        // Silenciar erro de tabela inexistente
-        if (profileError.code !== 'PGRST116') {
-          console.error('Error fetching profile:', profileError);
-        }
+        console.warn('Profile sync skipped (likely schema mismatch):', profileError.message);
       }
 
       // 2. Fetch Unit Progress
@@ -32,15 +29,14 @@ export const useStudentJourney = (userId: string) => {
         .eq('profile_id', userId);
 
       if (progressError) {
-        if (progressError.code !== 'PGRST116') {
-          console.error('Error fetching progress:', progressError);
-        }
+        console.warn('Progress sync skipped:', progressError.message);
       }
 
-      setStats(profileData);
+      setStats(profileData || { xp: 0, level: 1, streak: 0, stars: 0 });
       setProgress(progressData || []);
     } catch (err) {
-      // Falha silenciosa para evitar loops
+      console.error('Journey data fallback activated');
+      setStats({ xp: 0, level: 1, streak: 0, stars: 0 });
     } finally {
       setLoading(false);
     }
