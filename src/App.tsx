@@ -263,7 +263,7 @@ export const App: React.FC = () => {
           <div className="icon-wrapper" style={{ background: 'var(--lavender)' }}>✨</div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
             <span style={{ direction: 'rtl', fontSize: '22px', fontWeight: 900, lineHeight: 1 }}>صنف‌های من</span>
-            <span style={{ fontSize: '14px', fontWeight: 700, opacity: 0.9, marginTop: '-2px' }}>Minhas Aulas</span>
+            <span style={{ fontSize: '14px', fontWeight: 700, opacity: 0.9, marginTop: '4px' }}>Minhas Aulas</span>
           </div>
         </button>
 
@@ -286,7 +286,7 @@ export const App: React.FC = () => {
           <div className="icon-wrapper" style={{ background: 'var(--sky-blue)' }}>☁️</div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
             <span style={{ direction: 'rtl', fontSize: '22px', fontWeight: 900, lineHeight: 1 }}>کمک</span>
-            <span style={{ fontSize: '14px', fontWeight: 700, opacity: 0.9, marginTop: '-2px' }}>Ajuda (Help)</span>
+            <span style={{ fontSize: '14px', fontWeight: 700, opacity: 0.9, marginTop: '4px' }}>Ajuda (Help)</span>
           </div>
         </button>
 
@@ -298,7 +298,7 @@ export const App: React.FC = () => {
              <div className="icon-wrapper" style={{ background: '#FF4D4D' }}>🚪</div>
              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                <span style={{ direction: 'rtl', fontSize: '18px', fontWeight: 900, lineHeight: 1 }}>خروج</span>
-               <span style={{ fontSize: '12px', fontWeight: 700, opacity: 0.9, marginTop: '-2px' }}>Sair (Logout)</span>
+               <span style={{ fontSize: '12px', fontWeight: 700, opacity: 0.9, marginTop: '4px' }}>Sair (Logout)</span>
              </div>
            </button>
         </div>
