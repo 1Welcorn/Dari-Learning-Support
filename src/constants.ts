@@ -24,7 +24,7 @@ export const DEFAULT_UNITS: Unit[] = [
    plan_c:'Vocabulário da cozinha; palavras-objeto',plan_h:'Identificar palavras em inglês por contexto',plan_e:'Objetos reais; leitura em voz alta',plan_a:'Apontamento correto',wa:'Aula 1 — Nossa cozinha',questions:[{q:'O que significa SPOON?',type:'mc',opts:['Colher','Garfo','Faca','Panela']}]},
   
   {id:'u7',color:'natural',sort_order:1,title:'Cores e Frutas',sub:'Aula 2',
-   icon3D: '/unit-icons/Cores e Frutas.png', iconOutline: '/unit-icons/Aula 7 Cores e Frutas-não iniciada.png',
+   icon3D: '/unit-icons/Aula 7 Cores e Frutas.png', iconOutline: '/unit-icons/Aula 7 Cores e Frutas-não iniciada.png',
    brief:'Use frutas reais.',plan_c:'Cores e frutas',plan_h:'Associar cores a objetos',plan_e:'Frutas reais',plan_a:'Identificação correta',wa:'Aula 2 — Cores e Frutas',questions:[{q:'Como se diz VERMELHO em inglês?',type:'mc',opts:['Red','Blue','Green','Yellow']}]},
   
   {id:'u8',color:'natural',sort_order:2,title:'Números e Quantidade',sub:'Aula 3',

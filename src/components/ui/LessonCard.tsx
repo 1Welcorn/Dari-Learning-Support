@@ -26,7 +26,7 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
       'u4': '/unit-icons/aula-4.png',
       'u5': '/unit-icons/aula-5.png',
       'u6': '/unit-icons/aula-6.png',
-      'u7': '/unit-icons/Cores e Frutas.png',
+      'u7': '/unit-icons/Aula 7 Cores e Frutas.png',
       'u8': '/unit-icons/Aula 8 Números e Quantidade.png',
       'u9': '/unit-icons/Minha Família.png',
       'u10': '/unit-icons/Partes do Corpo.png',
