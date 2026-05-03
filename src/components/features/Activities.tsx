@@ -338,7 +338,7 @@ const StepNavigation: React.FC<{
         <div className="avatar-and-name">
           <div className="user-text-v7">
              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <h2 style={{ fontSize: '22px', margin: 0, fontWeight: 900 }}>خوش آمدید (Oi)! ☀️</h2>
+                <h2 style={{ fontSize: '22px', margin: 0, fontWeight: 900 }}>English classes خوش آمدید (Oi)! ☀️</h2>
              </div>
              <div className="xp-bar-mini">
                 <div className="xp-fill-mini" style={{ width: '15%' }}></div>
@@ -1219,7 +1219,7 @@ export const Activities: React.FC<{
               </div>
               <div className="user-text-v7">
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                   <h2 style={{ fontSize: '22px', margin: 0, fontWeight: 900 }}>خوش آمدید (Oi)!</h2>
+                   <h2 style={{ fontSize: '22px', margin: 0, fontWeight: 900 }}>English classes خوش آمدید (Oi)!</h2>
                    <span style={{ fontSize: '24px' }}>☀️</span>
                 </div>
                 <div className="xp-bar-mini">

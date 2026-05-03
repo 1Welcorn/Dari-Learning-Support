@@ -63,7 +63,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       }}>
         <div className="dash-v5-profile">
           <h1 style={{ fontSize: '28px', fontWeight: 900, color: 'var(--ink1)', margin: 0, direction: 'rtl', fontFamily: 'Fraunces, serif' }}>
-            سلام {user?.user_metadata?.full_name?.split(' ')[0] || 'دانش‌آموز'}! ✨
+            English classes سلام! ✨
           </h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '12px' }}>
             <div style={{ flex: 1, minWidth: '200px' }}>
