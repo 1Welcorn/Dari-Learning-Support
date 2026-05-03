@@ -142,7 +142,7 @@ const VideoPlayerV5: React.FC<{ media: ExternalLink }> = ({ media }) => {
        loop={media.loop && !media.repeatCount} 
        playsInline
        onEnded={handleEnded}
-       style={{ width: '100%', borderRadius: '16px', display: 'block' }}
+       style={{ width: media.width || '100%', maxWidth: '100%', borderRadius: '16px', display: 'block', margin: '0 auto' }}
     />
   );
 };
