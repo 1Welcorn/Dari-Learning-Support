@@ -1208,78 +1208,10 @@ export const Activities: React.FC<{
     });
   }, [units]);
 
+  if (!expandedUnitId) return null;
+
   return (
-    <div className={`screen activities-screen ${expandedUnitId ? 'has-expanded' : ''}`}>
-      {!expandedUnitId ? (
-        <div className="dashboard-v7-wrapper">
-          <div className="profile-header-image-style">
-            <div className="avatar-and-name">
-              <div className="avatar-v7">
-                 <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHpueGtxZ2txZ2txZ2txZ2txZ2txZ2txZ2txZ2txZ2txZ2txZ2txJmVwPXYxX2ludGVybmFs_giF_by_id&ct=s/3o7TKMGfN9qN3Z4Jq0/giphy.gif" alt="avatar" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              </div>
-              <div className="user-text-v7">
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                   <h2 style={{ fontSize: '22px', margin: 0, fontWeight: 900 }}>English classes خوش آمدید (Oi)!</h2>
-                   <span style={{ fontSize: '24px' }}>☀️</span>
-                </div>
-                <div className="xp-bar-mini">
-                   <div className="xp-fill-mini" style={{ width: '15%' }}></div>
-                </div>
-                <small style={{ direction: 'rtl' }}>پیشرفت <span style={{fontSize: '9px'}}>(0% da Jornada)</span> | XP: 34/2000</small>
-              </div>
-              <div className="level-hexagon">
-                 <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', lineHeight: '1.1', marginBottom: '2px' }}>
-                   <span style={{ fontSize: '11px', fontWeight: 900, direction: 'rtl', textTransform: 'none' }}>سطح</span>
-                   <span style={{ fontSize: '8px', fontWeight: 800 }}>(NÍVEL)</span>
-                 </div>
-                 <span style={{ fontSize: '18px' }}>1</span>
-              </div>
-            </div>
-            <div className="stats-v7">
-              <div className="stats-pill-red">🔥 0 Dias <small style={{ fontSize: '8px', display: 'block', opacity: 0.7 }}>شعله (CHAMA)</small></div>
-              <div className="stats-pill-yellow">💰 2 <small style={{ fontSize: '8px', display: 'block', opacity: 0.7 }}>سکه (COINS)</small></div>
-            </div>
-          </div>
-
-          <div className="mission-banner-v7">
-            <span className="jornada-badge-v7" style={{background: '#dbeafe', color: '#1e40af'}}>سفر یادگیری (JORNADA)</span>
-            <h1 style={{ direction: 'rtl', textAlign: 'right' }}>ماژول ۱ — اولین قدم‌ها <br/><span style={{fontSize: '14px', color: '#64748b'}}>(Módulo 1 — Primeiros Passos)</span></h1>
-            <p style={{ direction: 'rtl', textAlign: 'right' }}>
-               برای دریافت جام برنز، تمام {sortedUnits.length} درس را کامل کنید!<br/>
-               <span style={{fontSize: '12px'}}>(Complete as {sortedUnits.length} aulas para ganhar o troféu de bronze!)</span>
-            </p>
-          </div>
-
-          <div className="lessons-grid-v7">
-            {sortedUnits.map((unit, index) => {
-              const isFirst = index === 0;
-              const prevUnit = index > 0 ? sortedUnits[index - 1] : null;
-              const prevComplete = prevUnit ? prevUnit.questions.every((_, i) => answers[`${prevUnit.id}-${i}`]?.is_done) : true;
-              const isLocked = !isAdmin && (unit.is_locked || (!isFirst && !prevComplete));
-
-              return (
-                <UnitCard 
-                  key={unit.id} 
-                  id={`unit-${unit.id}`}
-                  unit={unit} 
-                  answers={answers}
-                  onSaveAnswer={(qIdx, val) => onSaveAnswer(unit.id, qIdx, val)}
-                  onSaveSession={(note) => onSaveSession(unit.id, note)}
-                  isAdmin={isAdmin}
-                  isMediator={isMediator}
-                  onUpdateUnit={onUpdateUnit}
-                  isExpanded={expandedUnitId === unit.id}
-                  onToggle={() => setExpandedUnitId(expandedUnitId === unit.id ? null : unit.id)}
-                  onStartGame={() => setActiveGameUnitId(unit.id)}
-                  onGoHome={onGoHome || (() => {})}
-                  isLocked={isLocked}
-                  isFirstUnit={isFirst}
-                />
-              );
-            })}
-          </div>
-        </div>
-      ) : (
+    <div className="screen activities-screen has-expanded">
         <div className="unit-grid-container expanded-view">
           {sortedUnits.filter(u => u.id === expandedUnitId).map((unit) => (
             <UnitCard 
@@ -1293,7 +1225,7 @@ export const Activities: React.FC<{
               isMediator={isMediator}
               onUpdateUnit={onUpdateUnit}
               isExpanded={true}
-              onToggle={() => setExpandedUnitId(null)}
+              onToggle={onToggle}
               onStartGame={() => setActiveGameUnitId(unit.id)}
               onGoHome={onGoHome || (() => {})}
               isLocked={false}
@@ -1301,7 +1233,6 @@ export const Activities: React.FC<{
             />
           ))}
         </div>
-      )}
 
       {activeGameUnitId && (
         <div className="game-screen-overlay">
@@ -1337,18 +1268,6 @@ export const Activities: React.FC<{
               />
             );
           })()}
-        </div>
-      )}
-
-      {isAdmin && (
-        <div style={{ padding: '0 16px 40px' }}>
-          <button 
-            className="admin-add-btn premium" 
-            onClick={handleCreateUnit}
-            style={{ width: '100%', padding: '18px' }}
-          >
-            <Plus size={20} /> Criar Nova Unidade / Aula
-          </button>
         </div>
       )}
     </div>
