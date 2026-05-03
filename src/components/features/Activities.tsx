@@ -534,9 +534,24 @@ const StepNavigation: React.FC<{
                    {(() => {
                       const mainMedia = unit.external_links?.find(l => l.label === 'media' || l.label === 'video_file' || l.label === 'video' || l.label === 'HTML');
                       if (!mainMedia) return null;
-                      const isVideo = mainMedia.label === 'video_file' || mainMedia.url.toLowerCase().endsWith('.mp4') || mainMedia.url.includes('player.cloudinary.com');
+                      const isCloudinary = mainMedia.url.includes('player.cloudinary.com');
+                      const isVideo = mainMedia.label === 'video_file' || mainMedia.url.toLowerCase().endsWith('.mp4') || isCloudinary;
+
                       if (isVideo) {
-                        if (mainMedia.url.includes('player.cloudinary.com')) {
+                        if (isCloudinary) {
+                          // Converte link do player para link direto do arquivo .mp4
+                          try {
+                            const urlObj = new URL(mainMedia.url);
+                            const cloudName = urlObj.searchParams.get('cloud_name');
+                            const publicId = urlObj.searchParams.get('public_id');
+                            if (cloudName && publicId) {
+                              const directUrl = `https://res.cloudinary.com/${cloudName}/video/upload/${publicId}.mp4`;
+                              return <VideoPlayerV5 media={{ ...mainMedia, url: directUrl }} />;
+                            }
+                          } catch (e) {
+                            console.error("Erro ao converter URL do Cloudinary", e);
+                          }
+                          // Se falhar a conversão, volta para o iframe básico
                           return (
                             <div style={{ width: '100%', borderRadius: '16px', overflow: 'hidden', background: '#000' }}>
                               <iframe src={mainMedia.url} style={{ width: '100%', height: '240px', border: 'none' }} allow="autoplay; fullscreen" />
