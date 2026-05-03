@@ -567,10 +567,10 @@ const StepNavigation: React.FC<{
                    <h1 className="mission-footer-title" style={{ direction: 'rtl' }}>راهنمای درس (Guia)</h1>
                    <button className="play-btn-v7-mission" onClick={() => {
                        if (isAdmin) setIsEditingBrief(!isEditingBrief);
-                       else setShowBriefViewer(true);
+                       else handleNext();
                    }} style={{ background: '#f59e0b', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
-                      <span style={{ fontWeight: 900, fontSize: '15px' }}>{isAdmin ? 'Editar Conteúdo' : 'مرور راهنما'}</span>
-                      <span style={{ fontSize: '10px' }}>{isAdmin ? '' : '(Explorar Guia)'}</span>
+                      <span style={{ fontWeight: 900, fontSize: '15px' }}>{isAdmin ? 'Editar Conteúdo' : 'بیا شروع کنیم؟'}</span>
+                      <span style={{ fontSize: '10px' }}>{isAdmin ? '' : '(Vamos começar?)'}</span>
                    </button>
                 </div>
              </div>
