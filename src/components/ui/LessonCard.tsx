@@ -180,7 +180,7 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
         )}
         
         {isCurrent && (
-          <button className="nav-link-kids adventure active" style={{ 
+          <button className="nav-link-kids whatsapp active" style={{ 
             width: '100%', 
             marginTop: '12px', 
             padding: '12px',
