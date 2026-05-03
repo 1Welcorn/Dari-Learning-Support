@@ -49,12 +49,13 @@ export const App: React.FC = () => {
           
           // FORÇANDO A SINCRONIZAÇÃO TOTAL: 
           // Se não existe ou se TÍTULO, SUBTÍTULO ou SORT_ORDER forem diferentes
-          if (!existing || existing.title !== defaultUnit.title || existing.sub !== defaultUnit.sub || existing.sort_order !== defaultUnit.sort_order) {
+          if (!existing || existing.title !== defaultUnit.title || existing.sub !== defaultUnit.sub || existing.sort_order !== defaultUnit.sort_order || existing.title_dari !== defaultUnit.title_dari) {
             console.log(`Force syncing unit: ${defaultUnit.title}`);
             
             const unitToSync = {
               id: defaultUnit.id,
               title: defaultUnit.title,
+              title_dari: defaultUnit.title_dari,
               sub: defaultUnit.sub,
               color: defaultUnit.color,
               sort_order: defaultUnit.sort_order,
