@@ -533,8 +533,8 @@ const StepNavigation: React.FC<{
                 }}>
                    {isCompleted ? 'ماموریت انجام شد (MISSÃO COMPLETA)' : 'راهنمای مطالعه (GUIA DE ESTUDO)'}
                 </span>
-                <div className="unit-label-badge-v7">{unit.title.split('—')[0].trim()}</div>
-                <h1 className="mission-subtitle-v7 main-theme">{unit.title.split('—')[1].trim()}</h1>
+                <div className="unit-label-badge-v7">{unit.title.includes('—') ? unit.title.split('—')[0].trim() : 'UNIDADE'}</div>
+                <h1 className="mission-subtitle-v7 main-theme">{unit.title.includes('—') ? unit.title.split('—')[1].trim() : unit.title}</h1>
                 <p className="mission-sub-v7 side" style={{ direction: 'rtl' }}>
                    محتوای تئوری را برای آماده شدن برای چالش‌های عملی مطالعه کنید.<br/>
                    <span style={{fontSize: '12px', opacity: 0.8}}>(Mergulhe no conteúdo teórico para se preparar para os desafios práticos.)</span>
@@ -624,8 +624,8 @@ const StepNavigation: React.FC<{
                 }}>
                    {isCompleted ? 'MISSÃO COMPLETA' : ((current as EmbedStep).title?.toLowerCase().includes('video') || (current as EmbedStep).title?.toLowerCase().includes('aula')) ? 'VÍDEO AULA' : 'ATIVIDADE INTERATIVA'}
                 </span>
-                <div className="unit-label-badge-v7">{unit.title.split('—')[0].trim()}</div>
-                <h1 className="mission-subtitle-v7 main-theme">{unit.title.split('—')[1].trim()}</h1>
+                <div className="unit-label-badge-v7">{unit.title.includes('—') ? unit.title.split('—')[0].trim() : 'UNIDADE'}</div>
+                <h1 className="mission-subtitle-v7 main-theme">{unit.title.includes('—') ? unit.title.split('—')[1].trim() : unit.title}</h1>
                 <p className="mission-sub-v7 side">
                    {((current as EmbedStep).title?.toLowerCase().includes('video') || (current as EmbedStep).title?.toLowerCase().includes('aula')) 
                      ? 'Assista ao vídeo interativo para reforçar seu aprendizado.' 
