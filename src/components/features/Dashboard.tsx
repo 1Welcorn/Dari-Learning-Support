@@ -103,8 +103,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Grid de Aulas */}
         <div className="lessons-grid-v5" style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(252px, 1fr))', 
-            gap: '20px',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', 
+            gap: '24px',
             maxWidth: '1200px',
             margin: '0 auto'
           }}>

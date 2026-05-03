@@ -70,14 +70,14 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
         style={{
           background: isLocked ? 'rgba(0,0,0,0.02)' : (isCurrent ? 'linear-gradient(135deg, #fff 0%, #FFF9FA 100%)' : 'white'),
           backdropFilter: 'blur(10px)',
-          border: isCurrent ? '2px solid #FF8DA1' : '1px solid rgba(0,0,0,0.05)',
+          border: isCurrent ? '4px solid #FF8DA1' : '4px solid white',
           borderRadius: '32px',
-          padding: '24px 20px',
-          boxShadow: isCurrent ? '0 20px 40px -10px rgba(255, 141, 161, 0.25)' : '0 10px 30px -10px rgba(0,0,0,0.05)',
+          padding: '16px',
+          boxShadow: isCurrent ? '0 10px 0px #E56A81, 0 15px 35px rgba(255, 141, 161, 0.2)' : '0 10px 0px rgba(0,0,0,0.1)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '12px'
+          gap: '10px'
         }}
       >
         {isCompleted && (
@@ -100,8 +100,8 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
               alt={lesson.title}
               className={isCompleted ? 'animate-pop' : ''}
               style={{ 
-                width: idx === 6 ? '115px' : '144px', 
-                height: idx === 6 ? '115px' : '144px', 
+                width: '110px', 
+                height: '110px', 
                 objectFit: 'contain' 
               }}
               onError={(e) => {
@@ -110,7 +110,7 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
               }}
             />
           ) : (
-            <span style={{ fontSize: '48px' }}>
+            <span style={{ fontSize: '40px' }}>
               {lesson.status === 'completed' ? '🌟' : (isLocked ? '🔒' : '📖')}
             </span>
           )}
