@@ -96,7 +96,11 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
               src={displayIcon} 
               alt={lesson.title}
               className={isCompleted ? 'animate-pop' : ''}
-              style={{ width: '144px', height: '144px', objectFit: 'contain' }}
+              style={{ 
+                width: idx === 6 ? '115px' : '144px', 
+                height: idx === 6 ? '115px' : '144px', 
+                objectFit: 'contain' 
+              }}
               onError={(e) => {
                  (e.target as any).style.display = 'none';
                  (e.target as any).parentElement.innerHTML = '<span style="font-size: 32px">📚</span>';
