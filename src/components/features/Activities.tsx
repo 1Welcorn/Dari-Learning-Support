@@ -898,8 +898,8 @@ const StepNavigation: React.FC<{
            <div className="brief-editor-v5-modern premium-overlay" style={{ background: 'rgba(255,255,255,0.95)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
              <div className="editor-container-v7" style={{ width: '90%', maxWidth: '800px', maxHeight: '85vh', overflowY: 'auto', background: 'white', borderRadius: '24px', padding: '40px', boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '2px solid #f1f5f9', paddingBottom: '20px', marginBottom: '30px' }}>
-                   <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#1e293b', direction: 'rtl', margin: 0 }}>
-                     راهنمای مطالعه <span style={{ fontSize: '14px', color: '#64748b' }}>(Guia de Estudo)</span>
+                   <h2 style={{ fontSize: '24px', fontWeight: 900, color: '#1e293b', margin: 0 }}>
+                     Guia de Estudo
                    </h2>
                    <button onClick={() => setShowBriefViewer(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#64748b' }}>
                       <X size={24} />
