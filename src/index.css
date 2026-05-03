@@ -6964,11 +6964,11 @@ select {
 
 /* Footer style for all cards (optional consistency) */
 .mission-footer-v7 {
-  background: rgba(255,255,255,0.9) !important;
-  backdrop-filter: blur(10px) !important;
-  padding: 0 25px 25px 25px !important;
-  border-top: 1px solid rgba(0,0,0,0.05) !important;
-  text-align: center !important;
+  background: transparent !important;
+  backdrop-filter: none !important;
+  padding: 10px 20px 30px 40px !important; /* 40px padding-left to align with the start of the image area */
+  border-top: none !important;
+  text-align: left !important;
 }
 
 
