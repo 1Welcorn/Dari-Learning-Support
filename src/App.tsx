@@ -47,9 +47,10 @@ export const App: React.FC = () => {
         for (const defaultUnit of DEFAULT_UNITS) {
           const existing = units.find(u => u.id === defaultUnit.id);
           
-          // Force sync if missing or title/subtitle doesn't match
-          if (!existing || existing.title !== defaultUnit.title || existing.sub !== defaultUnit.sub) {
-            console.log(`Syncing unit: ${defaultUnit.title}`);
+          // FORÇANDO A SINCRONIZAÇÃO TOTAL: 
+          // Se não existe ou se TÍTULO, SUBTÍTULO ou SORT_ORDER forem diferentes
+          if (!existing || existing.title !== defaultUnit.title || existing.sub !== defaultUnit.sub || existing.sort_order !== defaultUnit.sort_order) {
+            console.log(`Force syncing unit: ${defaultUnit.title}`);
             
             const unitToSync = {
               id: defaultUnit.id,
