@@ -68,13 +68,16 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
         className={`lesson-card-v5 ${isLocked ? 'is-locked' : ''} ${isCurrent ? 'is-current' : ''}`}
         onClick={onClick}
         style={{
-          background: isLocked ? 'rgba(0,0,0,0.05)' : 'var(--card)',
-          backdropFilter: 'var(--glass)',
-          border: '1px solid var(--border)',
-          borderRadius: 'var(--r-md)',
-          padding: '16px',
-          boxShadow: isCurrent ? '0 15px 35px rgba(216, 180, 216, 0.2)' : 'var(--shadow-soft)',
-          overflow: 'hidden'
+          background: isLocked ? 'rgba(0,0,0,0.02)' : (isCurrent ? 'linear-gradient(135deg, #fff 0%, #FFF9FA 100%)' : 'white'),
+          backdropFilter: 'blur(10px)',
+          border: isCurrent ? '2px solid #FF8DA1' : '1px solid rgba(0,0,0,0.05)',
+          borderRadius: '32px',
+          padding: '24px 20px',
+          boxShadow: isCurrent ? '0 20px 40px -10px rgba(255, 141, 161, 0.25)' : '0 10px 30px -10px rgba(0,0,0,0.05)',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '12px'
         }}
       >
         {isCompleted && (
@@ -90,7 +93,7 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
           </div>
         )}
         
-        <div className="lesson-icon-v5" style={{ marginBottom: '16px', filter: isLocked ? 'grayscale(1) opacity(0.3)' : 'none' }}>
+        <div className="lesson-icon-v5" style={{ filter: isLocked ? 'grayscale(1) opacity(0.3)' : 'none' }}>
           {hasIcon ? (
             <img 
               src={displayIcon} 
@@ -113,22 +116,39 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
           )}
         </div>
         
-        <div className="lesson-info-v5" style={{ textAlign: 'center' }}>
-          <span className="lesson-id-tag" style={{ background: 'var(--sky-blue)', color: 'white', padding: '4px 12px', borderRadius: '20px', fontSize: '10px', fontWeight: 900, marginBottom: '8px', display: 'inline-block' }}>
+        <div className="lesson-info-v5" style={{ textAlign: 'center', flex: 1 }}>
+          <span className="lesson-id-tag" style={{ 
+            background: 'rgba(162, 210, 255, 0.2)', 
+            color: '#0369a1', 
+            padding: '6px 16px', 
+            borderRadius: '12px', 
+            fontSize: '11px', 
+            fontWeight: 900, 
+            marginBottom: '12px', 
+            display: 'inline-block',
+            textTransform: 'uppercase',
+            letterSpacing: '1px'
+          }}>
             {lesson.sub || `AULA ${idx + 1}`}
           </span>
-          <h3 className="lesson-title-v5" style={{ fontSize: lesson.titleDari ? '13px' : '16px', color: 'var(--ink2)', fontWeight: 700, margin: 0 }}>
+          <h3 className="lesson-title-v5" style={{ 
+            fontSize: '18px', 
+            color: 'var(--ink1)', 
+            fontWeight: 900, 
+            margin: '0 0 4px',
+            fontFamily: 'Fraunces, serif'
+          }}>
             {lesson.title}
           </h3>
           {lesson.titleDari && (
             <div style={{ 
               direction: 'rtl', 
-              fontSize: '18px', 
+              fontSize: '22px', 
               fontWeight: 900, 
               color: 'var(--ink1)',
-              marginTop: '6px',
-              lineHeight: 1.2,
-              fontFamily: 'Outfit, sans-serif'
+              lineHeight: 1,
+              fontFamily: 'Outfit, sans-serif',
+              marginBottom: '4px'
             }}>
               {lesson.titleDari}
             </div>
@@ -136,18 +156,43 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
         </div>
         
         {!isLocked && (
-          <div className="lesson-footer-v5" style={{ marginTop: '6px' }}>
-             <div className="lesson-bar-v5" style={{ height: '6px', background: 'rgba(0,0,0,0.05)', borderRadius: '3px' }}>
-                <div className="lesson-bar-fill-v5" style={{ height: '100%', borderRadius: '3px', background: 'var(--sage)', width: isCompleted ? '100%' : (isCurrent ? '20%' : '0%') }} />
+          <div className="lesson-footer-v5" style={{ marginTop: '8px', width: '100%' }}>
+             <div className="lesson-bar-v5" style={{ 
+               height: '10px', 
+               background: 'rgba(0,0,0,0.05)', 
+               borderRadius: '5px',
+               position: 'relative',
+               overflow: 'hidden',
+               border: '1px solid rgba(0,0,0,0.02)'
+             }}>
+                <div className="lesson-bar-fill-v5" style={{ 
+                  height: '100%', 
+                  borderRadius: '5px', 
+                  background: 'linear-gradient(90deg, #468432, #9AD872)', 
+                  width: isCompleted ? '100%' : (isCurrent ? '20%' : '0%'),
+                  boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.3)'
+                }} />
              </div>
-             <span className="lesson-xp-v5" style={{ fontSize: '10px', fontWeight: 900, color: 'var(--sage)', marginTop: '4px', display: 'block' }}>{lesson.xpValue}XP</span>
+             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '4px' }}>
+                <span className="lesson-xp-v5" style={{ fontSize: '11px', fontWeight: 900, color: '#468432' }}>{lesson.xpValue}XP</span>
+             </div>
           </div>
         )}
         
         {isCurrent && (
-          <button className="lesson-play-btn-v5" style={{ width: '100%', marginTop: '12px', background: 'var(--lavender)', color: 'white', border: 'none', borderRadius: '16px', padding: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            <span style={{ fontSize: '14px', fontWeight: 900 }}>حالا شروع کنید!</span>
-            <span style={{ fontSize: '10px', fontWeight: 700, opacity: 0.9 }}>(Começar Agora!)</span>
+          <button className="nav-link-kids adventure active" style={{ 
+            width: '100%', 
+            marginTop: '12px', 
+            padding: '12px',
+            display: 'flex', 
+            flexDirection: 'column', 
+            alignItems: 'center',
+            cursor: 'pointer',
+            minHeight: 'auto',
+            borderWidth: '3px'
+          }}>
+            <span style={{ fontSize: '16px', fontWeight: 900, lineHeight: 1 }}>حالا شروع کنید!</span>
+            <span style={{ fontSize: '10px', fontWeight: 700, opacity: 0.9, marginTop: '2px' }}>(Começar Agora!)</span>
           </button>
         )}
       </motion.div>
