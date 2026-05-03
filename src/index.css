@@ -6638,7 +6638,7 @@ select {
 .mission-horizontal-v7.brief-step {
   gap: 80px;
   align-items: flex-start;
-  padding-top: 20px;
+  padding-top: 0 !important;
 }
 
 .brief-media-card {
@@ -6909,7 +6909,7 @@ select {
   align-items: center !important;
   max-width: 1300px !important;
   margin: 0 auto !important;
-  min-height: 58vh !important;
+  min-height: 40vh !important;
   height: auto !important;
   gap: 60px !important;
 }
