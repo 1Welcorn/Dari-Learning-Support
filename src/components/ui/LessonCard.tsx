@@ -29,7 +29,7 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
           backdropFilter: 'var(--glass)',
           border: '1px solid var(--border)',
           borderRadius: 'var(--r-md)',
-          padding: '20px',
+          padding: '16px',
           boxShadow: isCurrent ? '0 15px 35px rgba(216, 180, 216, 0.2)' : 'var(--shadow-soft)',
           overflow: 'hidden'
         }}

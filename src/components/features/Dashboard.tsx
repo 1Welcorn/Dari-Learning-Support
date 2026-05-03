@@ -101,7 +101,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         {/* Grid de Aulas */}
-        <div className="trail-grid-v5" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+        <div className="lessons-grid-v5" style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(252px, 1fr))', 
+            gap: '20px',
+            maxWidth: '1200px',
+            margin: '0 auto'
+          }}>
           {units.map((unit, idx) => {
             const hasQuestions = unit.questions && unit.questions.length > 0;
             const isDone = hasQuestions && unit.questions.every((_: any, i: number) => answers[`${unit.id}-${i}`]?.is_done);
