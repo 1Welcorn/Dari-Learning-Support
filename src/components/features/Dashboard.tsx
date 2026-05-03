@@ -92,7 +92,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div style={{ padding: '0 24px' }}>
         {/* Título do Módulo */}
         <div className="module-intro-v5" style={{ textAlign: 'center', marginBottom: '10px' }}>
-           <h2 style={{ fontSize: '32px', fontWeight: 900, color: 'var(--ink1)', margin: '12px 0 8px', direction: 'rtl', fontFamily: 'Fraunces, serif' }}>
+           <h2 style={{ fontSize: '32px', fontWeight: 900, color: 'var(--ink1)', margin: '12px 0 4px', direction: 'rtl', fontFamily: 'Fraunces, serif' }}>
               ماژول ۱: مکالمه پایه 🚀
            </h2>
            <p style={{ color: 'var(--ink3)', fontWeight: 500, fontSize: '15px' }}>
