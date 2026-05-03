@@ -319,30 +319,104 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                   </div>
                 )}
                 
-                {unitData.external_links?.filter((l: any) => l.label === 'media' || l.label === 'HTML').map((media: any, i: number) => (
-                  <div key={i} className="media-item-card-v4">
-                    <div className="media-preview-mini">
-                      {media.label === 'HTML' ? '<b>HTML</b>' : (media.url.includes('youtube') ? '🎥' : '🖼️')}
+                {unitData.external_links?.filter((l: any) => l.label === 'media' || l.label === 'HTML').map((media: any, i: number) => {
+                  const realIdx = unitData.external_links.findIndex((l: any) => l === media);
+                  return (
+                    <div key={i} className="media-item-card-v4 premium-style" style={{ 
+                      background: 'white', 
+                      padding: '20px', 
+                      borderRadius: '24px', 
+                      border: '1px solid #edf2f7',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '12px'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                        <div className="media-preview-mini" style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justify: 'center' }}>
+                          {media.label === 'HTML' ? '<b>H</b>' : (media.url.includes('cloudinary') || media.url.endsWith('.mp4') ? '🎥' : '🖼️')}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <span className="media-url-mini" style={{ fontSize: '11px', color: '#64748b', display: 'block', wordBreak: 'break-all' }}>{media.url}</span>
+                        </div>
+                        <button 
+                          className="media-delete-btn" 
+                          onClick={() => {
+                            const next = unitData.external_links.filter((_: any, idx: number) => idx !== realIdx);
+                            setUnitData({ ...unitData, external_links: next });
+                            setIsDirty(true);
+                          }}
+                          style={{ color: '#ef4444', background: '#fee2e2', padding: '8px', borderRadius: '10px' }}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </div>
+
+                      <div className="media-controls-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', paddingTop: '10px', borderTop: '1px solid #f1f5f9' }}>
+                        <div className="control-group">
+                          <label style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '5px' }}>LARGURA: {media.width || '100%'}</label>
+                          <input 
+                            type="range" min="10" max="100" step="5"
+                            value={parseInt(media.width?.replace('%', '') || '100')}
+                            onChange={(e) => {
+                              const next = [...unitData.external_links];
+                              next[realIdx] = { ...media, width: e.target.value + '%' };
+                              setUnitData({ ...unitData, external_links: next });
+                              setIsDirty(true);
+                            }}
+                            style={{ width: '100%', accentColor: '#3b82f6' }}
+                          />
+                        </div>
+                        <div className="control-group" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 800 }}>
+                              <input 
+                                type="checkbox" 
+                                checked={!!media.loop}
+                                onChange={(e) => {
+                                  const next = [...unitData.external_links];
+                                  next[realIdx] = { ...media, loop: e.target.checked };
+                                  setUnitData({ ...unitData, external_links: next });
+                                  setIsDirty(true);
+                                }}
+                              />
+                              LOOP
+                           </label>
+                           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 800 }}>
+                              <input 
+                                type="checkbox" 
+                                checked={!!media.showSubtitles}
+                                onChange={(e) => {
+                                  const next = [...unitData.external_links];
+                                  next[realIdx] = { ...media, showSubtitles: e.target.checked };
+                                  setUnitData({ ...unitData, external_links: next });
+                                  setIsDirty(true);
+                                }}
+                              />
+                              LEGENDA
+                           </label>
+                        </div>
+                      </div>
+
+                      {media.showSubtitles && (
+                        <div className="subtitle-input-group" style={{ marginTop: '5px' }}>
+                          <input 
+                            type="text" 
+                            className="editor-input-v4"
+                            placeholder="Escreva a legenda aqui..."
+                            value={media.caption || ''}
+                            onChange={(e) => {
+                              const next = [...unitData.external_links];
+                              next[realIdx] = { ...media, caption: e.target.value };
+                              setUnitData({ ...unitData, external_links: next });
+                              setIsDirty(true);
+                            }}
+                            style={{ width: '100%', fontSize: '13px', padding: '10px' }}
+                          />
+                        </div>
+                      )}
                     </div>
-                    <div className="media-info-mini">
-                      <span className="media-type-tag" style={{ background: media.label === 'HTML' ? '#f59e0b' : '#3b82f6' }}>{media.label}</span>
-                      <span className="media-url-mini">{media.url}</span>
-                    </div>
-                    <button 
-                      className="media-delete-btn" 
-                      title="Remover mídia"
-                      onClick={() => {
-                        // Encontrar o índice real no array original
-                        const filtered = unitData.external_links.filter((item: any) => item.label === 'media' || item.label === 'HTML');
-                        const targetItem = filtered[i];
-                        const next = unitData.external_links.filter((l: any) => l !== targetItem);
-                        setUnitData({ ...unitData, external_links: next });
-                      }}
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </section>

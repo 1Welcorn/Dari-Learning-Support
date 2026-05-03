@@ -537,30 +537,53 @@ const StepNavigation: React.FC<{
                       const isCloudinary = mainMedia.url.includes('player.cloudinary.com');
                       const isVideo = mainMedia.label === 'video_file' || mainMedia.url.toLowerCase().endsWith('.mp4') || isCloudinary;
 
-                      if (isVideo) {
-                        if (isCloudinary) {
-                          // Converte link do player para link direto do arquivo .mp4
-                          try {
-                            const urlObj = new URL(mainMedia.url);
-                            const cloudName = urlObj.searchParams.get('cloud_name');
-                            const publicId = urlObj.searchParams.get('public_id');
-                            if (cloudName && publicId) {
-                              const directUrl = `https://res.cloudinary.com/${cloudName}/video/upload/${publicId}.mp4`;
-                              return <VideoPlayerV5 media={{ ...mainMedia, url: directUrl }} />;
-                            }
-                          } catch (e) {
-                            console.error("Erro ao converter URL do Cloudinary", e);
-                          }
-                          // Se falhar a conversão, volta para o iframe básico
-                          return (
-                            <div style={{ width: '100%', borderRadius: '16px', overflow: 'hidden', background: '#000' }}>
-                              <iframe src={mainMedia.url} style={{ width: '100%', height: '240px', border: 'none' }} allow="autoplay; fullscreen" />
-                            </div>
-                          );
-                        }
-                        return <VideoPlayerV5 media={mainMedia} />;
-                      }
-                      return <img src={mainMedia.url} alt="Media" className="word-game-icon-3d" />;
+                      return (
+                         <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                            {isVideo ? (
+                              isCloudinary ? (
+                                (() => {
+                                  try {
+                                    const urlObj = new URL(mainMedia.url);
+                                    const cloudName = urlObj.searchParams.get('cloud_name');
+                                    const publicId = urlObj.searchParams.get('public_id');
+                                    if (cloudName && publicId) {
+                                      const directUrl = `https://res.cloudinary.com/${cloudName}/video/upload/${publicId}.mp4`;
+                                      return <VideoPlayerV5 media={{ ...mainMedia, url: directUrl }} />;
+                                    }
+                                  } catch (e) {
+                                    console.error("Erro ao converter URL do Cloudinary", e);
+                                  }
+                                  return (
+                                    <div style={{ width: mainMedia.width || '100%', borderRadius: '16px', overflow: 'hidden', background: '#000', margin: '0 auto' }}>
+                                      <iframe src={mainMedia.url} style={{ width: '100%', height: '240px', border: 'none' }} allow="autoplay; fullscreen" />
+                                    </div>
+                                  );
+                                })()
+                              ) : (
+                                <VideoPlayerV5 media={mainMedia} />
+                              )
+                            ) : (
+                              <img src={mainMedia.url} alt="Media" className="word-game-icon-3d" style={{ width: mainMedia.width || 'auto', maxWidth: '100%' }} />
+                            )}
+                            
+                            {mainMedia.showSubtitles && mainMedia.caption && (
+                              <p style={{ 
+                                marginTop: '12px', 
+                                fontSize: '18px', 
+                                fontWeight: 600, 
+                                color: '#1e293b', 
+                                textAlign: 'center',
+                                background: 'rgba(255,255,255,0.8)',
+                                padding: '8px 20px',
+                                borderRadius: '12px',
+                                boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                                maxWidth: '90%'
+                              }}>
+                                {mainMedia.caption}
+                              </p>
+                            )}
+                         </div>
+                       );
                    })()}
                 </div>
                 <div className="mission-footer-v7">

@@ -21,6 +21,8 @@ export interface ExternalLink {
   loop?: boolean;
   repeatCount?: number;
   delay?: number;
+  showSubtitles?: boolean;
+  caption?: string;
 }
 
 export interface EmbedActivity {
