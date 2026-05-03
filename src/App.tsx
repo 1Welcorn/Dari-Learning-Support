@@ -37,22 +37,32 @@ export const App: React.FC = () => {
     saveAnswer, saveSession, updateSession, deleteSession, resetUnitAnswers, updateUnit, createUnit, refresh
   } = useDariData();
 
-  // Auto-sync missing default units to Supabase
+  // Sync units to Supabase (Add missing or Update existing with new titles/icons)
   useEffect(() => {
-    const syncMissingUnits = async () => {
-      if (role === 'admin' && units && units.length > 0 && units.length < DEFAULT_UNITS.length) {
-        console.log("Syncing missing units to Supabase...");
+    const syncUnits = async () => {
+      if (role === 'admin' && units && units.length > 0) {
+        console.log("Checking unit synchronization...");
+        let needsRefresh = false;
+
         for (const defaultUnit of DEFAULT_UNITS) {
-          const exists = units.find(u => u.id === defaultUnit.id);
-          if (!exists) {
-            console.log(`Adding missing unit: ${defaultUnit.title}`);
-            await supabase.from('units').insert(defaultUnit);
+          const existing = units.find(u => u.id === defaultUnit.id);
+          
+          // Se não existe ou se o título mudou, vamos atualizar/inserir
+          if (!existing || existing.title !== defaultUnit.title || !existing.icon3D) {
+            console.log(`Syncing unit: ${defaultUnit.title}`);
+            const { error } = await supabase.from('units').upsert(defaultUnit);
+            if (error) console.error(`Error syncing unit ${defaultUnit.id}:`, error);
+            else needsRefresh = true;
           }
         }
-        refresh?.();
+
+        if (needsRefresh) {
+          console.log("Units updated, refreshing...");
+          refresh?.();
+        }
       }
     };
-    syncMissingUnits();
+    syncUnits();
   }, [units, role, refresh]);
 
   // Student Journey Hook for rewards
