@@ -15,7 +15,50 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
   const isCompleted = lesson.status === 'completed';
 
   // Define qual imagem usar baseado no status: 3D para Concluído ou Atual, Outline apenas para Bloqueado
-  const displayIcon = (isCompleted || isCurrent) ? lesson.icon3D : lesson.iconOutline;
+  const getIcon3D = () => {
+    if (lesson.icon3D && !lesson.icon3D.includes('placeholder')) return lesson.icon3D;
+    
+    // Fallback mapping for all 12 units
+    const mapping: Record<string, string> = {
+      'u1': '/unit-icons/aula-1.png',
+      'u2': '/unit-icons/aula-2.png',
+      'u3': '/unit-icons/aula-3.png',
+      'u4': '/unit-icons/aula-4.png',
+      'u5': '/unit-icons/aula-5.png',
+      'u6': '/unit-icons/aula-6.png',
+      'u7': '/unit-icons/Cores e Frutas.png',
+      'u8': '/unit-icons/Aula 8 Números e Quantidade.png',
+      'u9': '/unit-icons/Minha Família.png',
+      'u10': '/unit-icons/Partes do Corpo.png',
+      'u11': '/unit-icons/Animais e Sons.png',
+      'u12': '/unit-icons/aula-1.png',
+    };
+    
+    return mapping[lesson.id] || `/unit-icons/aula-1.png`;
+  };
+
+  const getIconOutline = () => {
+    if (lesson.iconOutline && !lesson.iconOutline.includes('placeholder')) return lesson.iconOutline;
+    
+    const mapping: Record<string, string> = {
+      'u1': '/unit-icons/aula-1-off.png',
+      'u2': '/unit-icons/aula-2-off.png',
+      'u3': '/unit-icons/aula-3-off.png',
+      'u4': '/unit-icons/aula-4-off.png',
+      'u5': '/unit-icons/aula-5-off.png',
+      'u6': '/unit-icons/aula-6-off.png',
+      'u7': '/unit-icons/Aula 7 Cores e Frutas-não iniciada.png',
+      'u8': '/unit-icons/Aula 8 Números e Quantidade-não iniciada.png',
+      'u9': '/unit-icons/Minha Família-não iniciada.png',
+      'u10': '/unit-icons/Partes do Corpo-não iniciada.png',
+      'u11': '/unit-icons/Animais e Sons-não iniciada.png',
+      'u12': '/unit-icons/aula-1-off.png',
+    };
+    
+    return mapping[lesson.id] || `/unit-icons/aula-1-off.png`;
+  };
+
+  const displayIcon = (isCompleted || isCurrent) ? getIcon3D() : getIconOutline();
   const hasIcon = !!displayIcon;
 
   return (

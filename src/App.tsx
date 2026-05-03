@@ -47,11 +47,10 @@ export const App: React.FC = () => {
         for (const defaultUnit of DEFAULT_UNITS) {
           const existing = units.find(u => u.id === defaultUnit.id);
           
-          if (!existing || existing.title !== defaultUnit.title) {
+          // Force sync if missing or title/subtitle doesn't match
+          if (!existing || existing.title !== defaultUnit.title || existing.sub !== defaultUnit.sub) {
             console.log(`Syncing unit: ${defaultUnit.title}`);
             
-            // Limpa o objeto para evitar colunas que podem não existir no banco do usuário
-            // e garante que campos complexos sejam aceitos
             const unitToSync = {
               id: defaultUnit.id,
               title: defaultUnit.title,
@@ -64,7 +63,7 @@ export const App: React.FC = () => {
               plan_e: defaultUnit.plan_e,
               plan_a: defaultUnit.plan_a,
               wa: defaultUnit.wa,
-              questions: defaultUnit.questions, // O Supabase JS lida com JSON
+              questions: defaultUnit.questions,
               external_links: defaultUnit.external_links
             };
 
