@@ -7038,8 +7038,10 @@ select {
 .nav-link-kids {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 15px;
     padding: 12px 18px;
+    min-height: 85px; /* Fixed height for all buttons */
     text-decoration: none;
     color: white; /* Text always white for game style */
     font-weight: 900;
