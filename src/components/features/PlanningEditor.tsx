@@ -684,7 +684,7 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
             <div className="color-selector-mini-v4">
               <p className="field-help">Ou selecione uma cor clássica:</p>
               <div className="mini-circles-row">
-                {['emerald', 'sapphire', 'terracotta', 'amethyst', 'crimson'].map(key => (
+                {['natural', 'emerald', 'sapphire', 'terracotta', 'amethyst', 'crimson'].map(key => (
                   <button
                     key={key}
                     className={`mini-color-btn ${unitData.color === key ? 'active' : ''}`}
