@@ -136,7 +136,7 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
         </div>
         
         {!isLocked && (
-          <div className="lesson-footer-v5" style={{ marginTop: '10px' }}>
+          <div className="lesson-footer-v5" style={{ marginTop: '6px' }}>
              <div className="lesson-bar-v5" style={{ height: '6px', background: 'rgba(0,0,0,0.05)', borderRadius: '3px' }}>
                 <div className="lesson-bar-fill-v5" style={{ height: '100%', borderRadius: '3px', background: 'var(--sage)', width: isCompleted ? '100%' : (isCurrent ? '20%' : '0%') }} />
              </div>
