@@ -89,9 +89,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
       </header>
 
-      <div style={{ padding: '32px 24px' }}>
+      <div style={{ padding: '10px 24px' }}>
         {/* Título do Módulo */}
-        <div className="module-intro-v5" style={{ textAlign: 'center', marginBottom: '40px' }}>
+        <div className="module-intro-v5" style={{ textAlign: 'center', marginBottom: '20px' }}>
            <span style={{ background: 'rgba(70, 132, 50, 0.1)', color: '#468432', padding: '6px 18px', borderRadius: '20px', fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px' }}>سفر یادگیری (Jornada)</span>
            <h2 style={{ fontSize: '32px', fontWeight: 900, color: 'var(--ink1)', margin: '12px 0 8px', direction: 'rtl', fontFamily: 'Fraunces, serif' }}>
               ماژول ۱: مکالمه پایه 🚀
