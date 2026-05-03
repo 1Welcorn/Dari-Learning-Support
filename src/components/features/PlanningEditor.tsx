@@ -333,7 +333,7 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                       gap: '12px'
                     }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                        <div className="media-preview-mini" style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justify: 'center' }}>
+                        <div className="media-preview-mini" style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                           {media.label === 'HTML' ? '<b>H</b>' : (media.url.includes('cloudinary') || media.url.endsWith('.mp4') ? '🎥' : '🖼️')}
                         </div>
                         <div style={{ flex: 1 }}>
