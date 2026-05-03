@@ -97,10 +97,11 @@ export const Dashboard: React.FC<DashboardProps> = ({
         {/* Grid de Aulas */}
         <div className="lessons-grid-v5" style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', 
-            gap: '24px',
-            maxWidth: '1200px',
-            margin: '0 auto'
+            gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', 
+            gap: '15px',
+            maxWidth: '1450px',
+            margin: '0 auto',
+            padding: '10px 20px'
           }}>
           {units.map((unit, idx) => {
             const hasQuestions = unit.questions && unit.questions.length > 0;
