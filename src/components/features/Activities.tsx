@@ -606,7 +606,7 @@ const StepNavigation: React.FC<{
                    <button className="play-btn-v7-mission" onClick={() => {
                        if (isAdmin) setIsEditingBrief(!isEditingBrief);
                        else handleNext();
-                   }} style={{ background: '#f59e0b', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
+                   }} style={{ background: '#6366f1', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '2px' }}>
                       <span style={{ fontWeight: 900, fontSize: '15px' }}>{isAdmin ? 'Editar Conteúdo' : 'بیا شروع کنیم؟'}</span>
                       <span style={{ fontSize: '10px' }}>{isAdmin ? '' : '(Vamos começar?)'}</span>
                    </button>
