@@ -253,7 +253,7 @@ export const Planning: React.FC<PlanningProps> = ({ units, sessions, isAdmin, se
                 <td><strong>Ano:</strong> 2026</td>
               </tr>
               <tr>
-                <td colSpan={2}><strong>Professor(a):</strong> WILLIANS ANTONIAZZI</td>
+                <td colSpan={2}><strong>Professor(a):</strong> ENGLISH CLASSES</td>
                 <td><strong>2º e 3º trimestres</strong></td>
               </tr>
               <tr>

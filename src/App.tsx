@@ -263,7 +263,7 @@ export const App: React.FC = () => {
               }}
               completedPct={completedPct}
               sessionsCount={sessions.length}
-              mediatorName={settings?.med_name || 'Willians Antoniazzi'}
+              mediatorName={settings?.med_name || 'English classes'}
               mediatorPhone={settings?.med_phone || '5543999567378'}
               units={sortedUnits}
               answers={answers}

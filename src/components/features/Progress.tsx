@@ -79,7 +79,7 @@ export const Progress: React.FC<ProgressProps> = ({
     let report = `RELATÓRIO PEDAGÓGICO DARI - ATENDIMENTO DOMICILIAR\n`;
     report += `====================================================\n`;
     report += `Estudante: Ione Jordão Ribeiro\n`;
-    report += `Professor: Willians Antoniazzi\n`;
+    report += `Professor: English classes\n`;
     report += `Data de Emissão: ${new Date().toLocaleDateString('pt-BR')}\n`;
     report += `Total de Módulos Concluídos: ${completedCount} / ${totalCount} (${totalPct}%)\n`;
     report += `Total de Encontros Realizados: ${sessions.length}\n`;
