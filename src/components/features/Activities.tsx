@@ -485,7 +485,23 @@ const StepNavigation: React.FC<{
                    محتوای این درس را تمرین کنید و سرعت خود را بسنجید!<br/>
                    <span style={{fontSize: '12px', opacity: 0.8}}>(Pratique o conteúdo desta unidade e teste sua velocidade para ganhar bônus!)</span>
                 </p>
-                <div className="mission-perks-v7">
+                                 {unit.brief && (
+                    <div className="unit-brief-display-v7" style={{ 
+                      marginTop: '15px', 
+                      padding: '12px 18px', 
+                      background: '#fff9eb', 
+                      borderRadius: '16px', 
+                      borderLeft: '4px solid #f59e0b',
+                      fontSize: '15px',
+                      color: '#475569',
+                      lineHeight: '1.5',
+                      fontWeight: 500,
+                      whiteSpace: 'pre-wrap'
+                    }}>
+                       {unit.brief}
+                    </div>
+                 )}
+                 <div className="mission-perks-v7">
                    <div className="perk-item-v7">✨ +{current.xp || 200} XP (امتیاز اضافی)</div>
                    <div className="perk-item-v7">🏆 Troféu (جام پایان)</div>
                 </div>
