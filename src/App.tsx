@@ -103,12 +103,7 @@ export const App: React.FC = () => {
 
   const sortedUnits = useMemo(() => {
     if (!units) return [];
-    return [...units].sort((a, b) => {
-      const numA = parseInt(a.title.match(/\d+/)?.[0] || '999');
-      const numB = parseInt(b.title.match(/\d+/)?.[0] || '999');
-      if (numA !== numB) return numA - numB;
-      return (a.sort_order || 0) - (b.sort_order || 0);
-    });
+    return [...units].sort((a, b) => (a.sort_order || 0) - (b.sort_order || 0));
   }, [units]);
 
   const completedPct = useMemo(() => {
