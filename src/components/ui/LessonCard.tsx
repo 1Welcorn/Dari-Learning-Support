@@ -70,29 +70,22 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
         style={{
           background: isLocked ? 'rgba(0,0,0,0.02)' : (isCurrent ? 'linear-gradient(135deg, #fff 0%, #FFF9FA 100%)' : 'white'),
           backdropFilter: 'blur(10px)',
-          border: isCurrent ? '4px solid #FF8DA1' : '4px solid white',
-          borderRadius: '32px',
-          padding: '16px',
-          boxShadow: isCurrent ? '0 10px 0px #E56A81, 0 15px 35px rgba(255, 141, 161, 0.2)' : '0 10px 0px rgba(0,0,0,0.1)',
+          border: isCurrent ? '3px solid #FF8DA1' : '3px solid white',
+          borderRadius: '24px',
+          padding: '10px',
+          boxShadow: isCurrent ? '0 8px 0px #E56A81' : '0 6px 0px rgba(0,0,0,0.05)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '10px'
+          gap: '6px'
         }}
       >
         {isCompleted && (
-          <div className="lesson-ribbon-v5" style={{ background: 'var(--sage)', color: 'white' }}>
-            <span style={{ fontSize: '10px', display: 'block', lineHeight: 1 }}>تکمیل شد!</span>
-            <span style={{ fontSize: '9px', opacity: 0.9 }}>(CONCLUÍDO!)</span>
+          <div className="lesson-ribbon-v5" style={{ background: 'var(--sage)', color: 'white', fontSize: '8px' }}>
+            تکمیل شد!
           </div>
         )}
 
-        {isCompleted && (
-          <div className="lesson-check-badge-v5" style={{ background: 'white', border: '2px solid var(--sage)' }}>
-             <CheckCircle2 size={20} fill="var(--sage)" stroke="white" />
-          </div>
-        )}
-        
         <div className="lesson-icon-v5" style={{ filter: isLocked ? 'grayscale(1) opacity(0.3)' : 'none' }}>
           {hasIcon ? (
             <img 
@@ -100,42 +93,40 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
               alt={lesson.title}
               className={isCompleted ? 'animate-pop' : ''}
               style={{ 
-                width: '110px', 
-                height: '110px', 
+                width: '80px', 
+                height: '80px', 
                 objectFit: 'contain' 
               }}
               onError={(e) => {
                  (e.target as any).style.display = 'none';
-                 (e.target as any).parentElement.innerHTML = '<span style="font-size: 32px">📚</span>';
+                 (e.target as any).parentElement.innerHTML = '<span style="font-size: 24px">📚</span>';
               }}
             />
           ) : (
-            <span style={{ fontSize: '40px' }}>
+            <span style={{ fontSize: '32px' }}>
               {lesson.status === 'completed' ? '🌟' : (isLocked ? '🔒' : '📖')}
             </span>
           )}
         </div>
         
-        <div className="lesson-info-v5" style={{ textAlign: 'center', flex: 1 }}>
+        <div className="lesson-info-v5" style={{ textAlign: 'center', width: '100%' }}>
           <span className="lesson-id-tag" style={{ 
             background: 'rgba(162, 210, 255, 0.2)', 
             color: '#0369a1', 
-            padding: '6px 16px', 
-            borderRadius: '12px', 
-            fontSize: '11px', 
+            padding: '2px 10px', 
+            borderRadius: '8px', 
+            fontSize: '9px', 
             fontWeight: 900, 
-            marginBottom: '12px', 
-            display: 'inline-block',
-            textTransform: 'uppercase',
-            letterSpacing: '1px'
+            marginBottom: '4px', 
+            display: 'inline-block'
           }}>
             {lesson.sub || `AULA ${idx + 1}`}
           </span>
           <h3 className="lesson-title-v5" style={{ 
-            fontSize: '18px', 
+            fontSize: '14px', 
             color: 'var(--ink1)', 
             fontWeight: 900, 
-            margin: '0 0 4px',
+            margin: '0',
             fontFamily: 'Fraunces, serif'
           }}>
             {lesson.title}
@@ -143,12 +134,11 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
           {lesson.titleDari && (
             <div style={{ 
               direction: 'rtl', 
-              fontSize: '22px', 
+              fontSize: '18px', 
               fontWeight: 900, 
               color: 'var(--ink1)',
               lineHeight: 1,
-              fontFamily: 'Outfit, sans-serif',
-              marginBottom: '2px'
+              fontFamily: 'Outfit, sans-serif'
             }}>
               {lesson.titleDari}
             </div>
@@ -158,23 +148,18 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
         {!isLocked && (
           <div className="lesson-footer-v5" style={{ marginTop: '2px', width: '100%' }}>
              <div className="lesson-bar-v5" style={{ 
-               height: '10px', 
+               height: '6px', 
                background: 'rgba(0,0,0,0.05)', 
-               borderRadius: '5px',
+               borderRadius: '3px',
                position: 'relative',
-               overflow: 'hidden',
-               border: '1px solid rgba(0,0,0,0.02)'
+               overflow: 'hidden'
              }}>
                 <div className="lesson-bar-fill-v5" style={{ 
                   height: '100%', 
-                  borderRadius: '5px', 
+                  borderRadius: '3px', 
                   background: 'linear-gradient(90deg, #468432, #9AD872)', 
-                  width: isCompleted ? '100%' : (isCurrent ? '20%' : '0%'),
-                  boxShadow: 'inset 0 2px 4px rgba(255,255,255,0.3)'
+                  width: isCompleted ? '100%' : (isCurrent ? '20%' : '0%')
                 }} />
-             </div>
-             <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '4px' }}>
-                <span className="lesson-xp-v5" style={{ fontSize: '11px', fontWeight: 900, color: '#468432' }}>{lesson.xpValue}XP</span>
              </div>
           </div>
         )}
@@ -182,17 +167,17 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
         {isCurrent && (
           <button className="nav-link-kids whatsapp active" style={{ 
             width: '100%', 
-            marginTop: '12px', 
-            padding: '12px',
+            marginTop: '4px', 
+            padding: '8px',
             display: 'flex', 
             flexDirection: 'column', 
             alignItems: 'center',
             cursor: 'pointer',
             minHeight: 'auto',
-            borderWidth: '3px'
+            borderWidth: '2px'
           }}>
-            <span style={{ fontSize: '16px', fontWeight: 900, lineHeight: 1 }}>حالا شروع کنید!</span>
-            <span style={{ fontSize: '10px', fontWeight: 700, opacity: 0.9, marginTop: '2px' }}>(Começar Agora!)</span>
+            <span style={{ fontSize: '12px', fontWeight: 900, lineHeight: 1 }}>حالا شروع کنید!</span>
+            <span style={{ fontSize: '8px', fontWeight: 700, opacity: 0.9 }}>(Começar Agora!)</span>
           </button>
         )}
       </motion.div>

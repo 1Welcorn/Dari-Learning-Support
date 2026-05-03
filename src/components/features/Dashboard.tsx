@@ -55,49 +55,43 @@ export const Dashboard: React.FC<DashboardProps> = ({
         background: 'rgba(154, 216, 114, 0.15)', /* Light Green from palette */
         backdropFilter: 'var(--glass)',
         borderBottom: '1px solid rgba(70, 132, 50, 0.1)', /* Dark Green border */
-        padding: '32px 24px',
+        padding: '12px 24px', /* Reduced from 32px */
         borderRadius: '0 0 var(--r-lg) var(--r-lg)',
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center'
       }}>
         <div className="dash-v5-profile">
-          <h1 style={{ fontSize: '28px', fontWeight: 900, color: 'var(--ink1)', margin: 0, direction: 'rtl', fontFamily: 'Fraunces, serif' }}>
+          <h1 style={{ fontSize: '20px', fontWeight: 900, color: 'var(--ink1)', margin: 0, direction: 'rtl', fontFamily: 'Fraunces, serif' }}>
             English classes سلام! ✨
           </h1>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '12px' }}>
-            <div style={{ flex: 1, minWidth: '200px' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
-                 <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--ink3)' }}>{completedPct}% تکمیل شد (Concluído)</span>
-              </div>
-              <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.5)', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: `${completedPct}%`, height: '100%', background: '#468432', borderRadius: '4px' }} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '15px', marginTop: '4px' }}>
+            <div style={{ flex: 1, minWidth: '150px' }}>
+              <div style={{ width: '100%', height: '6px', background: 'rgba(255,255,255,0.5)', borderRadius: '3px', overflow: 'hidden' }}>
+                <div style={{ width: `${completedPct}%`, height: '100%', background: '#468432', borderRadius: '3px' }} />
               </div>
             </div>
           </div>
         </div>
-
-        <div className="dash-v5-stats" style={{ display: 'flex', gap: '12px' }}>
-          <div className="stat-badge-v5" style={{ background: 'rgba(255, 160, 46, 0.2)', padding: '10px 16px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Flame size={20} fill="#FFA02E" stroke="none" />
-            <span style={{ fontSize: '15px', fontWeight: 900, color: '#FFA02E' }}>{currentStreak}</span>
+        {/* Stats on same line as title to save space */}
+        <div className="dash-v5-stats" style={{ display: 'flex', gap: '8px' }}>
+          <div className="stat-badge-v5" style={{ background: 'rgba(255, 160, 46, 0.2)', padding: '6px 12px', borderRadius: '15px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Flame size={16} fill="#FFA02E" stroke="none" />
+            <span style={{ fontSize: '13px', fontWeight: 900, color: '#FFA02E' }}>{currentStreak}</span>
           </div>
-          <div className="stat-badge-v5" style={{ background: 'rgba(255, 239, 145, 0.3)', padding: '10px 16px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Star size={20} fill="#FFD700" stroke="none" />
-            <span style={{ fontSize: '15px', fontWeight: 900, color: '#468432' }}>{totalStars}</span>
+          <div className="stat-badge-v5" style={{ background: 'rgba(255, 239, 145, 0.3)', padding: '6px 12px', borderRadius: '15px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <Star size={16} fill="#FFD700" stroke="none" />
+            <span style={{ fontSize: '13px', fontWeight: 900, color: '#468432' }}>{totalStars}</span>
           </div>
         </div>
       </header>
 
       <div style={{ padding: '0 24px' }}>
-        {/* Título do Módulo */}
-        <div className="module-intro-v5" style={{ textAlign: 'center', marginBottom: '10px' }}>
-           <h2 style={{ fontSize: '32px', fontWeight: 900, color: 'var(--ink1)', margin: '12px 0 4px', direction: 'rtl', fontFamily: 'Fraunces, serif' }}>
+        {/* Título do Módulo Super Compacto */}
+        <div className="module-intro-v5" style={{ textAlign: 'center', marginBottom: '8px', marginTop: '8px' }}>
+           <h2 style={{ fontSize: '24px', fontWeight: 900, color: 'var(--ink1)', margin: '0', direction: 'rtl', fontFamily: 'Fraunces, serif' }}>
               ماژول ۱: مکالمه پایه 🚀
            </h2>
-           <p style={{ color: 'var(--ink3)', fontWeight: 500, fontSize: '15px' }}>
-              Complete as atividades para ganhar estrelas!
-           </p>
         </div>
 
         {/* Grid de Aulas */}
