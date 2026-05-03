@@ -148,7 +148,7 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
               color: 'var(--ink1)',
               lineHeight: 1,
               fontFamily: 'Outfit, sans-serif',
-              marginBottom: '4px'
+              marginBottom: '2px'
             }}>
               {lesson.titleDari}
             </div>
@@ -156,7 +156,7 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
         </div>
         
         {!isLocked && (
-          <div className="lesson-footer-v5" style={{ marginTop: '4px', width: '100%' }}>
+          <div className="lesson-footer-v5" style={{ marginTop: '2px', width: '100%' }}>
              <div className="lesson-bar-v5" style={{ 
                height: '10px', 
                background: 'rgba(0,0,0,0.05)', 
