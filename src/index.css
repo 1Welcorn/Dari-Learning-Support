@@ -6966,7 +6966,7 @@ select {
 .mission-footer-v7 {
   background: rgba(255,255,255,0.9) !important;
   backdrop-filter: blur(10px) !important;
-  padding: 25px !important;
+  padding: 0 25px 25px 25px !important;
   border-top: 1px solid rgba(0,0,0,0.05) !important;
   text-align: center !important;
 }
