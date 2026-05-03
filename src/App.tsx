@@ -47,12 +47,34 @@ export const App: React.FC = () => {
         for (const defaultUnit of DEFAULT_UNITS) {
           const existing = units.find(u => u.id === defaultUnit.id);
           
-          // Se não existe ou se o título mudou, vamos atualizar/inserir
-          if (!existing || existing.title !== defaultUnit.title || !existing.icon3D) {
+          if (!existing || existing.title !== defaultUnit.title) {
             console.log(`Syncing unit: ${defaultUnit.title}`);
-            const { error } = await supabase.from('units').upsert(defaultUnit);
-            if (error) console.error(`Error syncing unit ${defaultUnit.id}:`, error);
-            else needsRefresh = true;
+            
+            // Limpa o objeto para evitar colunas que podem não existir no banco do usuário
+            // e garante que campos complexos sejam aceitos
+            const unitToSync = {
+              id: defaultUnit.id,
+              title: defaultUnit.title,
+              sub: defaultUnit.sub,
+              color: defaultUnit.color,
+              sort_order: defaultUnit.sort_order,
+              brief: defaultUnit.brief,
+              plan_c: defaultUnit.plan_c,
+              plan_h: defaultUnit.plan_h,
+              plan_e: defaultUnit.plan_e,
+              plan_a: defaultUnit.plan_a,
+              wa: defaultUnit.wa,
+              questions: defaultUnit.questions, // O Supabase JS lida com JSON
+              external_links: defaultUnit.external_links
+            };
+
+            const { error } = await supabase.from('units').upsert(unitToSync);
+            
+            if (error) {
+              console.error(`Error syncing unit ${defaultUnit.id}:`, error.message);
+            } else {
+              needsRefresh = true;
+            }
           }
         }
 
