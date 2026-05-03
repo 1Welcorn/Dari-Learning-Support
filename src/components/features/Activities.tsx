@@ -334,7 +334,7 @@ const StepNavigation: React.FC<{
     return (
     <div className={`activities-v5-wrapper step-type-${current.type}`}>
       {/* 1. TOP PROFILE BAR */}
-      <div className="profile-header-image-style" style={{ margin: '10px auto' }}>
+      <div className="profile-header-image-style" style={{ margin: '4px auto 0' }}>
         <div className="avatar-and-name">
           <div className="user-text-v7">
              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
