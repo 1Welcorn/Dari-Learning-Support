@@ -821,6 +821,18 @@ const StepNavigation: React.FC<{
                                         />
                                         <span>Loop</span>
                                      </label>
+                                      <label className="playback-check">
+                                         <input 
+                                            type="checkbox" 
+                                            checked={link.showSubtitles || false} 
+                                            onChange={(e) => {
+                                               const newLinks = [...tempLinks];
+                                               newLinks[idx].showSubtitles = e.target.checked;
+                                               setTempLinks(newLinks);
+                                            }}
+                                         />
+                                         <span>Legenda</span>
+                                      </label>
                                      <button className="del-media-btn" onClick={() => setTempLinks(tempLinks.filter((_, i) => i !== idx))}>
                                         <Trash2 size={14} />
                                      </button>
