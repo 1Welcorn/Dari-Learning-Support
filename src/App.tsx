@@ -16,6 +16,7 @@ import { Planning } from './components/features/Planning';
 import PlanningEditor from './components/features/PlanningEditor';
 import { WhatsAppAssistant } from './components/features/WhatsAppAssistant';
 import { useDariData } from './hooks/useData';
+import { useStudentJourney } from './hooks/useStudentJourney';
 import { speechService } from './utils/speech';
 import { DEFAULT_UNITS } from './constants';
 import { supabase } from './services/supabase';
