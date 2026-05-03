@@ -294,7 +294,6 @@ export const App: React.FC = () => {
            <button 
              className="nav-link-kids logout-btn-v5"
              onClick={logout}
-             style={{ width: '100%', border: '4px solid white' }}
            >
              <div className="icon-wrapper" style={{ background: '#FF4D4D' }}>🚪</div>
              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>

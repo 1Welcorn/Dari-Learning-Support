@@ -7040,8 +7040,11 @@ select {
     align-items: center;
     justify-content: flex-start;
     gap: 15px;
-    padding: 12px 18px;
-    min-height: 85px; /* Fixed height for all buttons */
+    padding: 12px 20px;
+    min-height: 85px; 
+    width: 100%; /* Fill container */
+    max-width: 240px; /* But keep a standard capsule length */
+    margin: 0 auto 15px auto; /* Center in sidebar and add spacing */
     text-decoration: none;
     color: white; /* Text always white for game style */
     font-weight: 900;
