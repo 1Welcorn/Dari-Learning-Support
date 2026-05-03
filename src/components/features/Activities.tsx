@@ -1225,7 +1225,7 @@ export const Activities: React.FC<{
               isMediator={isMediator}
               onUpdateUnit={onUpdateUnit}
               isExpanded={true}
-              onToggle={onToggle}
+              onToggle={onToggle || (() => {})}
               onStartGame={() => setActiveGameUnitId(unit.id)}
               onGoHome={onGoHome || (() => {})}
               isLocked={false}
