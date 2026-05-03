@@ -143,6 +143,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
             else if (t.includes('números')) titleDari = 'اعداد و مقدار';
             else if (t.includes('família')) titleDari = 'خانواده من';
             else if (t.includes('corpo')) titleDari = 'اعضای بدن';
+            else if (t.includes('animais')) titleDari = 'حیوانات و صداها';
+            else if (t.includes('revisão')) titleDari = 'مرور درس';
 
             const lessonData: Lesson = {
               id: unit.id,

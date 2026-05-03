@@ -117,22 +117,22 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
           <span className="lesson-id-tag" style={{ background: 'var(--sky-blue)', color: 'white', padding: '4px 12px', borderRadius: '20px', fontSize: '10px', fontWeight: 900, marginBottom: '8px', display: 'inline-block' }}>
             {lesson.sub || `AULA ${idx + 1}`}
           </span>
+          <h3 className="lesson-title-v5" style={{ fontSize: lesson.titleDari ? '13px' : '16px', color: 'var(--ink2)', fontWeight: 700, margin: 0 }}>
+            {lesson.title}
+          </h3>
           {lesson.titleDari && (
             <div style={{ 
               direction: 'rtl', 
               fontSize: '18px', 
               fontWeight: 900, 
               color: 'var(--ink1)',
-              marginBottom: '4px',
+              marginTop: '6px',
               lineHeight: 1.2,
               fontFamily: 'Outfit, sans-serif'
             }}>
               {lesson.titleDari}
             </div>
           )}
-          <h3 className="lesson-title-v5" style={{ fontSize: lesson.titleDari ? '13px' : '16px', color: 'var(--ink2)', fontWeight: 700, margin: 0 }}>
-            {lesson.title}
-          </h3>
         </div>
         
         {!isLocked && (
