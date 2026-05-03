@@ -837,6 +837,27 @@ const StepNavigation: React.FC<{
                                         <Trash2 size={14} />
                                      </button>
                                   </div>
+                                  {link.showSubtitles && (
+                                     <div style={{ marginTop: '10px' }}>
+                                        <input 
+                                           type="text"
+                                           value={link.caption || ''}
+                                           onChange={(e) => {
+                                              const newLinks = [...tempLinks];
+                                              newLinks[idx].caption = e.target.value;
+                                              setTempLinks(newLinks);
+                                           }}
+                                           placeholder="Escreva a legenda aqui..."
+                                           style={{ 
+                                              width: '100%', 
+                                              padding: '8px 12px', 
+                                              borderRadius: '10px', 
+                                              border: '1px solid #e2e8f0',
+                                              fontSize: '13px'
+                                           }}
+                                        />
+                                     </div>
+                                  )}
                                </div>
                             </div>
                          </div>
