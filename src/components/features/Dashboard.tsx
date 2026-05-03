@@ -146,12 +146,13 @@ export const Dashboard: React.FC<DashboardProps> = ({
 
             const lessonData: Lesson = {
               id: unit.id,
-              title: unit.sub || unit.title,
+              title: unit.title || unit.sub, // Prioritize the real title
               status: isDone ? 'completed' : (isLocked ? 'locked' : 'not_started'),
-              iconOutline: base ? `/unit-icons/${base}-off.png` : '',
-              icon3D: base ? `/unit-icons/${base}.png` : '',
+              iconOutline: unit.iconOutline || (base ? `/unit-icons/${base}-off.png` : ''),
+              icon3D: unit.icon3D || (base ? `/unit-icons/${base}.png` : ''),
               xpValue: 100,
-              titleDari: unit.title_dari || titleDari
+              titleDari: unit.title_dari || titleDari,
+              sub: unit.sub
             };
 
             return (

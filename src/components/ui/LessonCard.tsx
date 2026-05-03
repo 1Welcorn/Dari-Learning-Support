@@ -110,7 +110,9 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
         </div>
         
         <div className="lesson-info-v5" style={{ textAlign: 'center' }}>
-          <span className="lesson-id-tag" style={{ background: 'var(--sky-blue)', color: 'white', padding: '4px 12px', borderRadius: '20px', fontSize: '10px', fontWeight: 900, marginBottom: '8px', display: 'inline-block' }}>AULA {idx + 1}</span>
+          <span className="lesson-id-tag" style={{ background: 'var(--sky-blue)', color: 'white', padding: '4px 12px', borderRadius: '20px', fontSize: '10px', fontWeight: 900, marginBottom: '8px', display: 'inline-block' }}>
+            {lesson.sub || `AULA ${idx + 1}`}
+          </span>
           {lesson.titleDari && (
             <div style={{ 
               direction: 'rtl', 

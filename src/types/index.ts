@@ -102,4 +102,5 @@ export interface Lesson {
   icon3D: string;      // Caminho para a imagem colorida
   xpValue: number;
   titleDari?: string;
+  sub?: string;
 }
