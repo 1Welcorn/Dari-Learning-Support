@@ -291,12 +291,17 @@ export const App: React.FC = () => {
           </div>
         </button>
 
-        <div style={{ marginTop: 'auto', padding: '20px' }}>
+        <div style={{ marginTop: 'auto', padding: '10px' }}>
            <button 
-             onClick={() => setActiveTab('settings')}
-             style={{ width: '100%', padding: '12px', borderRadius: '16px', background: 'white', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: '10px', fontSize: '12px', fontWeight: 700 }}
+             className="nav-link-kids logout-btn-v5"
+             onClick={logout}
+             style={{ width: '100%', border: '4px solid white' }}
            >
-             ⚙️ تنظیمات (Config)
+             <div className="icon-wrapper" style={{ background: '#FF4D4D' }}>🚪</div>
+             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+               <span style={{ direction: 'rtl', fontSize: '18px', fontWeight: 900 }}>خروج</span>
+               <span style={{ fontSize: '12px', fontWeight: 700, opacity: 0.9 }}>Sair (Logout)</span>
+             </div>
            </button>
         </div>
       </aside>

@@ -7110,6 +7110,15 @@ select {
     box-shadow: none;
 }
 
+.nav-link-kids.logout-btn-v5 {
+    background: linear-gradient(to bottom, #FF6B6B, #C92A2A);
+    color: white;
+}
+
+.nav-link-kids.logout-btn-v5:hover {
+    background: linear-gradient(to bottom, #FF8787, #E03131);
+}
+
 
 /* --- PLANNING (MEU MAPA) ADJUSTMENTS V7 --- */
 .planning-container {
