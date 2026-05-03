@@ -7041,9 +7041,9 @@ select {
     gap: 15px;
     padding: 15px 20px;
     text-decoration: none;
-    color: #475569;
-    font-weight: 800;
-    font-size: 1.1rem;
+    color: var(--ink1);
+    font-weight: 900;
+    font-size: 1.2rem;
     border-radius: 25px;
     margin-bottom: 15px;
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);

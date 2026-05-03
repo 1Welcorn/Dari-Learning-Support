@@ -262,8 +262,8 @@ export const App: React.FC = () => {
         >
           <div className="icon-wrapper" style={{ background: 'var(--lavender)' }}>✨</div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-            <span style={{ direction: 'rtl', fontSize: '16px', fontWeight: 800 }}>صنف‌های من</span>
-            <span style={{ fontSize: '11px', color: 'var(--ink3)', fontWeight: 500 }}>Minhas Aulas</span>
+            <span style={{ direction: 'rtl', fontSize: '22px', fontWeight: 900 }}>صنف‌های من</span>
+            <span style={{ fontSize: '14px', fontWeight: 700, opacity: 0.9 }}>Minhas Aulas</span>
           </div>
         </button>
 
@@ -274,8 +274,8 @@ export const App: React.FC = () => {
           >
             <div className="icon-wrapper" style={{ background: 'var(--sage)' }}>🌿</div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-              <span style={{ direction: 'rtl', fontSize: '16px', fontWeight: 800 }}>نقشه من</span>
-              <span style={{ fontSize: '11px', color: 'var(--ink3)', fontWeight: 500 }}>Planejamento</span>
+              <span style={{ direction: 'rtl', fontSize: '22px', fontWeight: 900 }}>نقشه من</span>
+              <span style={{ fontSize: '14px', fontWeight: 700, opacity: 0.9 }}>Planejamento</span>
             </div>
           </button>
         )}
@@ -286,8 +286,8 @@ export const App: React.FC = () => {
         >
           <div className="icon-wrapper" style={{ background: 'var(--sky-blue)' }}>☁️</div>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-            <span style={{ direction: 'rtl', fontSize: '16px', fontWeight: 800 }}>کمک</span>
-            <span style={{ fontSize: '11px', color: 'var(--ink3)', fontWeight: 500 }}>Ajuda (Help)</span>
+            <span style={{ direction: 'rtl', fontSize: '22px', fontWeight: 900 }}>کمک</span>
+            <span style={{ fontSize: '14px', fontWeight: 700, opacity: 0.9 }}>Ajuda (Help)</span>
           </div>
         </button>
 
