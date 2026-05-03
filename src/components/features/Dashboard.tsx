@@ -52,9 +52,9 @@ export const Dashboard: React.FC<DashboardProps> = ({
     <div className="dash-v5-container" style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       {/* Header de Status do Aluno (Whimsical Design) */}
       <header className="dash-v5-header" style={{ 
-        background: 'rgba(216, 180, 216, 0.15)', 
+        background: 'rgba(154, 216, 114, 0.15)', /* Light Green from palette */
         backdropFilter: 'var(--glass)',
-        borderBottom: '1px solid var(--border)',
+        borderBottom: '1px solid rgba(70, 132, 50, 0.1)', /* Dark Green border */
         padding: '32px 24px',
         borderRadius: '0 0 var(--r-lg) var(--r-lg)',
         display: 'flex',
@@ -71,20 +71,20 @@ export const Dashboard: React.FC<DashboardProps> = ({
                  <span style={{ fontSize: '11px', fontWeight: 800, color: 'var(--ink3)' }}>{completedPct}% تکمیل شد (Concluído)</span>
               </div>
               <div style={{ width: '100%', height: '8px', background: 'rgba(255,255,255,0.5)', borderRadius: '4px', overflow: 'hidden' }}>
-                <div style={{ width: `${completedPct}%`, height: '100%', background: 'var(--sage)', borderRadius: '4px' }} />
+                <div style={{ width: `${completedPct}%`, height: '100%', background: '#468432', borderRadius: '4px' }} />
               </div>
             </div>
           </div>
         </div>
 
         <div className="dash-v5-stats" style={{ display: 'flex', gap: '12px' }}>
-          <div className="stat-badge-v5" style={{ background: 'rgba(229, 152, 155, 0.2)', padding: '10px 16px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Flame size={20} fill="var(--rose)" stroke="none" />
-            <span style={{ fontSize: '15px', fontWeight: 900, color: 'var(--rose)' }}>{currentStreak}</span>
+          <div className="stat-badge-v5" style={{ background: 'rgba(255, 160, 46, 0.2)', padding: '10px 16px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Flame size={20} fill="#FFA02E" stroke="none" />
+            <span style={{ fontSize: '15px', fontWeight: 900, color: '#FFA02E' }}>{currentStreak}</span>
           </div>
-          <div className="stat-badge-v5" style={{ background: 'rgba(106, 154, 176, 0.2)', padding: '10px 16px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <Star size={20} fill="var(--sky-blue)" stroke="none" />
-            <span style={{ fontSize: '15px', fontWeight: 900, color: 'var(--sky-blue)' }}>{totalStars}</span>
+          <div className="stat-badge-v5" style={{ background: 'rgba(255, 239, 145, 0.3)', padding: '10px 16px', borderRadius: '20px', display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <Star size={20} fill="#FFD700" stroke="none" />
+            <span style={{ fontSize: '15px', fontWeight: 900, color: '#468432' }}>{totalStars}</span>
           </div>
         </div>
       </header>
@@ -92,7 +92,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       <div style={{ padding: '32px 24px' }}>
         {/* Título do Módulo */}
         <div className="module-intro-v5" style={{ textAlign: 'center', marginBottom: '40px' }}>
-           <span style={{ background: 'rgba(107, 142, 107, 0.15)', color: 'var(--sage)', padding: '6px 18px', borderRadius: '20px', fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px' }}>سفر یادگیری (Jornada)</span>
+           <span style={{ background: 'rgba(70, 132, 50, 0.1)', color: '#468432', padding: '6px 18px', borderRadius: '20px', fontSize: '11px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '1px' }}>سفر یادگیری (Jornada)</span>
            <h2 style={{ fontSize: '32px', fontWeight: 900, color: 'var(--ink1)', margin: '12px 0 8px', direction: 'rtl', fontFamily: 'Fraunces, serif' }}>
               ماژول ۱: مکالمه پایه 🚀
            </h2>
