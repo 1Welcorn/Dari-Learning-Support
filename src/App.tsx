@@ -257,7 +257,7 @@ export const App: React.FC = () => {
         </div>
 
         <button 
-          className={`nav-link-kids ${activeTab === 'adventure' ? 'active' : ''}`}
+          className={`nav-link-kids adventure ${activeTab === 'adventure' ? 'active' : ''}`}
           onClick={() => { setActiveTab('adventure'); setActiveUnit(null); }}
         >
           <div className="icon-wrapper" style={{ background: 'var(--lavender)' }}>✨</div>
@@ -269,7 +269,7 @@ export const App: React.FC = () => {
 
         {!isPreviewMode && role === 'admin' && (
           <button 
-            className={`nav-link-kids ${activeTab === 'planning' ? 'active' : ''}`}
+            className={`nav-link-kids planning ${activeTab === 'planning' ? 'active' : ''}`}
             onClick={() => setActiveTab('planning')}
           >
             <div className="icon-wrapper" style={{ background: 'var(--sage)' }}>🌿</div>
@@ -281,7 +281,7 @@ export const App: React.FC = () => {
         )}
 
         <button 
-          className={`nav-link-kids ${activeTab === 'whatsapp' ? 'active' : ''}`}
+          className={`nav-link-kids whatsapp ${activeTab === 'whatsapp' ? 'active' : ''}`}
           onClick={() => { setActiveTab('whatsapp'); setActiveUnit(null); }}
         >
           <div className="icon-wrapper" style={{ background: 'var(--sky-blue)' }}>☁️</div>

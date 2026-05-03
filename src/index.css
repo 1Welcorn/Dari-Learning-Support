@@ -7070,13 +7070,27 @@ select {
 }
 
 .nav-link-kids.active {
-    background: #00D2A1;
     color: white;
-    box-shadow: 0 8px 0px #00a881;
+}
+
+.nav-link-kids.adventure.active {
+    background: #FF8DA1; /* Lavender/Rose Tulipa */
+    box-shadow: 0 8px 20px rgba(255, 141, 161, 0.3);
+}
+
+.nav-link-kids.planning.active {
+    background: #468432; /* Natural Green */
+    box-shadow: 0 8px 20px rgba(70, 132, 50, 0.3);
+}
+
+.nav-link-kids.whatsapp.active {
+    background: #A2D2FF; /* Sky Blue */
+    color: #1A0F1A;
+    box-shadow: 0 8px 20px rgba(162, 210, 255, 0.3);
 }
 
 .nav-link-kids.active .icon-wrapper {
-    background: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.25);
     box-shadow: none;
 }
 
