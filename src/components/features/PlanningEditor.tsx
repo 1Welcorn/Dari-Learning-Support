@@ -217,8 +217,16 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
           <button onClick={() => setIsPreviewing(true)} className="preview-plano-btn">
             <Eye size={20} /> PREVIEW
           </button>
-          <button onClick={handleSave} className="save-plano-btn">
-            <Save size={20} /> SALVAR PLANO
+          <button 
+            onClick={handleSave} 
+            className={`save-plano-btn ${isDirty ? 'is-dirty-pulse' : ''}`}
+            style={{
+              position: 'relative',
+              animation: isDirty ? 'pulse-gold 2s infinite' : 'none'
+            }}
+          >
+            <Save size={20} /> {isDirty ? 'SALVAR ALTERAÇÕES' : 'SALVAR PLANO'}
+            {isDirty && <span className="dirty-dot" style={{ position: 'absolute', top: '-5px', right: '-5px', width: '12px', height: '12px', background: '#f59e0b', borderRadius: '50%', border: '2px solid white' }} />}
           </button>
           <button 
             onClick={async () => {
@@ -474,8 +482,9 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                 onClick={saveEmbedLink}
                 className={`embed-add-btn-v4 ${embedSaved ? 'saved' : ''}`}
                 disabled={!tempEmbed.trim() || isSavingEmbed}
+                style={{ background: '#10b981' }}
               >
-                <Plus size={20} /> {isSavingEmbed ? 'Salvando...' : embedSaved ? 'Salvo' : 'Salvar'}
+                <Plus size={20} /> {isSavingEmbed ? '...' : 'ADICIONAR'}
               </button>
             </div>
             <div className="embed-list-editor-v5">
