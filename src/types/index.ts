@@ -12,6 +12,7 @@ export interface Question {
   audioUrl?: string;
   ttsEnabled?: boolean;
   ttsOptionsEnabled?: boolean;
+  autoPlayOnce?: boolean;
 }
 
 export interface ExternalLink {

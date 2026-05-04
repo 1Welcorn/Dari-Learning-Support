@@ -91,7 +91,7 @@ const normalizeEmbedUrl = (rawUrl: string): string => {
   }
 };
 
-const VideoPlayerV5: React.FC<{ media: ExternalLink }> = ({ media }) => {
+export const VideoPlayerV5: React.FC<{ media: ExternalLink }> = ({ media }) => {
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const [playCount, setPlayCount] = React.useState(0);
   const [hasPlayedOnce, setHasPlayedOnce] = React.useState(false);

@@ -849,6 +849,38 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                     </div>
                   </div>
 
+                  <div className="q-field-row" style={{ marginTop: '12px' }}>
+                    <div className="q-field" style={{ flex: 2 }}>
+                      <label>Mídia (Link da Imagem ou Vídeo MP4)</label>
+                      <input 
+                        type="text" 
+                        value={q.imageUrl || ""} 
+                        onChange={(e) => {
+                          const newQs = [...unitData.questions];
+                          newQs[idx].imageUrl = e.target.value;
+                          setUnitData({ ...unitData, questions: newQs });
+                          setIsDirty(true);
+                        }}
+                        placeholder="Cole aqui o link .jpg, .png ou .mp4"
+                      />
+                    </div>
+                    <div className="q-field" style={{ flex: 1, display: 'flex', alignItems: 'center', paddingTop: '20px' }}>
+                       <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 800, color: '#3b82f6' }}>
+                          <input 
+                            type="checkbox" 
+                            checked={!!q.autoPlayOnce}
+                            onChange={(e) => {
+                              const newQs = [...unitData.questions];
+                              newQs[idx].autoPlayOnce = e.target.checked;
+                              setUnitData({ ...unitData, questions: newQs });
+                              setIsDirty(true);
+                            }}
+                          />
+                          AUTO-PLAY ✨
+                       </label>
+                    </div>
+                  </div>
+
                   {q.type === 'mc' && (
                     <div className="q-field">
                       <label>Opções (separadas por vírgula)</label>

@@ -3,6 +3,7 @@ import type { Question, QuestionType } from '../../types';
 import { COLORS } from '../../constants';
 import { Info, CheckCircle, Volume2, Edit2, Trash2, Check, Circle, Music, Plus } from 'lucide-react';
 import { speechService } from '../../utils/speech';
+import { VideoPlayerV5 } from './Activities';
 // import { supabase } from '../../services/supabase';
 
 interface QuestionBlockProps {
@@ -51,6 +52,7 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
   const [editAudio, _setEditAudio] = useState(question.audioUrl || '');
   const [editTtsEnabled, _setEditTtsEnabled] = useState(question.ttsEnabled ?? true);
   const [editTtsOptionsEnabled, _setEditTtsOptionsEnabled] = useState(question.ttsOptionsEnabled ?? false);
+  const [editAutoPlayOnce, setEditAutoPlayOnce] = useState(question.autoPlayOnce ?? false);
   const [_lastFocusedField, _setLastFocusedField] = useState<{ field: string, index?: number, start: number, end: number } | null>(null);
   
   const currentColors = COLORS[color] || COLORS.emerald || { main: '#10b981', light: '#ecfdf5', dark: '#064e3b' };
@@ -108,7 +110,8 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
       imageUrl: editImage,
       audioUrl: editAudio,
       ttsEnabled: editTtsEnabled,
-      ttsOptionsEnabled: editTtsOptionsEnabled
+      ttsOptionsEnabled: editTtsOptionsEnabled,
+      autoPlayOnce: editAutoPlayOnce
     });
     setIsEditing(false);
   };
@@ -264,7 +267,14 @@ export const QuestionBlock: React.FC<QuestionBlockProps> = ({
 
             {question.imageUrl && (
               <div className="q-image-v4">
-                <img src={question.imageUrl} alt="Visual" />
+                {(() => {
+                  const url = question.imageUrl.toLowerCase();
+                  const isVideo = url.endsWith('.mp4') || url.endsWith('.webm') || url.includes('player.cloudinary.com');
+                  if (isVideo) {
+                    return <VideoPlayerV5 media={{ label: 'video', url: question.imageUrl, autoPlayOnce: question.autoPlayOnce }} />;
+                  }
+                  return <img src={question.imageUrl} alt="Visual" />;
+                })()}
               </div>
             )}
 
