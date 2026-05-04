@@ -367,7 +367,7 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                         </button>
                       </div>
 
-                      <div className="media-controls-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', paddingTop: '10px', borderTop: '1px solid #f1f5f9' }}>
+                      <div className="media-controls-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', gap: '15px', paddingTop: '10px', borderTop: '1px solid #f1f5f9' }}>
                         <div className="control-group">
                           <label style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '5px' }}>LARGURA: {media.width || '100%'}</label>
                           <input 
@@ -875,11 +875,12 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                           setUnitData({ ...unitData, questions: newQs });
                           setIsDirty(true);
                         }}
-                        placeholder="Cole aqui o link .jpg, .png ou .mp4"
+                        placeholder="Link .mp4 ou .jpg"
+                        style={{ fontSize: '12px' }}
                       />
                     </div>
-                    <div className="q-field" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px', paddingTop: '5px' }}>
-                       <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 800, color: '#3b82f6' }}>
+                    <div className="q-field" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px', paddingTop: '5px', minWidth: '150px' }}>
+                       <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '11px', fontWeight: 900, color: '#3b82f6', background: 'rgba(59, 130, 246, 0.05)', padding: '4px 8px', borderRadius: '8px' }}>
                           <input 
                             type="checkbox" 
                             checked={!!q.autoPlayOnce}
@@ -892,18 +893,20 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                           />
                           AUTO-PLAY ✨
                        </label>
-                       <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b' }}>ESPERA: {q.delay || 0}s</label>
-                       <input 
-                         type="range" min="0" max="10" step="1"
-                         value={q.delay || 0}
-                         onChange={(e) => {
-                           const newQs = [...unitData.questions];
-                           newQs[idx].delay = parseInt(e.target.value);
-                           setUnitData({ ...unitData, questions: newQs });
-                           setIsDirty(true);
-                         }}
-                         style={{ width: '100%', accentColor: '#f59e0b' }}
-                       />
+                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b', whiteSpace: 'nowrap' }}>ESPERA: {q.delay || 0}s</label>
+                          <input 
+                            type="range" min="0" max="10" step="1"
+                            value={q.delay || 0}
+                            onChange={(e) => {
+                              const newQs = [...unitData.questions];
+                              newQs[idx].delay = parseInt(e.target.value);
+                              setUnitData({ ...unitData, questions: newQs });
+                              setIsDirty(true);
+                            }}
+                            style={{ flex: 1, accentColor: '#f59e0b' }}
+                          />
+                       </div>
                     </div>
                   </div>
 
