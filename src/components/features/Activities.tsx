@@ -566,7 +566,7 @@ const StepNavigation: React.FC<{
                                         <div style={{ width: media.width || '100%', borderRadius: '24px', overflow: 'hidden', background: 'transparent', margin: '0 auto', boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>
                                           <iframe 
                                             src={media.url} 
-                                            style={{ width: '100%', height: '350px', border: 'none' }} 
+                                            style={{ width: '100%', height: '550px', border: 'none' }} 
                                             allow="autoplay; fullscreen" 
                                           />
                                         </div>

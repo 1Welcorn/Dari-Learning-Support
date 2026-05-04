@@ -6993,7 +6993,7 @@ select {
 .mission-footer-v7 {
   background: transparent !important;
   backdrop-filter: none !important;
-  padding: 10px 20px 30px 40px !important; /* 40px padding-left to align with the start of the image area */
+  padding: 10px 20px 10px 40px !important; /* 40px padding-left to align with the start of the image area */
   border-top: none !important;
   text-align: left !important;
 }
