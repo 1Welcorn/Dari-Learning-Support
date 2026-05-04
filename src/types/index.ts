@@ -56,6 +56,8 @@ export interface Unit {
   embed_preview_images?: string[];
   hide_nav?: boolean;
   descriptors?: string[];
+  icon3D?: string;
+  iconOutline?: string;
   questions: Question[];
   external_links?: ExternalLink[];
   vocabulary_list?: string[];
