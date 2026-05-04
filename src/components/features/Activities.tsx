@@ -577,7 +577,7 @@ const StepNavigation: React.FC<{
                                       isCloudinary ? (
                                         <div style={{ width: media.width || '100%', borderRadius: '24px', overflow: 'hidden', background: 'transparent', margin: '0 auto', boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>
                                           <iframe 
-                                            src={`${media.url}${media.url.includes('?') ? '&' : '?'}autoplay=${media.autoPlayOnce ? '1' : '0'}`} 
+                                            src={`${media.url}${media.url.includes('?') ? '&' : '?'}autoplay=${media.autoPlayOnce ? '1' : '0'}${media.autoPlayOnce ? '&controls=0' : ''}`} 
                                             style={{ width: '100%', height: '550px', border: 'none' }} 
                                             allow="autoplay; fullscreen" 
                                           />
