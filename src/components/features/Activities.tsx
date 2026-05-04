@@ -555,14 +555,20 @@ const StepNavigation: React.FC<{
                           <div style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '24px' }}>
                              {medias.map((media, mIdx) => {
                                const isCloudinary = media.url.includes('player.cloudinary.com');
-                               const isVideo = media.label === 'video_file' || media.url.toLowerCase().endsWith('.mp4') || isCloudinary;
+                               const isVideoFile = media.url.toLowerCase().endsWith('.mp4') || media.url.toLowerCase().endsWith('.webm');
+                               const isExplicitVideo = media.label === 'video_file' || media.label === 'video';
+                               const isVideo = isExplicitVideo || (isVideoFile && media.label !== 'media');
 
                                return (
                                  <div key={mIdx} style={{ width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                                    {isVideo ? (
                                       isCloudinary ? (
-                                        <div style={{ width: media.width || '100%', borderRadius: '16px', overflow: 'hidden', background: '#000', margin: '0 auto' }}>
-                                          <iframe src={media.url} style={{ width: '100%', height: '240px', border: 'none' }} allow="autoplay; fullscreen" />
+                                        <div style={{ width: media.width || '100%', borderRadius: '24px', overflow: 'hidden', background: 'transparent', margin: '0 auto', boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>
+                                          <iframe 
+                                            src={media.url} 
+                                            style={{ width: '100%', height: '350px', border: 'none' }} 
+                                            allow="autoplay; fullscreen" 
+                                          />
                                         </div>
                                       ) : (
                                         <VideoPlayerV5 media={media} />
@@ -578,7 +584,18 @@ const StepNavigation: React.FC<{
                                         />
                                       </div>
                                    ) : (
-                                      <img src={media.url} alt="Media" className="word-game-icon-3d" style={{ width: media.width || 'auto', maxWidth: '100%' }} />
+                                      <div className="premium-sticker-container">
+                                        <img 
+                                          src={media.url} 
+                                          alt="Media" 
+                                          className="premium-3d-sticker" 
+                                          style={{ 
+                                            width: media.width || 'auto', 
+                                            maxWidth: '100%',
+                                            filter: 'drop-shadow(0 20px 30px rgba(0,0,0,0.15))'
+                                          }} 
+                                        />
+                                      </div>
                                    )}
                                    
                                    {media.showSubtitles && media.caption && (

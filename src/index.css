@@ -7325,3 +7325,29 @@ select {
   100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
 }
 
+
+/* Premium Sticker / Character Styles */
+.premium-sticker-container {
+  perspective: 1000px;
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.premium-3d-sticker {
+  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transform: rotateX(5deg) rotateY(-5deg);
+  animation: float-character 6s ease-in-out infinite;
+}
+
+.premium-3d-sticker:hover {
+  transform: scale(1.05) rotateX(0deg) rotateY(0deg) translateY(-10px);
+  filter: drop-shadow(0 30px 45px rgba(0,0,0,0.25)) !important;
+}
+
+@keyframes float-character {
+  0%, 100% { transform: translateY(0) rotateX(5deg) rotateY(-5deg); }
+  50% { transform: translateY(-15px) rotateX(2deg) rotateY(2deg); }
+}
+
