@@ -94,11 +94,12 @@ const normalizeEmbedUrl = (rawUrl: string): string => {
 const VideoPlayerV5: React.FC<{ media: ExternalLink }> = ({ media }) => {
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const [playCount, setPlayCount] = React.useState(0);
+  const [hasPlayedOnce, setHasPlayedOnce] = React.useState(false);
   const targetRepeats = media.repeatCount || 0;
 
   React.useEffect(() => {
-    // Reset play count when URL changes
     setPlayCount(0);
+    setHasPlayedOnce(false);
   }, [media.url]);
 
   React.useEffect(() => {
@@ -123,7 +124,8 @@ const VideoPlayerV5: React.FC<{ media: ExternalLink }> = ({ media }) => {
   }, [media.url, media.delay]);
 
   const handleEnded = () => {
-    if (media.loop) return; // Native loop handles it
+    setHasPlayedOnce(true);
+    if (media.loop) return;
     
     if (targetRepeats > 0 && playCount < targetRepeats - 1) {
       setPlayCount(prev => prev + 1);
@@ -134,16 +136,26 @@ const VideoPlayerV5: React.FC<{ media: ExternalLink }> = ({ media }) => {
     }
   };
 
+  const showControls = !media.autoPlayOnce || hasPlayedOnce;
+
   return (
-    <video 
-       ref={videoRef}
-       src={media.url} 
-       muted={false} 
-       loop={media.loop && !media.repeatCount} 
-       playsInline
-       onEnded={handleEnded}
-       style={{ width: media.width || '100%', maxWidth: '100%', borderRadius: '16px', display: 'block', margin: '0 auto' }}
-    />
+    <div style={{ width: media.width || '100%', maxWidth: '100%', position: 'relative' }}>
+      <video 
+         ref={videoRef}
+         src={media.url} 
+         muted={false} 
+         loop={media.loop && !media.repeatCount} 
+         playsInline
+         controls={showControls}
+         onEnded={handleEnded}
+         style={{ width: '100%', borderRadius: '16px', display: 'block', margin: '0 auto' }}
+      />
+      {media.autoPlayOnce && hasPlayedOnce && (
+        <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.5)', color: 'white', padding: '4px 8px', borderRadius: '4px', fontSize: '10px' }}>
+          Auto-Play Concluído ✨
+        </div>
+      )}
+    </div>
   );
 };
 

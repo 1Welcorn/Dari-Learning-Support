@@ -409,6 +409,19 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                               />
                               LEGENDA
                            </label>
+                           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 800, color: '#3b82f6' }}>
+                              <input 
+                                type="checkbox" 
+                                checked={!!media.autoPlayOnce}
+                                onChange={(e) => {
+                                  const next = [...unitData.external_links];
+                                  next[realIdx] = { ...media, autoPlayOnce: e.target.checked };
+                                  setUnitData({ ...unitData, external_links: next });
+                                  setIsDirty(true);
+                                }}
+                              />
+                              AUTO-PLAY ✨
+                           </label>
                         </div>
                       </div>
 

@@ -23,6 +23,7 @@ export interface ExternalLink {
   delay?: number;
   showSubtitles?: boolean;
   caption?: string;
+  autoPlayOnce?: boolean;
 }
 
 export interface EmbedActivity {
