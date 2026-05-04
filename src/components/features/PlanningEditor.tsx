@@ -23,6 +23,12 @@ const normalizeEmbedUrl = (rawUrl: string): string => {
   const trimmed = rawUrl.trim();
   if (!trimmed) return '';
 
+  // Se for um código de iframe completo, tenta extrair o src
+  if (trimmed.startsWith('<iframe')) {
+    const srcMatch = trimmed.match(/src=["'](.*?)["']/);
+    if (srcMatch && srcMatch[1]) return srcMatch[1];
+  }
+
   const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
 
   try {
@@ -301,7 +307,8 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                     if (!val) return;
                     
                     const isHtml = val.startsWith('<');
-                    const newMedia = { label: isHtml ? 'HTML' : 'media', url: val };
+                    const normalizedUrl = normalizeEmbedUrl(val);
+                    const newMedia = { label: isHtml ? 'HTML' : 'media', url: normalizedUrl };
                     const nextLinks = [...(unitData.external_links || []), newMedia];
                     setUnitData({ ...unitData, external_links: nextLinks });
                     input.value = '';
