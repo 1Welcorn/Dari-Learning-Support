@@ -13,6 +13,7 @@ export interface Question {
   ttsEnabled?: boolean;
   ttsOptionsEnabled?: boolean;
   autoPlayOnce?: boolean;
+  delay?: number;
 }
 
 export interface ExternalLink {

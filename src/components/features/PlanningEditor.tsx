@@ -382,6 +382,20 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                             style={{ width: '100%', accentColor: '#3b82f6' }}
                           />
                         </div>
+                        <div className="control-group">
+                          <label style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '5px' }}>ESPERA (Segundos): {media.delay || 0}s</label>
+                          <input 
+                            type="range" min="0" max="10" step="1"
+                            value={media.delay || 0}
+                            onChange={(e) => {
+                              const next = [...unitData.external_links];
+                              next[realIdx] = { ...media, delay: parseInt(e.target.value) };
+                              setUnitData({ ...unitData, external_links: next });
+                              setIsDirty(true);
+                            }}
+                            style={{ width: '100%', accentColor: '#f59e0b' }}
+                          />
+                        </div>
                         <div className="control-group" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                            <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 800 }}>
                               <input 
@@ -864,7 +878,7 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                         placeholder="Cole aqui o link .jpg, .png ou .mp4"
                       />
                     </div>
-                    <div className="q-field" style={{ flex: 1, display: 'flex', alignItems: 'center', paddingTop: '20px' }}>
+                    <div className="q-field" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px', paddingTop: '5px' }}>
                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 800, color: '#3b82f6' }}>
                           <input 
                             type="checkbox" 
@@ -878,6 +892,18 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                           />
                           AUTO-PLAY ✨
                        </label>
+                       <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b' }}>ESPERA: {q.delay || 0}s</label>
+                       <input 
+                         type="range" min="0" max="10" step="1"
+                         value={q.delay || 0}
+                         onChange={(e) => {
+                           const newQs = [...unitData.questions];
+                           newQs[idx].delay = parseInt(e.target.value);
+                           setUnitData({ ...unitData, questions: newQs });
+                           setIsDirty(true);
+                         }}
+                         style={{ width: '100%', accentColor: '#f59e0b' }}
+                       />
                     </div>
                   </div>
 

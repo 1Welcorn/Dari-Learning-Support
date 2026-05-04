@@ -91,6 +91,21 @@ const normalizeEmbedUrl = (rawUrl: string): string => {
   }
 };
 
+export const DelayedIframe: React.FC<{ src: string, delay?: number, style?: React.CSSProperties, allow?: string }> = ({ src, delay, style, allow }) => {
+  const [ready, setReady] = React.useState((delay || 0) === 0);
+
+  React.useEffect(() => {
+    if ((delay || 0) > 0) {
+      const timer = setTimeout(() => setReady(true), (delay || 0) * 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [src, delay]);
+
+  if (!ready) return <div style={{ ...style, background: 'rgba(0,0,0,0.02)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><span style={{fontSize: '12px', color: '#94a3b8', fontWeight: 600}}>Carregando mídia... ({(delay || 0)}s)</span></div>;
+
+  return <iframe src={src} style={style} allow={allow} allowFullScreen />;
+};
+
 export const VideoPlayerV5: React.FC<{ media: ExternalLink }> = ({ media }) => {
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const [playCount, setPlayCount] = React.useState(0);
@@ -576,10 +591,11 @@ const StepNavigation: React.FC<{
                                    {isVideo ? (
                                       isCloudinary ? (
                                         <div style={{ width: media.width || '100%', borderRadius: '24px', overflow: 'hidden', background: 'transparent', margin: '0 auto', boxShadow: '0 20px 40px rgba(0,0,0,0.1)' }}>
-                                          <iframe 
+                                          <DelayedIframe 
                                             src={`${media.url}${media.url.includes('?') ? '&' : '?'}autoplay=${media.autoPlayOnce ? '1' : '0'}${media.autoPlayOnce ? '&controls=0' : ''}`} 
                                             style={{ width: '100%', height: '550px', border: 'none' }} 
                                             allow="autoplay; fullscreen" 
+                                            delay={media.delay}
                                           />
                                         </div>
                                       ) : (
@@ -587,12 +603,11 @@ const StepNavigation: React.FC<{
                                       )
                                    ) : media.label === 'HTML' ? (
                                       <div style={{ width: media.width || '100%', borderRadius: '24px', overflow: 'hidden', background: '#f8fafc', border: '2px solid rgba(0,0,0,0.05)', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', margin: '0 auto' }}>
-                                        <iframe 
+                                        <DelayedIframe 
                                           src={media.url} 
                                           style={{ width: '100%', height: '450px', border: 'none' }} 
-                                          title="Atividade HTML"
                                           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                                          allowFullScreen
+                                          delay={media.delay}
                                         />
                                       </div>
                                    ) : (
