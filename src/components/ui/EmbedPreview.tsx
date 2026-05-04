@@ -26,6 +26,16 @@ const EmbedPreview = React.forwardRef<EmbedPreviewHandle, { url: string; title?:
     };
   }, [open]);
 
+  useEffect(() => {
+    const handleFsChange = () => {
+      if (!document.fullscreenElement && open) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('fullscreenchange', handleFsChange);
+    return () => document.removeEventListener('fullscreenchange', handleFsChange);
+  }, [open]);
+
   const openFullscreen = () => {
     setOpen(true);
     setTimeout(() => {
@@ -39,10 +49,10 @@ const EmbedPreview = React.forwardRef<EmbedPreviewHandle, { url: string; title?:
   };
 
   const closeFullscreen = async () => {
-    setOpen(false);
     if (document.fullscreenElement) {
       try { await document.exitFullscreen(); } catch {}
     }
+    setOpen(false);
   };
 
   useImperativeHandle(ref, () => ({ open: openFullscreen, close: closeFullscreen }));
