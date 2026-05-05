@@ -32,6 +32,13 @@ export const App: React.FC = () => {
   const [isPreviewMode, setIsPreviewMode] = useState(false);
   const [celebration, setCelebration] = useState<{ xp: number, stars: number } | null>(null);
   const [editingUnitId, setEditingUnitId] = useState<string | null>(null);
+  const [minLoadingTimePassed, setMinLoadingTimePassed] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setMinLoadingTimePassed(true), 5000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const {
     units, sessions, answers, settings, loading, syncStatus,
     saveAnswer, saveSession, updateSession, deleteSession, resetUnitAnswers, updateUnit, createUnit, refresh
@@ -138,9 +145,9 @@ export const App: React.FC = () => {
   }, [sortedUnits, answers]);
 
   console.log("App Rendering: Version - Mystery Icon Controls Added");
-  console.log("App State:", { role, loading, unitsCount: units?.length, settingsAvailable: !!settings });
+  console.log("App State:", { role, loading, unitsCount: units?.length, settingsAvailable: !!settings, minLoadingTimePassed });
 
-  if (loading) {
+  if (loading || !minLoadingTimePassed) {
     return (
       <div id="loader">
         <img src={tulipIcon} alt="Logo" style={{ width: '440px', height: 'auto', marginBottom: '40px' }} />
