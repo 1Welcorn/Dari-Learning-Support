@@ -13,8 +13,12 @@ export const useDariData = () => {
   const { user } = useAuth();
 
   const fetchData = useCallback(async () => {
-    if (!user) return;
+    if (!user) {
+      setLoading(false);
+      return;
+    }
     try {
+      setLoading(true);
       const profileId = user.id;
       const [uRes, sRes, aRes, setsRes] = await Promise.all([
         supabase.from('units').select('*').order('sort_order'),
@@ -53,11 +57,13 @@ export const useDariData = () => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     fetchData();
+  }, [fetchData]);
 
+  useEffect(() => {
     // Inscrição em tempo real com nome único para evitar conflitos entre instâncias do hook
     const channelId = `dari-realtime-${Math.random().toString(36).substring(7)}`;
     const channel = supabase.channel(channelId)
@@ -72,7 +78,7 @@ export const useDariData = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [fetchData]);
 
   const saveAnswer = useCallback(async (unitId: string, qIdx: number, val: string) => {
     try {
