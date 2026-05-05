@@ -5,29 +5,51 @@ import { UnitCard, VideoPlayerV5 } from './Activities';
 import { COLORS } from '../../constants';
 
 // --- RICH TEXT EDITOR ---
-const RichTextEditor: React.FC<{ value: string; onChange: (val: string) => void }> = ({ value, onChange }) => {
+const RichTextEditor: React.FC<{ value: string; onChange: (val: string) => void; height?: string }> = ({ value, onChange, height = '350px' }) => {
   const editorRef = useRef<HTMLDivElement>(null);
   useEffect(() => { if (editorRef.current && editorRef.current.innerHTML !== value) { editorRef.current.innerHTML = value; } }, []);
   const exec = (cmd: string, val?: string) => { document.execCommand(cmd, false, val); if (editorRef.current) { onChange(editorRef.current.innerHTML); } };
   return (
-    <div className="rich-editor-container" style={{ display: 'flex', flexDirection: 'column', height: '350px', border: '1px solid #e2e8f0', borderRadius: '20px', overflow: 'hidden', background: '#fff' }}>
-      <div className="rich-editor-toolbar" style={{ padding: '10px', borderBottom: '1px solid #e2e8f0', display: 'flex', flexWrap: 'wrap', gap: '6px', background: '#f8fafc' }}>
-        <button onClick={() => exec('formatBlock', '<h1>')} style={{ padding: '4px 8px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white', fontWeight: 900 }}>H1</button>
-        <button onClick={() => exec('formatBlock', '<h2>')} style={{ padding: '4px 8px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white', fontWeight: 900 }}>H2</button>
-        <button onClick={() => exec('bold')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><Bold size={16} /></button>
-        <button onClick={() => exec('italic')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><Italic size={16} /></button>
-        <button onClick={() => exec('justifyLeft')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><AlignLeft size={16} /></button>
-        <button onClick={() => exec('justifyCenter')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><AlignCenter size={16} /></button>
-        <button onClick={() => exec('justifyRight')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><AlignRight size={16} /></button>
-        <button onClick={() => exec('justifyFull')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><AlignJustify size={16} /></button>
-        <button onClick={() => exec('insertUnorderedList')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><List size={16} /></button>
-        <button onClick={() => exec('foreColor', '#3b82f6')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white', color: '#3b82f6' }}><Palette size={16} /></button>
-        <button onClick={() => exec('removeFormat')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><Eraser size={16} /></button>
+    <div className="rich-editor-container" style={{ display: 'flex', flexDirection: 'column', height: height, border: '1px solid #e2e8f0', borderRadius: '20px', overflow: 'hidden', background: '#fff' }}>
+      <div className="rich-editor-toolbar" style={{ padding: '6px', borderBottom: '1px solid #e2e8f0', display: 'flex', flexWrap: 'wrap', gap: '4px', background: '#f8fafc' }}>
+        <button onClick={() => exec('bold')} style={{ padding: '4px', borderRadius: '4px', border: '1px solid #e2e8f0', background: 'white' }}><Bold size={14} /></button>
+        <button onClick={() => exec('italic')} style={{ padding: '4px', borderRadius: '4px', border: '1px solid #e2e8f0', background: 'white' }}><Italic size={14} /></button>
+        <button onClick={() => exec('justifyCenter')} style={{ padding: '4px', borderRadius: '4px', border: '1px solid #e2e8f0', background: 'white' }}><AlignCenter size={14} /></button>
+        <button onClick={() => exec('foreColor', '#3b82f6')} style={{ padding: '4px', borderRadius: '4px', border: '1px solid #e2e8f0', background: 'white', color: '#3b82f6' }}><Palette size={14} /></button>
       </div>
-      <div ref={editorRef} className="rich-editor-content" contentEditable onInput={(e) => onChange(e.currentTarget.innerHTML)} style={{ flex: 1, padding: '20px', background: 'white', outline: 'none', overflowY: 'auto', fontSize: '16px', lineHeight: '1.6' }} />
+      <div ref={editorRef} className="rich-editor-content" contentEditable onInput={(e) => onChange(e.currentTarget.innerHTML)} style={{ flex: 1, padding: '12px', background: 'white', outline: 'none', overflowY: 'auto', fontSize: '14px', lineHeight: '1.5' }} />
     </div>
   );
 };
+
+const INTERNAL_ASSETS = [
+  { name: 'Projeto Logo', path: 'src/assets/imagem do projeto.png' },
+  { name: 'Tulip Icon', path: 'src/assets/tulip icon.png' },
+  { name: 'Robot 3D', path: 'src/assets/robot-3d.png' },
+  { name: 'Pan 3D', path: 'src/assets/pan-3d.png' },
+  { name: 'Help Button', path: 'src/assets/help-button.png' },
+  { name: 'Memory Game', path: 'src/assets/memory_game.png' },
+  { name: 'Word Game', path: 'src/assets/word_game.png' }
+];
+
+const AssetPicker: React.FC<{ onSelect: (path: string) => void; onClose: () => void }> = ({ onSelect, onClose }) => (
+  <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyCenter: 'center', padding: '20px' }}>
+    <div style={{ background: 'white', borderRadius: '30px', padding: '30px', maxWidth: '600px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+        <h3 style={{ margin: 0, fontWeight: 900 }}>Galeria do Repositório</h3>
+        <button onClick={onClose} style={{ background: 'none', border: 'none' }}><X /></button>
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))', gap: '15px' }}>
+        {INTERNAL_ASSETS.map(asset => (
+          <button key={asset.path} onClick={() => onSelect(`/${asset.path}`)} style={{ background: '#f8fafc', border: '1px solid #e2e8f0', borderRadius: '15px', padding: '10px', display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center' }}>
+            <img src={`/${asset.path}`} style={{ width: '60px', height: '60px', objectFit: 'contain' }} alt={asset.name} />
+            <span style={{ fontSize: '10px', fontWeight: 900, textAlign: 'center' }}>{asset.name}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  </div>
+);
 
 interface PlanningEditorProps {
   unitId: string;
@@ -98,6 +120,44 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
   const [isSavingEmbed, setIsSavingEmbed] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
   const [autoSavePulse, setAutoSavePulse] = useState(false);
+  const [showAssetPicker, setShowAssetPicker] = useState<{ active: boolean; callback: (path: string) => void }>({ active: false, callback: () => {} });
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [activeUploadCallback, setActiveUploadCallback] = useState<(url: string) => void>(() => () => {});
+
+  const triggerUpload = (callback: (url: string) => void) => {
+    setActiveUploadCallback(() => callback);
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    
+    setLoading(true);
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      const filePath = `uploads/${fileName}`;
+
+      const { data, error } = await supabase.storage
+        .from('media')
+        .upload(filePath, file);
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('media')
+        .getPublicUrl(filePath);
+
+      activeUploadCallback(publicUrl);
+      setIsDirty(true);
+    } catch (err: any) {
+      alert('Erro no upload: ' + err.message + '\nCertifique-se de que o bucket "media" existe no Supabase.');
+    } finally {
+      setLoading(false);
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    }
+  };
 
   // Sincroniza o estado local quando os dados globais mudam
   useEffect(() => {
@@ -196,9 +256,13 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                  <label style={{ fontSize: '11px', fontWeight: 900, color: '#64748b' }}>CONFIGURAÇÕES DE MÍDIA</label>
                  <button onClick={() => { setUnitData({...unitData, external_links: [...(unitData.external_links || []), { label: 'video', url: '', width: '600px', height: 300, objectFit: 'cover' }]}); setIsDirty(true); }} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 900 }}>+ ADICIONAR MÍDIA</button>
                  
-                 {(unitData.external_links || []).map((link: any, i: number) => (
+                  {(unitData.external_links || []).map((link: any, i: number) => (
                     <div key={i} style={{ background: '#f8fafc', padding: '15px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
-                       <input type="text" value={link.url} placeholder="URL do Vídeo/Imagem..." style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '10px' }} onChange={(e) => { const nl = [...unitData.external_links]; nl[i].url = e.target.value; setUnitData({...unitData, external_links: nl}); setIsDirty(true); }} />
+                       <div style={{ display: 'flex', gap: '8px', marginBottom: '10px' }}>
+                          <input type="text" value={link.url} placeholder="URL do Vídeo/Imagem..." style={{ flex: 1, padding: '10px', borderRadius: '10px' }} onChange={(e) => { const nl = [...unitData.external_links]; nl[i].url = e.target.value; setUnitData({...unitData, external_links: nl}); setIsDirty(true); }} />
+                          <button onClick={() => triggerUpload((url) => { const nl = [...unitData.external_links]; nl[i].url = url; setUnitData({...unitData, external_links: nl}); })} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px' }} title="Upload Local"><ImageIcon size={16} /></button>
+                          <button onClick={() => setShowAssetPicker({ active: true, callback: (path) => { const nl = [...unitData.external_links]; nl[i].url = path; setUnitData({...unitData, external_links: nl}); setIsDirty(true); setShowAssetPicker({ active: false, callback: () => {} }); } })} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px' }} title="Galeria do App"><Globe size={16} /></button>
+                       </div>
                        
                        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>LARGURA: {link.width || '600px'}</span></div>
@@ -264,18 +328,42 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
               </button>
            </div>
            
-           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '20px' }}>
+           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '20px' }}>
               {unitData.embed_urls?.map((item: any, i: number) => (
-                <div key={i} style={{ background: '#f8fafc', padding: '20px', borderRadius: '25px', border: '1px solid #e2e8f0' }}>
-                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
-                      <input value={item.title} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].title = e.target.value; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ fontWeight: 800, background: 'none', border: 'none', width: '80%' }} />
-                      <button onClick={() => { const nl = unitData.embed_urls.filter((_: any, idx: number) => idx !== i); setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }}><Trash2 size={16} color="#ef4444" /></button>
+                <div key={i} style={{ background: '#f8fafc', padding: '25px', borderRadius: '30px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+                      <input value={item.title} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].title = e.target.value; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ fontWeight: 900, background: 'none', border: 'none', width: '80%', fontSize: '16px' }} placeholder="Título da Atividade" />
+                      <button onClick={() => { if(window.confirm('Excluir atividade?')) { const nl = unitData.embed_urls.filter((_: any, idx: number) => idx !== i); setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); } }}><Trash2 size={18} color="#ef4444" /></button>
                    </div>
-                   <input value={item.url} readOnly style={{ width: '100%', fontSize: '10px', color: '#64748b', background: 'none', border: 'none', marginBottom: '10px' }} />
-                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+
+                   <div style={{ marginBottom: '15px' }}>
+                      <label style={{ fontSize: '10px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '4px' }}>INSTRUÇÕES / EDIÇÃO DE TEXTO</label>
+                      <RichTextEditor 
+                        value={item.brief || ''} 
+                        onChange={(val) => { const nl = [...unitData.embed_urls]; nl[i].brief = val; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} 
+                        height="140px"
+                      />
+                   </div>
+
+                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+                      <div>
+                        <label style={{ fontSize: '10px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '4px' }}>ÍCONE MISTERIOSO (URL)</label>
+                        <div style={{ display: 'flex', gap: '6px' }}>
+                          <input type="text" value={item.mystery_icon || ''} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = e.target.value; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} placeholder="Link da imagem..." style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1.5px solid #e2e8f0', fontSize: '11px' }} />
+                          <button onClick={() => triggerUpload((url) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = url; setUnitData({...unitData, embed_urls: nl}); })} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px' }}><ImageIcon size={14} /></button>
+                          <button onClick={() => setShowAssetPicker({ active: true, callback: (path) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = path; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); setShowAssetPicker({ active: false, callback: () => {} }); } })} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px' }}><Globe size={14} /></button>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <label style={{ fontSize: '10px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '4px' }}>TAMANHO: {item.mystery_icon_size || 120}px</label>
+                        <input type="range" min="40" max="250" value={item.mystery_icon_size || 120} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon_size = parseInt(e.target.value); setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ width: '100%' }} />
+                      </div>
+                   </div>
+
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'white', padding: '12px', borderRadius: '15px', border: '1px solid #f1f5f9' }}>
                       <Smartphone size={16} color="#64748b" />
                       <input type="range" min="30" max="100" value={parseInt(item.width?.replace('%','') || '100')} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].width = `${e.target.value}%`; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ flex: 1 }} />
-                      <span style={{ fontSize: '10px', fontWeight: 900 }}>{item.width || '100%'}</span>
+                      <span style={{ fontSize: '11px', fontWeight: 900 }}>{item.width || '100%'}</span>
                    </div>
                 </div>
               ))}
@@ -428,6 +516,9 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
 
       </div>
 
+      {showAssetPicker.active && <AssetPicker onSelect={showAssetPicker.callback} onClose={() => setShowAssetPicker({ active: false, callback: () => {} })} />}
+      <input type="file" ref={fileInputRef} onChange={handleFileChange} style={{ display: 'none' }} accept="image/*" />
+      
       <style>{`
         @keyframes pulse {
           0% { opacity: 0.6; transform: scale(1); }

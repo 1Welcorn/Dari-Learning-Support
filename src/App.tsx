@@ -265,9 +265,9 @@ export const App: React.FC = () => {
         <button 
           className={`nav-link-kids adventure ${activeTab === 'adventure' ? 'active' : ''}`}
           onClick={() => { setActiveTab('adventure'); setActiveUnit(null); }}
+          style={{ justifyContent: 'center', textAlign: 'center' }}
         >
-          <div className="icon-wrapper" style={{ background: 'var(--lavender)' }}>✨</div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <span style={{ direction: 'rtl', fontSize: '22px', fontWeight: 900, lineHeight: 1 }}>صنف‌های من</span>
             <span style={{ fontSize: '14px', fontWeight: 700, opacity: 0.9, marginTop: '4px' }}>Minhas Aulas</span>
           </div>
@@ -277,9 +277,9 @@ export const App: React.FC = () => {
           <button 
             className={`nav-link-kids planning ${activeTab === 'planning' ? 'active' : ''}`}
             onClick={() => setActiveTab('planning')}
+            style={{ justifyContent: 'center', textAlign: 'center' }}
           >
-            <div className="icon-wrapper" style={{ background: 'var(--sage)' }}>🌿</div>
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <span style={{ fontSize: '18px', fontWeight: 900 }}>Planejamento</span>
             </div>
           </button>
@@ -288,9 +288,9 @@ export const App: React.FC = () => {
         <button 
           className={`nav-link-kids whatsapp ${activeTab === 'whatsapp' ? 'active' : ''}`}
           onClick={() => { setActiveTab('whatsapp'); setActiveUnit(null); }}
+          style={{ justifyContent: 'center', textAlign: 'center' }}
         >
-          <div className="icon-wrapper" style={{ background: 'var(--sky-blue)' }}>☁️</div>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
             <span style={{ direction: 'rtl', fontSize: '22px', fontWeight: 900, lineHeight: 1 }}>کمک</span>
             <span style={{ fontSize: '14px', fontWeight: 700, opacity: 0.9, marginTop: '4px' }}>Ajuda (Help)</span>
           </div>
@@ -300,9 +300,9 @@ export const App: React.FC = () => {
            <button 
              className="nav-link-kids logout-btn-v5"
              onClick={logout}
+             style={{ justifyContent: 'center', textAlign: 'center' }}
            >
-             <div className="icon-wrapper" style={{ background: '#FF4D4D' }}>🚪</div>
-             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
+             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                <span style={{ direction: 'rtl', fontSize: '18px', fontWeight: 900, lineHeight: 1 }}>خروج</span>
                <span style={{ fontSize: '12px', fontWeight: 700, opacity: 0.9, marginTop: '4px' }}>Sair (Logout)</span>
              </div>

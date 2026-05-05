@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../services/supabase';
+import { useAuth } from '../context/AuthContext';
 import type { Unit, Session, Answer, AppSettings } from '../types';
 
 export const useDariData = () => {
@@ -9,13 +10,16 @@ export const useDariData = () => {
   const [settings, setSettings] = useState<Partial<AppSettings>>({});
   const [loading, setLoading] = useState(true);
   const [syncStatus, setSyncStatus] = useState<'ok' | 'err'>('ok');
+  const { user } = useAuth();
 
   const fetchData = useCallback(async () => {
+    if (!user) return;
     try {
+      const profileId = user.id;
       const [uRes, sRes, aRes, setsRes] = await Promise.all([
         supabase.from('units').select('*').order('sort_order'),
-        supabase.from('sessions').select('*').order('session_date', { ascending: false }),
-        supabase.from('answers').select('*'),
+        supabase.from('sessions').select('*').eq('profile_id', profileId).order('session_date', { ascending: false }),
+        supabase.from('answers').select('*').eq('profile_id', profileId),
         supabase.from('settings').select('*')
       ]);
 
@@ -73,11 +77,12 @@ export const useDariData = () => {
   const saveAnswer = useCallback(async (unitId: string, qIdx: number, val: string) => {
     try {
       const { error } = await supabase.from('answers').upsert({
+        profile_id: user?.id,
         unit_id: unitId,
         question_index: qIdx,
         answer_value: val,
         is_done: true
-      }, { onConflict: 'unit_id,question_index' });
+      }, { onConflict: 'profile_id,unit_id,question_index' });
       
       if (error) {
         console.error('Error saving answer to Supabase:', error);
@@ -109,6 +114,7 @@ export const useDariData = () => {
   const saveSession = useCallback(async (unitId: string, note: string) => {
     try {
       const { data, error } = await supabase.from('sessions').insert({
+        profile_id: user?.id,
         unit_id: unitId,
         session_date: new Date().toLocaleDateString('pt-BR'),
         note
@@ -131,7 +137,7 @@ export const useDariData = () => {
 
   const resetUnitAnswers = useCallback(async (unitId: string): Promise<boolean> => {
     try {
-      const { error } = await supabase.from('answers').delete().eq('unit_id', unitId);
+      const { error } = await supabase.from('answers').delete().eq('unit_id', unitId).eq('profile_id', user?.id);
       if (error) {
         console.error('Error resetting unit answers:', error);
         setSyncStatus('err');

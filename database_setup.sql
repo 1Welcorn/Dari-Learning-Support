@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS student_progress (
 -- 4. Tabela de Sessões (Sessions)
 CREATE TABLE IF NOT EXISTS sessions (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
   unit_id TEXT REFERENCES units(id) ON DELETE CASCADE,
   session_date TEXT,
   note TEXT,
@@ -56,12 +57,13 @@ CREATE TABLE IF NOT EXISTS sessions (
 -- 5. Tabela de Respostas (Answers)
 CREATE TABLE IF NOT EXISTS answers (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
   unit_id TEXT REFERENCES units(id) ON DELETE CASCADE,
   question_index INTEGER,
   answer_value TEXT,
   is_done BOOLEAN DEFAULT FALSE,
   updated_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(unit_id, question_index)
+  UNIQUE(profile_id, unit_id, question_index)
 );
 
 -- 6. Tabela de Configurações (Settings)

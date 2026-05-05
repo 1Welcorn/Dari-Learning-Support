@@ -205,7 +205,15 @@ const StepNavigation: React.FC<{
   steps.push({ type: 'game', title: 'WordFall Game' });
   
   // 3. Atividades Interativas (Wordwall/Canva)
-  (unit.embed_urls || []).forEach((e, i) => steps.push({ type: 'embed', url: normalizeEmbedUrl(typeof e === 'string' ? e : e.url), title: typeof e === 'string' ? '' : e.title, idx: i }));
+  (unit.embed_urls || []).forEach((e: any, i: number) => steps.push({ 
+    type: 'embed', 
+    url: normalizeEmbedUrl(typeof e === 'string' ? e : e.url), 
+    title: typeof e === 'string' ? '' : e.title, 
+    brief: typeof e === 'string' ? '' : e.brief,
+    mystery_icon: typeof e === 'string' ? undefined : e.mystery_icon,
+    mystery_icon_size: typeof e === 'string' ? undefined : e.mystery_icon_size,
+    idx: i 
+  }));
   
   // 4. Perguntas (Tipo Google Forms)
   unit.questions.forEach((q, i) => steps.push({ type: 'question', q, idx: i }));
@@ -249,13 +257,16 @@ const StepNavigation: React.FC<{
         
         {current.type === 'embed' && (
           <div className="embed-card-v5" style={{ background: 'white', padding: '40px', borderRadius: '40px', boxShadow: '0 20px 60px rgba(0,0,0,0.05)', width: '100%', maxWidth: '1100px', minHeight: '650px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-             <h2 style={{ margin: 0, fontWeight: 900, color: 'var(--ink1)' }}>{current.title || 'Atividade Interativa'}</h2>
+             <div style={{ textAlign: 'center', marginBottom: '10px' }}>
+                <h2 style={{ margin: 0, fontWeight: 900, color: 'var(--ink1)' }}>{current.title || 'Atividade Interativa'}</h2>
+                {current.brief && <div dangerouslySetInnerHTML={{ __html: current.brief }} style={{ marginTop: '10px', fontSize: '15px', color: 'var(--ink3)', fontWeight: 500, lineHeight: '1.4' }} />}
+             </div>
              <div style={{ flex: 1, borderRadius: '24px', overflow: 'hidden', border: '2px solid #f1f5f9', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f8fafc' }}>
                 <EmbedPreview 
                    url={current.url || ''} 
                    title={current.title} 
-                   maskIcon={unit.mystery_icon} 
-                   maskSize={unit.mystery_icon_size || 120}
+                   maskIcon={current.mystery_icon || unit.mystery_icon} 
+                   maskSize={current.mystery_icon_size || unit.mystery_icon_size || 120}
                 />
              </div>
           </div>
