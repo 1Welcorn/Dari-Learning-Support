@@ -18,7 +18,6 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const ADMIN_EMAILS = ['willians.souza@escola.pr.gov.br', 'f4330252301@gmail.com']; 
 const MEDIATOR_EMAILS: string[] = []; 
-]; 
 
 const CUSTOM_STUDENTS = [
   { name: 'ASMA QARI ZADAH', pin: 'asma', email: 'asma@pontes.com' },
