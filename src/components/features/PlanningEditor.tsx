@@ -328,46 +328,98 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
               </button>
            </div>
            
-           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(400px, 1fr))', gap: '20px' }}>
-              {unitData.embed_urls?.map((item: any, i: number) => (
-                <div key={i} style={{ background: '#f8fafc', padding: '25px', borderRadius: '30px', border: '1px solid #e2e8f0', boxShadow: '0 4px 12px rgba(0,0,0,0.02)' }}>
-                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
-                      <input value={item.title} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].title = e.target.value; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ fontWeight: 900, background: 'none', border: 'none', width: '80%', fontSize: '16px' }} placeholder="Título da Atividade" />
-                      <button onClick={() => { if(window.confirm('Excluir atividade?')) { const nl = unitData.embed_urls.filter((_: any, idx: number) => idx !== i); setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); } }}><Trash2 size={18} color="#ef4444" /></button>
+           <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '25px' }}>
+               {unitData.embed_urls?.map((item: any, i: number) => (
+                 <div key={i} style={{ 
+                   background: 'white', 
+                   padding: '0', 
+                   borderRadius: '35px', 
+                   border: '1px solid #e2e8f0', 
+                   boxShadow: '0 20px 50px rgba(0,0,0,0.04)',
+                   overflow: 'hidden',
+                   display: 'flex',
+                   flexDirection: 'column'
+                 }}>
+                   {/* CARD HEADER */}
+                   <div style={{ background: '#f8fafc', padding: '20px 30px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                        <div style={{ background: '#10b981', color: 'white', padding: '8px', borderRadius: '12px' }}><Globe size={18} /></div>
+                        <input 
+                          value={item.title} 
+                          onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].title = e.target.value; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} 
+                          style={{ fontWeight: 900, background: 'none', border: 'none', fontSize: '18px', color: '#1e293b', width: '300px' }} 
+                          placeholder="Título da Atividade..." 
+                        />
+                      </div>
+                      <button 
+                        onClick={() => { if(window.confirm('Excluir esta atividade permanentemente?')) { const nl = unitData.embed_urls.filter((_: any, idx: number) => idx !== i); setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); } }}
+                        style={{ background: '#fee2e2', color: '#ef4444', border: 'none', padding: '10px 20px', borderRadius: '12px', fontWeight: 900, fontSize: '12px', display: 'flex', alignItems: 'center', gap: '8px' }}
+                      >
+                        <Trash2 size={16} /> EXCLUIR
+                      </button>
                    </div>
 
-                   <div style={{ marginBottom: '15px' }}>
-                      <label style={{ fontSize: '10px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '4px' }}>INSTRUÇÕES / EDIÇÃO DE TEXTO</label>
-                      <RichTextEditor 
-                        value={item.brief || ''} 
-                        onChange={(val) => { const nl = [...unitData.embed_urls]; nl[i].brief = val; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} 
-                        height="140px"
-                      />
-                   </div>
+                   <div style={{ padding: '30px', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '30px' }}>
+                      {/* LEFT COLUMN: CONTENT & INSTRUCTIONS */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                        <div>
+                          <label style={{ fontSize: '11px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '8px', letterSpacing: '1px' }}>LINK DA ATIVIDADE (URL)</label>
+                          <input 
+                            type="text" 
+                            value={item.url} 
+                            onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].url = e.target.value; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }}
+                            style={{ width: '100%', padding: '12px 15px', borderRadius: '15px', border: '1.5px solid #e2e8f0', fontSize: '13px', background: '#f1f5f9' }} 
+                          />
+                        </div>
 
-                   <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
-                      <div>
-                        <label style={{ fontSize: '10px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '4px' }}>ÍCONE MISTERIOSO (URL)</label>
-                        <div style={{ display: 'flex', gap: '6px' }}>
-                          <input type="text" value={item.mystery_icon || ''} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = e.target.value; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} placeholder="Link da imagem..." style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1.5px solid #e2e8f0', fontSize: '11px' }} />
-                          <button onClick={() => triggerUpload((url) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = url; setUnitData({...unitData, embed_urls: nl}); })} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px' }}><ImageIcon size={14} /></button>
-                          <button onClick={() => setShowAssetPicker({ active: true, callback: (path) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = path; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); setShowAssetPicker({ active: false, callback: () => {} }); } })} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px' }}><Globe size={14} /></button>
+                        <div>
+                          <label style={{ fontSize: '11px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '8px', letterSpacing: '1px' }}>INSTRUÇÕES PEDAGÓGICAS</label>
+                          <RichTextEditor 
+                            value={item.brief || ''} 
+                            onChange={(val) => { const nl = [...unitData.embed_urls]; nl[i].brief = val; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} 
+                            height="180px"
+                          />
                         </div>
                       </div>
-                      <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                        <label style={{ fontSize: '10px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '4px' }}>TAMANHO: {item.mystery_icon_size || 120}px</label>
-                        <input type="range" min="40" max="250" value={item.mystery_icon_size || 120} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon_size = parseInt(e.target.value); setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ width: '100%' }} />
+
+                      {/* RIGHT COLUMN: DESIGN & MYSTERY */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', background: '#f8fafc', padding: '25px', borderRadius: '30px' }}>
+                        <div>
+                          <label style={{ fontSize: '11px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '8px', letterSpacing: '1px' }}>CONFIGURAÇÃO DE MISTÉRIO</label>
+                          <div style={{ background: 'white', padding: '15px', borderRadius: '20px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                            <div>
+                              <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '4px' }}>IMAGEM DA MÁSCARA (URL)</label>
+                              <div style={{ display: 'flex', gap: '8px' }}>
+                                <input type="text" value={item.mystery_icon || ''} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = e.target.value; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} placeholder="Link ou escolha na galeria..." style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1.5px solid #e2e8f0', fontSize: '12px' }} />
+                                <button onClick={() => triggerUpload((url) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = url; setUnitData({...unitData, embed_urls: nl}); })} style={{ background: '#f1f5f9', border: 'none', borderRadius: '10px', padding: '8px' }} title="Upload Local"><ImageIcon size={16} /></button>
+                                <button onClick={() => setShowAssetPicker({ active: true, callback: (path) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = path; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); setShowAssetPicker({ active: false, callback: () => {} }); } })} style={{ background: '#f1f5f9', border: 'none', borderRadius: '10px', padding: '8px' }} title="Galeria"><Globe size={16} /></button>
+                              </div>
+                            </div>
+                            
+                            <div>
+                              <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '4px' }}>TAMANHO DO ÍCONE: {item.mystery_icon_size || 120}px</label>
+                              <input type="range" min="40" max="300" value={item.mystery_icon_size || 120} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon_size = parseInt(e.target.value); setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ width: '100%' }} />
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label style={{ fontSize: '11px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '8px', letterSpacing: '1px' }}>APARÊNCIA NO APP</label>
+                          <div style={{ background: 'white', padding: '15px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                              <Smartphone size={20} color="#10b981" />
+                              <div style={{ flex: 1 }}>
+                                <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '4px' }}>LARGURA DO CARD: {item.width || '100%'}</label>
+                                <input type="range" min="30" max="100" value={parseInt(item.width?.replace('%','') || '100')} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].width = `${e.target.value}%`; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ width: '100%' }} />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                    </div>
-
-                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'white', padding: '12px', borderRadius: '15px', border: '1px solid #f1f5f9' }}>
-                      <Smartphone size={16} color="#64748b" />
-                      <input type="range" min="30" max="100" value={parseInt(item.width?.replace('%','') || '100')} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].width = `${e.target.value}%`; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ flex: 1 }} />
-                      <span style={{ fontSize: '11px', fontWeight: 900 }}>{item.width || '100%'}</span>
-                   </div>
-                </div>
-              ))}
-           </div>
+                 </div>
+               ))}
+            </div>
         </section>
 
         {/* SECTION 3: QUESTÕES INTERATIVAS */}
