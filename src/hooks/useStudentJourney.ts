@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../services/supabase';
 
 export const useStudentJourney = (userId: string) => {
@@ -6,7 +6,7 @@ export const useStudentJourney = (userId: string) => {
   const [progress, setProgress] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const fetchJourneyData = async () => {
+  const fetchJourneyData = useCallback(async () => {
     if (!userId) return;
     setLoading(true);
     
@@ -40,9 +40,9 @@ export const useStudentJourney = (userId: string) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId]);
 
-  const completeLesson = async (unitId: string, earnedXp: number) => {
+  const completeLesson = useCallback(async (unitId: string, earnedXp: number) => {
     if (!userId) return false;
     
     try {
@@ -79,9 +79,9 @@ export const useStudentJourney = (userId: string) => {
       console.error('Error in completeLesson:', err);
       return false;
     }
-  };
+  }, [userId, fetchJourneyData]);
 
-  const addStudentRewards = async (xpGained: number, starsEarned: number) => {
+  const addStudentRewards = useCallback(async (xpGained: number, starsEarned: number) => {
     if (!userId) return { success: false };
     
     try {
@@ -98,7 +98,7 @@ export const useStudentJourney = (userId: string) => {
       console.error('Error adding student rewards:', err);
       return { success: false, error: err };
     }
-  };
+  }, [userId, fetchJourneyData]);
 
   useEffect(() => {
     if (userId) fetchJourneyData();

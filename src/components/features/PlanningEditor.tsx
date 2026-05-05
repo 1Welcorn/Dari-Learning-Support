@@ -1,52 +1,84 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { supabase } from '../../services/supabase';
-import { Save, Plus, Trash2, BookOpen, Target, Lightbulb, ChevronLeft, Eye, X, Globe, Lock, Unlock } from 'lucide-react';
-import { UnitCard } from './Activities';
+import { Save, Plus, Trash2, BookOpen, Target, Lightbulb, ChevronLeft, Eye, X, Globe, Lock, Unlock, Bold, Italic, Palette, Eraser, AlignLeft, AlignCenter, AlignRight, AlignJustify, List, Type, Monitor, Image as ImageIcon, Zap, AlertTriangle, Smartphone, Clock, Check, Sparkles, ChefHat, Headphones, User, Building2, GraduationCap, ClipboardList } from 'lucide-react';
+import { UnitCard, VideoPlayerV5 } from './Activities';
 import { COLORS } from '../../constants';
-import { useDariData } from '../../hooks/useData';
 
-interface EmbedActivity {
-  url: string;
-  title: string;
-  width: string;
-  maskIcon?: string;
-  maskSize?: number;
-}
+// --- RICH TEXT EDITOR ---
+const RichTextEditor: React.FC<{ value: string; onChange: (val: string) => void }> = ({ value, onChange }) => {
+  const editorRef = useRef<HTMLDivElement>(null);
+  useEffect(() => { if (editorRef.current && editorRef.current.innerHTML !== value) { editorRef.current.innerHTML = value; } }, []);
+  const exec = (cmd: string, val?: string) => { document.execCommand(cmd, false, val); if (editorRef.current) { onChange(editorRef.current.innerHTML); } };
+  return (
+    <div className="rich-editor-container" style={{ display: 'flex', flexDirection: 'column', height: '350px', border: '1px solid #e2e8f0', borderRadius: '20px', overflow: 'hidden', background: '#fff' }}>
+      <div className="rich-editor-toolbar" style={{ padding: '10px', borderBottom: '1px solid #e2e8f0', display: 'flex', flexWrap: 'wrap', gap: '6px', background: '#f8fafc' }}>
+        <button onClick={() => exec('formatBlock', '<h1>')} style={{ padding: '4px 8px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white', fontWeight: 900 }}>H1</button>
+        <button onClick={() => exec('formatBlock', '<h2>')} style={{ padding: '4px 8px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white', fontWeight: 900 }}>H2</button>
+        <button onClick={() => exec('bold')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><Bold size={16} /></button>
+        <button onClick={() => exec('italic')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><Italic size={16} /></button>
+        <button onClick={() => exec('justifyLeft')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><AlignLeft size={16} /></button>
+        <button onClick={() => exec('justifyCenter')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><AlignCenter size={16} /></button>
+        <button onClick={() => exec('justifyRight')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><AlignRight size={16} /></button>
+        <button onClick={() => exec('justifyFull')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><AlignJustify size={16} /></button>
+        <button onClick={() => exec('insertUnorderedList')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><List size={16} /></button>
+        <button onClick={() => exec('foreColor', '#3b82f6')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white', color: '#3b82f6' }}><Palette size={16} /></button>
+        <button onClick={() => exec('removeFormat')} style={{ padding: '6px', borderRadius: '6px', border: '1px solid #e2e8f0', background: 'white' }}><Eraser size={16} /></button>
+      </div>
+      <div ref={editorRef} className="rich-editor-content" contentEditable onInput={(e) => onChange(e.currentTarget.innerHTML)} style={{ flex: 1, padding: '20px', background: 'white', outline: 'none', overflowY: 'auto', fontSize: '16px', lineHeight: '1.6' }} />
+    </div>
+  );
+};
 
 interface PlanningEditorProps {
   unitId: string;
   onBack: () => void;
   updateUnit: (id: string, updates: any) => Promise<{ success: boolean; error?: string }>;
+  units: any[];
 }
 
 const normalizeEmbedUrl = (rawUrl: string): string => {
-  const trimmed = rawUrl.trim();
+  let trimmed = rawUrl.trim();
   if (!trimmed) return '';
-
-  // Se for um código de iframe completo, tenta extrair o src
+  
+  // Se for código de iframe completo, extrai apenas o SRC
   if (trimmed.startsWith('<iframe')) {
     const srcMatch = trimmed.match(/src=["'](.*?)["']/);
-    if (srcMatch && srcMatch[1]) return srcMatch[1];
+    if (srcMatch && srcMatch[1]) trimmed = srcMatch[1];
   }
 
   const withProtocol = /^https?:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`;
-
+  
   try {
     const url = new URL(withProtocol);
-
-    if (url.hostname.includes('drive.google.com')) {
-      url.pathname = url.pathname.replace(/\/view$/, '/preview');
+    
+    // WORDWALL: Converte /resource/ para /embed/resource/
+    if (url.hostname.includes('wordwall.net')) {
+      if (url.pathname.includes('/resource/') && !url.pathname.includes('/embed/')) {
+        url.pathname = url.pathname.replace('/resource/', '/embed/resource/');
+      }
       return url.toString();
     }
 
+    // YOUTUBE
     if (url.hostname.includes('youtube.com') && url.pathname === '/watch') {
       const videoId = url.searchParams.get('v');
       if (videoId) return `https://www.youtube.com/embed/${videoId}`;
     }
-
     if (url.hostname.includes('youtu.be')) {
       const videoId = url.pathname.replace('/', '');
       if (videoId) return `https://www.youtube.com/embed/${videoId}`;
+    }
+
+    // CANVA: Tenta converter links de visualização para embed
+    if (url.hostname.includes('canva.com') && url.pathname.includes('/view')) {
+      url.pathname = url.pathname.replace('/view', '/view?embed');
+      return url.toString();
+    }
+
+    // GOOGLE DRIVE
+    if (url.hostname.includes('drive.google.com')) {
+      url.pathname = url.pathname.replace(/\/view$/, '/preview');
+      return url.toString();
     }
 
     return url.toString();
@@ -55,91 +87,54 @@ const normalizeEmbedUrl = (rawUrl: string): string => {
   }
 };
 
-const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateUnit }) => {
-  // const { updateUnit } = useDariData(); - Removido para evitar conflito de canais realtime
-  const [loading, setLoading] = useState(true);
+const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateUnit, units }) => {
+  const [loading, setLoading] = useState(false);
+  const unitDataFromProps = useMemo(() => units.find(u => u.id === unitId), [units, unitId]);
+  
   const [unitData, setUnitData] = useState<any>(null);
   const [newWord, setNewWord] = useState("");
   const [descText, setDescText] = useState("");
   const [tempEmbed, setTempEmbed] = useState("");
   const [isSavingEmbed, setIsSavingEmbed] = useState(false);
-  const [embedSaved, setEmbedSaved] = useState(false);
-  const [isPreviewing, setIsPreviewing] = useState(false);
   const [isDirty, setIsDirty] = useState(false);
+  const [autoSavePulse, setAutoSavePulse] = useState(false);
 
+  // Sincroniza o estado local quando os dados globais mudam
   useEffect(() => {
-    fetchUnit();
-  }, [unitId]);
-
-  const fetchUnit = async () => {
-    const { data } = await supabase.from('units').select('*').eq('id', unitId).single();
-    if (data) {
-      // Garantir que campos JSON sejam arrays/objetos mesmo que venham como string
-      const sanitized = {
-        ...data,
-        descriptors: typeof data.descriptors === 'string' ? JSON.parse(data.descriptors) : (data.descriptors || []),
-        embed_urls: typeof data.embed_urls === 'string' ? JSON.parse(data.embed_urls) : (data.embed_urls || []),
-        questions: typeof data.questions === 'string' ? JSON.parse(data.questions) : (data.questions || []),
-        external_links: typeof data.external_links === 'string' ? JSON.parse(data.external_links) : (data.external_links || []),
-        vocabulary_list: typeof data.vocabulary_list === 'string' ? JSON.parse(data.vocabulary_list) : (data.vocabulary_list || []),
-      };
-      setUnitData(sanitized);
-      setDescText(sanitized.descriptors?.join(', ') || '');
+    if (unitDataFromProps) {
+      if (!unitData || !isDirty) {
+        setUnitData(JSON.parse(JSON.stringify(unitDataFromProps)));
+        setDescText(unitDataFromProps.descriptors?.join(', ') || '');
+      }
     }
-    setLoading(false);
-  };
+  }, [unitDataFromProps, isDirty]);
 
-  const handleSave = async () => {
+  const handleSave = async (overrideData?: any) => {
+    const dataToSave = overrideData || unitData;
+    if (!dataToSave) return;
     try {
       const descs = descText.split(',').map((v: string) => v.trim()).filter(Boolean);
+      // Remove ID from updates to avoid Supabase conflicts
+      const { id, ...updatesOnly } = dataToSave;
+      const finalUpdates = JSON.parse(JSON.stringify({ ...updatesOnly, descriptors: descs }));
       
-      // Definir explicitamente apenas as colunas que existem no banco de dados
-      const updates = { 
-        title: unitData.title,
-        sub: unitData.sub,
-        brief: unitData.brief,
-        learning_objectives: unitData.learning_objectives,
-        methodology: unitData.methodology,
-        color: unitData.color,
-        is_locked: unitData.is_locked,
-        descriptors: descs,
-        questions: unitData.questions || [],
-        vocabulary_list: unitData.vocabulary_list || [],
-        embed_urls: unitData.embed_urls || [],
-        external_links: unitData.external_links || []
-      };
-      
-      console.log('PlanningEditor: Saving changes...', updates);
-      const result = await updateUnit(unitId, updates);
-      
+      const result = await updateUnit(unitId, finalUpdates);
       if (result.success) {
         setIsDirty(false);
-        // Recarregar os dados do banco para garantir sincronia total
-        await fetchUnit();
-        alert("Planejamento atualizado com sucesso! 🚀");
+        setAutoSavePulse(true);
+        setTimeout(() => setAutoSavePulse(false), 2000);
       } else {
-        alert('Erro ao salvar: ' + result.error);
+         alert('Erro ao salvar: ' + result.error);
       }
-    } catch (err: any) {
-      console.error('Exception in handleSave:', err);
-      alert('Erro inesperado: ' + err.message);
-    }
+    } catch (err: any) { alert('Erro crítico ao salvar: ' + err.message); }
   };
 
   const addWord = () => {
     if (!newWord.trim()) return;
-    
-    // Suporte para formato "en / pt / dari" ou "en / pt" ou apenas "en"
     const parts = newWord.split('/').map(p => p.trim());
-    const wordObj = {
-      en: parts[0],
-      pt: parts[1] || parts[0],
-      dari: parts[2] || undefined,
-      icon: '🏷️'
-    };
-    
-    const updatedVocab = [...(unitData.vocabulary_list || []), wordObj];
-    setUnitData({ ...unitData, vocabulary_list: updatedVocab });
+    const wordObj = { en: parts[0], pt: parts[1] || parts[0], dari: parts[2] || undefined, icon: '🏷️' };
+    const nextData = { ...unitData, vocabulary_list: [...(unitData.vocabulary_list || []), wordObj] };
+    setUnitData(nextData);
     setNewWord("");
     setIsDirty(true);
   };
@@ -147,1587 +142,297 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
   const saveEmbedLink = async () => {
     if (!tempEmbed.trim() || isSavingEmbed) return;
     setIsSavingEmbed(true);
-    setEmbedSaved(false);
-    const current = Array.isArray(unitData.embed_urls) ? unitData.embed_urls : [];
-    const newEmbed: EmbedActivity = { url: normalizeEmbedUrl(tempEmbed), title: `Nova Atividade`, width: '100%' };
-    const nextEmbeds = [...current, newEmbed];
+    const normalized = normalizeEmbedUrl(tempEmbed);
+    const nextEmbeds = [...(unitData.embed_urls || []), { url: normalized, title: `Atividade`, width: '100%' }];
+    const nextData = { ...unitData, embed_urls: nextEmbeds };
     
-    setUnitData({ ...unitData, embed_urls: nextEmbeds });
-    setIsSavingEmbed(false);
+    // Atualiza localmente e tenta salvar no banco imediatamente
+    setUnitData(nextData);
     setTempEmbed("");
-    setEmbedSaved(true);
+    setIsSavingEmbed(false);
     setIsDirty(true);
+    
+    // Auto-save para evitar perda de links
+    handleSave(nextData);
   };
 
-  const removeEmbed = (idx: number) => {
-    const current = [...(unitData.embed_urls || [])];
-    current.splice(idx, 1);
-    setUnitData({ ...unitData, embed_urls: current });
-    setIsDirty(true);
-  };
-
-  if (loading) return (
-    <div className="screen-loading">
-      <div className="loader-spinner"></div>
-      <p>Carregando plano...</p>
-    </div>
-  );
-
-  if (!unitData) return (
-    <div className="screen-error">
-      <h2>Erro ao carregar unidade</h2>
-      <p>Não foi possível encontrar os dados para a unidade ID: {unitId}</p>
-      <button onClick={onBack} className="primary-btn">Voltar</button>
-    </div>
-  );
+  if (loading) return <div className="screen-loading"><div className="loader-spinner"></div><p>Carregando...</p></div>;
+  if (!unitData) return <div className="screen-error"><h2>Sincronizando...</h2></div>;
 
   return (
-    <div className="planning-editor-view">
-      <header className="editor-header no-print">
-        <div className="header-left">
-          <button onClick={onBack} className="back-btn-v4">
-            <ChevronLeft size={24} />
-          </button>
+    <div className="planning-editor-view" style={{ background: '#f8fafc', minHeight: '100vh', paddingBottom: '150px' }}>
+      
+      {/* HEADER FIXO */}
+      <header className="editor-header" style={{ background: 'white', padding: '15px 30px', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 4px 12px rgba(0,0,0,0.05)' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+          <button onClick={onBack} style={{ background: '#f1f5f9', border: 'none', padding: '10px', borderRadius: '14px' }}><ChevronLeft size={24} /></button>
           <div>
-            <h1 className="editor-title">Gestão Pedagógica</h1>
-            <p className="editor-subtitle">Configurando: {unitData.title}</p>
+            <h1 style={{ fontSize: '18px', fontWeight: 900, margin: 0 }}>Gerenciador Maestro Full</h1>
+            <p style={{ fontSize: '12px', color: '#64748b', margin: 0 }}>Aula: {unitData.title}</p>
           </div>
         </div>
-        <div className="header-right">
-          <button 
-            className={`admin-lock-btn-editor ${unitData.is_locked ? 'locked' : ''}`}
-            onClick={() => setUnitData({ ...unitData, is_locked: !unitData.is_locked })}
-            style={{
-              padding: '10px 18px',
-              borderRadius: '14px',
-              border: 'none',
-              background: unitData.is_locked ? '#fee2e2' : '#f1f5f9',
-              color: unitData.is_locked ? '#ef4444' : '#64748b',
-              fontWeight: 900,
-              fontSize: '13px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '8px',
-              cursor: 'pointer'
-            }}
-          >
-            {unitData.is_locked ? <Lock size={18} /> : <Unlock size={18} />}
-            {unitData.is_locked ? 'BLOQUEADO' : 'LIBERADO'}
-          </button>
-          <button onClick={() => setIsPreviewing(true)} className="preview-plano-btn">
-            <Eye size={20} /> PREVIEW
-          </button>
-          <button 
-            onClick={handleSave} 
-            className={`save-plano-btn ${isDirty ? 'is-dirty-pulse' : ''}`}
-            style={{
-              position: 'relative',
-              animation: isDirty ? 'pulse-gold 2s infinite' : 'none'
-            }}
-          >
-            <Save size={20} /> {isDirty ? 'SALVAR ALTERAÇÕES' : 'SALVAR PLANO'}
-            {isDirty && <span className="dirty-dot" style={{ position: 'absolute', top: '-5px', right: '-5px', width: '12px', height: '12px', background: '#f59e0b', borderRadius: '50%', border: '2px solid white' }} />}
-          </button>
-          <button 
-            onClick={async () => {
-              if (confirm('Deseja realmente apagar TODAS as atividades e o banco de palavras desta aula? Esta ação não pode ser desfeita.')) {
-                setUnitData({ 
-                  ...unitData, 
-                  embed_urls: [], 
-                  vocabulary_list: [],
-                  external_links: (unitData.external_links || []).filter((l: any) => l.label !== 'media' && l.label !== 'HTML')
-                });
-                setIsDirty(true);
-                alert('Tudo limpo! Agora você pode começar as novas atividades do zero. 🚀');
-              }
-            }}
-            className="clear-all-btn"
-            style={{
-              padding: '10px 14px',
-              borderRadius: '16px',
-              border: '1px solid #fee2e2',
-              background: 'white',
-              color: '#ef4444',
-              fontWeight: 800,
-              fontSize: '11px',
-              cursor: 'pointer',
-              marginLeft: '8px'
-            }}
-          >
-            RECOMEÇAR DO ZERO
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+          {autoSavePulse && <span style={{ color: '#10b981', fontSize: '11px', fontWeight: 900, animation: 'pulse 1s infinite' }}>SALVO COM SUCESSO ✓</span>}
+          <button onClick={() => handleSave()} style={{ background: isDirty ? '#f59e0b' : '#10b981', color: 'white', border: 'none', padding: '12px 30px', borderRadius: '14px', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '10px', boxShadow: '0 10px 20px rgba(0,0,0,0.1)' }}>
+            <Save size={18} /> {isDirty ? 'GRAVAR TUDO AGORA' : 'SISTEMA EM DIA'}
           </button>
         </div>
       </header>
 
-      <div className="editor-grid">
-        {/* Core Info Section */}
-        <div className="editor-main-col">
-          <section className="editor-section-card study-guide-editor">
-            <div className="section-header-v4">
-              <h3 className="section-title-v4">
-                <BookOpen className="text-blue" size={20} /> Guia de Estudo (Estudante & Mediadora)
-              </h3>
-              <div className="smart-badge-v4">Smart Renderer Ativo ✨</div>
-            </div>
-            
-            <div className="editor-field-wrapper">
-              <label className="field-label-v4">Texto de Introdução</label>
-              <p className="field-help">Este texto aparece na primeira etapa da aula. O sistema ajusta o tamanho da fonte automaticamente se houver mídias abaixo.</p>
-              <textarea 
-                className="editor-textarea-premium"
-                rows={6}
-                value={unitData.brief || ""}
-                onChange={(e) => setUnitData({...unitData, brief: e.target.value})}
-                placeholder="Ex: Hoje falaremos dos objetos e ações que acontecem na cozinha..."
-                style={{ 
-                  fontSize: unitData.external_links?.some((l: any) => l.label === 'media' || l.label === 'HTML') ? '16px' : '18px',
-                  fontWeight: unitData.external_links?.some((l: any) => l.label === 'media' || l.label === 'HTML') ? 500 : 700
-                }}
-              />
-            </div>
-
-            <div className="media-management-v4" style={{ marginTop: '32px', padding: '24px', background: '#f8fafc', borderRadius: '24px', border: '1px solid #edf2f7' }}>
-              <h4 style={{ fontSize: '15px', fontWeight: 900, marginBottom: '8px', color: '#1e293b' }}>
-                Conteúdo Multimídia Abaixo do Texto
-              </h4>
-              <p className="field-help" style={{ marginBottom: '20px' }}>
-                Insira imagens (URL), vídeos (YouTube) ou código HTML. Eles aparecerão em sequência após o texto.
-              </p>
-              
-              <div className="media-input-bar">
-                <input 
-                  type="text" 
-                  className="editor-input-v4"
-                  placeholder="Cole aqui o link (JPG, PNG, YouTube) ou código <HTML>..."
-                  id="new-brief-media"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      const btn = document.getElementById('add-media-btn');
-                      btn?.click();
-                    }
-                  }}
-                />
-                <button
-                  id="add-media-btn"
-                  onClick={() => {
-                    const input = document.getElementById('new-brief-media') as HTMLInputElement;
-                    const val = input.value.trim();
-                    if (!val) return;
-                    
-                    const isHtml = val.startsWith('<');
-                    const normalizedUrl = normalizeEmbedUrl(val);
-                    const newMedia = { label: isHtml ? 'HTML' : 'media', url: normalizedUrl };
-                    const nextLinks = [...(unitData.external_links || []), newMedia];
-                    setUnitData({ ...unitData, external_links: nextLinks });
-                    input.value = '';
-                  }}
-                  className="media-add-btn-v4"
-                >
-                  <Plus size={20} /> ADICIONAR
-                </button>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', padding: '30px', maxWidth: '1400px', margin: '0 auto' }}>
+        
+        {/* SECTION 1: MAESTRO INTRO & MEDIA */}
+        <section style={{ background: 'white', borderRadius: '30px', padding: '30px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
+           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ background: '#3b82f6', color: 'white', padding: '10px', borderRadius: '14px' }}><BookOpen size={24} /></div>
+              <h3 style={{ margin: 0, fontWeight: 900 }}>1. Guia de Estudo & Mídias Maestro</h3>
+           </div>
+           <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px 1fr', gap: '25px' }}>
+              <div>
+                 <label style={{ fontSize: '11px', fontWeight: 900, color: '#64748b' }}>TEXTO DE INTRODUÇÃO</label>
+                 <RichTextEditor value={unitData.brief || ""} onChange={(val) => { setUnitData({...unitData, brief: val}); setIsDirty(true); }} />
               </div>
-
-              <div className="media-list-stack" style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {(unitData.external_links || []).filter((l: any) => l.label === 'media' || l.label === 'HTML').length === 0 && (
-                  <div className="empty-media-placeholder">
-                    <span>Nenhuma mídia adicionada. O texto ficará em destaque máximo.</span>
-                  </div>
-                )}
-                
-                {unitData.external_links?.filter((l: any) => l.label === 'media' || l.label === 'HTML').map((media: any, i: number) => {
-                  const realIdx = unitData.external_links.findIndex((l: any) => l === media);
-                  return (
-                    <div key={i} className="media-item-card-v4 premium-style" style={{ 
-                      background: 'white', 
-                      padding: '20px', 
-                      borderRadius: '24px', 
-                      border: '1px solid #edf2f7',
-                      boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '12px'
-                    }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-                        <div className="media-preview-mini" style={{ width: '40px', height: '40px', borderRadius: '10px', background: '#f1f5f9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                          {media.label === 'HTML' ? '<b>H</b>' : (media.url.includes('cloudinary') || media.url.endsWith('.mp4') ? '🎥' : '🖼️')}
-                        </div>
-                        <div style={{ flex: 1 }}>
-                          <span className="media-url-mini" style={{ fontSize: '11px', color: '#64748b', display: 'block', wordBreak: 'break-all' }}>{media.url}</span>
-                        </div>
-                        <button 
-                          className="media-delete-btn" 
-                          onClick={() => {
-                            const next = unitData.external_links.filter((_: any, idx: number) => idx !== realIdx);
-                            setUnitData({ ...unitData, external_links: next });
-                            setIsDirty(true);
-                          }}
-                          style={{ color: '#ef4444', background: '#fee2e2', padding: '8px', borderRadius: '10px' }}
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      </div>
-
-                      <div className="media-controls-row" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', gap: '15px', paddingTop: '10px', borderTop: '1px solid #f1f5f9' }}>
-                        <div className="control-group">
-                          <label style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '5px' }}>LARGURA: {media.width || '100%'}</label>
-                          <input 
-                            type="range" min="10" max="100" step="5"
-                            value={parseInt(media.width?.replace('%', '') || '100')}
-                            onChange={(e) => {
-                              const next = [...unitData.external_links];
-                              next[realIdx] = { ...media, width: e.target.value + '%' };
-                              setUnitData({ ...unitData, external_links: next });
-                              setIsDirty(true);
-                            }}
-                            style={{ width: '100%', accentColor: '#3b82f6' }}
-                          />
-                        </div>
-                        <div className="control-group">
-                          <label style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '5px' }}>ESPERA (Segundos): {media.delay || 0}s</label>
-                          <input 
-                            type="range" min="0" max="10" step="1"
-                            value={media.delay || 0}
-                            onChange={(e) => {
-                              const next = [...unitData.external_links];
-                              next[realIdx] = { ...media, delay: parseInt(e.target.value) };
-                              setUnitData({ ...unitData, external_links: next });
-                              setIsDirty(true);
-                            }}
-                            style={{ width: '100%', accentColor: '#f59e0b' }}
-                          />
-                        </div>
-                        <div className="control-group" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 800 }}>
-                              <input 
-                                type="checkbox" 
-                                checked={!!media.loop}
-                                onChange={(e) => {
-                                  const next = [...unitData.external_links];
-                                  next[realIdx] = { ...media, loop: e.target.checked };
-                                  setUnitData({ ...unitData, external_links: next });
-                                  setIsDirty(true);
-                                }}
-                              />
-                              LOOP
-                           </label>
-                           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 800 }}>
-                              <input 
-                                type="checkbox" 
-                                checked={!!media.showSubtitles}
-                                onChange={(e) => {
-                                  const next = [...unitData.external_links];
-                                  next[realIdx] = { ...media, showSubtitles: e.target.checked };
-                                  setUnitData({ ...unitData, external_links: next });
-                                  setIsDirty(true);
-                                }}
-                              />
-                              LEGENDA
-                           </label>
-                           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '12px', fontWeight: 800, color: '#3b82f6' }}>
-                              <input 
-                                type="checkbox" 
-                                checked={!!media.autoPlayOnce}
-                                onChange={(e) => {
-                                  const next = [...unitData.external_links];
-                                  next[realIdx] = { ...media, autoPlayOnce: e.target.checked };
-                                  setUnitData({ ...unitData, external_links: next });
-                                  setIsDirty(true);
-                                }}
-                              />
-                              AUTO-PLAY ✨
-                           </label>
-                        </div>
-                      </div>
-
-                      {media.showSubtitles && (
-                        <div className="subtitle-input-group" style={{ marginTop: '5px' }}>
-                          <input 
-                            type="text" 
-                            className="editor-input-v4"
-                            placeholder="Escreva a legenda aqui..."
-                            value={media.caption || ''}
-                            onChange={(e) => {
-                              const next = [...unitData.external_links];
-                              next[realIdx] = { ...media, caption: e.target.value };
-                              setUnitData({ ...unitData, external_links: next });
-                              setIsDirty(true);
-                            }}
-                            style={{ width: '100%', fontSize: '13px', padding: '10px' }}
-                          />
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </section>
-
-          <section className="editor-section-card">
-            <h3 className="section-title-v4">
-              <Target className="text-orange" size={20} /> Objetivos de Aprendizagem
-            </h3>
-            <textarea 
-              className="editor-textarea"
-              rows={4}
-              value={unitData.learning_objectives || ""}
-              onChange={(e) => setUnitData({...unitData, learning_objectives: e.target.value})}
-              placeholder="Ex: Identificar cores e formas..."
-            />
-          </section>
-
-          <section className="editor-section-card">
-            <h3 className="section-title-v4">
-              <Lightbulb className="text-purple" size={20} /> Encaminhamento Metodológico
-            </h3>
-            <textarea 
-              className="editor-textarea"
-              rows={4}
-              value={unitData.methodology || ""}
-              onChange={(e) => setUnitData({...unitData, methodology: e.target.value})}
-              placeholder="Ex: Uso de flashcards e objetos reais..."
-            />
-          </section>
-          <section className="editor-section-card">
-            <h3 className="section-title-v4">
-              <Globe className="text-teal" size={20} /> Atividades Interativas (Embed)
-            </h3>
-            <p className="field-help">Cole aqui links do Wordwall, Canva ou Apps em HTML para que apareçam dentro da aula.</p>
-            <div className="embed-input-group">
-              <input 
-                type="text" 
-                className="editor-input-v4"
-                placeholder="Cole o link da atividade aqui..."
-                value={tempEmbed}
-                onChange={(e) => {
-                  setTempEmbed(e.target.value);
-                  setEmbedSaved(false);
-                }}
-                onKeyDown={(e) => e.key === 'Enter' && saveEmbedLink()}
-              />
-              <button
-                onClick={saveEmbedLink}
-                className={`embed-add-btn-v4 ${embedSaved ? 'saved' : ''}`}
-                disabled={!tempEmbed.trim() || isSavingEmbed}
-                style={{ background: '#10b981' }}
-              >
-                <Plus size={20} /> {isSavingEmbed ? '...' : 'ADICIONAR'}
-              </button>
-            </div>
-            <div className="embed-list-editor-v5">
-              {(!unitData.embed_urls || unitData.embed_urls.length === 0) && (
-                <div className="empty-mini">Nenhuma atividade interativa adicionada.</div>
-              )}
-              {unitData.embed_urls?.map((itemOrUrl: string | EmbedActivity, i: number) => {
-                const item: EmbedActivity = typeof itemOrUrl === 'string' ? { url: itemOrUrl, title: `Atividade ${i+1}`, width: '100%' } : itemOrUrl;
-                
-                return (
-                  <div key={i} className="admin-embed-edit-card-v5">
-                    <div className="admin-embed-main-row">
-                      <input 
-                        className="admin-embed-title-input"
-                        value={item.title || ''} 
-                        placeholder="Título da atividade"
-                        onChange={(e) => {
-                          const next = [...unitData.embed_urls];
-                          next[i] = { ...item, title: e.target.value };
-                          setUnitData({ ...unitData, embed_urls: next });
-                        }}
-                      />
-                      <button className="admin-item-del" title="Excluir" onClick={() => removeEmbed(i)}>
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                    
-                    <input 
-                      className="admin-embed-url-input"
-                      value={item.url} 
-                      placeholder="URL do Wordwall / Embed"
-                      onChange={(e) => {
-                        const next = [...unitData.embed_urls];
-                        next[i] = { ...item, url: e.target.value };
-                        setUnitData({ ...unitData, embed_urls: next });
-                      }}
-                    />
-                    
-
-                    
-                    <div className="admin-embed-width-row">
-                      <span>Largura do Card:</span>
-                      <input 
-                        type="range" min="30" max="100" step="5"
-                        value={parseInt(item.width?.replace('%', '') || '100')}
-                        onChange={(e) => {
-                          const next = [...unitData.embed_urls];
-                          next[i] = { ...item, width: e.target.value + '%' };
-                          setUnitData({ ...unitData, embed_urls: next });
-                        }}
-                      />
-                      <span className="width-label">{item.width || '100%'}</span>
-                    </div>
-
-                    <div className="admin-embed-mask-row" style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                        <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px', fontWeight: 700, color: '#475569' }}>
-                          <input 
-                            type="checkbox" 
-                            checked={!!item.maskIcon} 
-                            onChange={(e) => {
-                              const next = [...unitData.embed_urls];
-                              next[i] = { 
-                                ...item, 
-                                maskIcon: e.target.checked ? 'pending' : undefined,
-                                maskSize: e.target.checked ? 64 : undefined
-                              };
-                              setUnitData({ ...unitData, embed_urls: next });
-                              setIsDirty(true);
-                            }}
-                          />
-                          <span>Usar Ícone de Mistério (Esconder conteúdo)</span>
-                        </label>
-                        
-                        {item.maskIcon && (
-                          <div style={{ position: 'relative' }}>
-                            <label 
-                              htmlFor={`mask-file-${i}`}
-                              title="Clique para trocar o ícone"
-                              style={{
-                                width: '48px',
-                                height: '48px',
-                                borderRadius: '16px',
-                                background: 'white',
-                                border: '2px dashed #3b82f6',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                cursor: 'pointer',
-                                overflow: 'hidden',
-                                transition: 'all 0.2s',
-                                boxShadow: '0 4px 12px rgba(59, 130, 246, 0.15)'
-                              }}
-                            >
-                              <img 
-                                src={item.maskIcon} 
-                                alt="Mistery Icon" 
-                                style={{ width: '80%', height: '80%', objectFit: 'contain' }}
-                                onError={(e) => {
-                                  e.currentTarget.style.display = 'none';
-                                  const parent = e.currentTarget.parentElement;
-                                  if (parent && !parent.querySelector('.upload-placeholder')) {
-                                    const span = document.createElement('span');
-                                    span.className = 'upload-placeholder';
-                                    span.innerHTML = '📤';
-                                    span.style.fontSize = '20px';
-                                    parent.appendChild(span);
-                                  }
-                                }}
-                              />
-                            </label>
-                            <input 
-                              type="file" 
-                              id={`mask-file-${i}`} 
-                              style={{ display: 'none' }} 
-                              accept="image/*"
-                              onChange={(e) => {
-                                 const file = e.target.files?.[0];
-                                 if (file) {
-                                   const reader = new FileReader();
-                                   reader.onload = () => {
-                                      const next = [...unitData.embed_urls];
-                                      next[i] = { ...item, maskIcon: reader.result as string };
-                                      setUnitData({ ...unitData, embed_urls: next });
-                                      setIsDirty(true);
-                                   };
-                                   reader.readAsDataURL(file);
-                                 }
-                              }}
-                            />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '500px', overflowY: 'auto', paddingRight: '10px' }}>
+                 <label style={{ fontSize: '11px', fontWeight: 900, color: '#64748b' }}>CONFIGURAÇÕES DE MÍDIA</label>
+                 <button onClick={() => { setUnitData({...unitData, external_links: [...(unitData.external_links || []), { label: 'video', url: '', width: '600px', height: 300, objectFit: 'cover' }]}); setIsDirty(true); }} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 900 }}>+ ADICIONAR MÍDIA</button>
+                 
+                 {(unitData.external_links || []).map((link: any, i: number) => (
+                    <div key={i} style={{ background: '#f8fafc', padding: '15px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+                       <input type="text" value={link.url} placeholder="URL do Vídeo/Imagem..." style={{ width: '100%', padding: '10px', marginBottom: '10px', borderRadius: '10px' }} onChange={(e) => { const nl = [...unitData.external_links]; nl[i].url = e.target.value; setUnitData({...unitData, external_links: nl}); setIsDirty(true); }} />
+                       
+                       <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>LARGURA: {link.width || '600px'}</span></div>
+                          <input type="range" min="200" max="1200" step="10" value={parseInt(String(link.width || '600').replace(/[^0-9]/g, '')) > 100 ? parseInt(String(link.width || '600').replace(/[^0-9]/g, '')) : 600} style={{ width: '100%' }} onChange={(e) => { const nl = [...unitData.external_links]; nl[i].width = `${e.target.value}px`; setUnitData({...unitData, external_links: nl}); setIsDirty(true); }} />
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>ALTURA: {link.height || 300}px</span></div>
+                          <input type="range" min="50" max="600" value={link.height || 300} style={{ width: '100%' }} onChange={(e) => { const nl = [...unitData.external_links]; nl[i].height = parseInt(e.target.value); setUnitData({...unitData, external_links: nl}); setIsDirty(true); }} />
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>CANTOS DO FRAME: {link.borderRadius !== undefined ? link.borderRadius : 20}px</span></div>
+                          <input type="range" min="0" max="100" step="1" value={link.borderRadius !== undefined ? link.borderRadius : 20} style={{ width: '100%' }} onChange={(e) => { const nl = [...unitData.external_links]; nl[i].borderRadius = parseInt(e.target.value); setUnitData({...unitData, external_links: nl}); setIsDirty(true); }} />
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>CANTOS DO PLAYER: {link.playerBorderRadius !== undefined ? link.playerBorderRadius : (link.borderRadius !== undefined ? link.borderRadius : 20)}px</span></div>
+                          <input type="range" min="0" max="100" step="1" value={link.playerBorderRadius !== undefined ? link.playerBorderRadius : (link.borderRadius !== undefined ? link.borderRadius : 20)} style={{ width: '100%' }} onChange={(e) => { const nl = [...unitData.external_links]; nl[i].playerBorderRadius = parseInt(e.target.value); setUnitData({...unitData, external_links: nl}); setIsDirty(true); }} />
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>ZOOM DA IMAGEM/VÍDEO: {link.scale || 1}x</span></div>
+                          <input type="range" min="0.5" max="3" step="0.1" value={link.scale || 1} style={{ width: '100%' }} onChange={(e) => { const nl = [...unitData.external_links]; nl[i].scale = parseFloat(e.target.value); setUnitData({...unitData, external_links: nl}); setIsDirty(true); }} />
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>ESPESSURA DO FRAME: {link.framePadding || '0px'}</span></div>
+                          <input type="range" min="0" max="50" step="1" value={parseInt(link.framePadding || '0')} style={{ width: '100%' }} onChange={(e) => { const nl = [...unitData.external_links]; nl[i].framePadding = `${e.target.value}px`; setUnitData({...unitData, external_links: nl}); setIsDirty(true); }} />
+                          <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>COR DO FRAME:</span></div>
+                          <select value={link.frameColor || ''} style={{ fontSize: '10px', width: '100%', padding: '5px', borderRadius: '5px', marginBottom: '5px' }} onChange={(e) => { const nl = [...unitData.external_links]; nl[i].frameColor = e.target.value; setUnitData({...unitData, external_links: nl}); setIsDirty(true); }}>
+                             <option value="">Padrão (Preto/Transp.)</option>
+                             <option value="transparent">Transparente (Vazio)</option>
+                             <option value="white">Branco</option>
+                             <option value="#fef3c7">Bege</option>
+                             <option value="#000000">Preto</option>
+                             <option value="#fbbf24">Amarelo</option>
+                             <option value="#3b82f6">Azul</option>
+                           </select>
+                           <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>DELAY DE INÍCIO: {link.delay || 0}s</span></div>
+                           <input type="range" min="0" max="15" step="0.5" value={link.delay || 0} style={{ width: '100%' }} onChange={(e) => { const nl = [...unitData.external_links]; nl[i].delay = parseFloat(e.target.value); setUnitData({...unitData, external_links: nl}); setIsDirty(true); }} />
+                          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginTop: '5px' }}>                             <label style={{ fontSize: '10px', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '4px', cursor: 'pointer', color: '#3b82f6' }}>
+                                <input type="checkbox" checked={!!link.autoPlayOnce} onChange={(e) => { const nl = [...unitData.external_links]; nl[i].autoPlayOnce = e.target.checked; setUnitData({...unitData, external_links: nl}); setIsDirty(true); }} /> AUTO-PLAY
+                             </label>
+                             <select value={link.objectFit || 'cover'} style={{ fontSize: '10px' }} onChange={(e) => { const nl = [...unitData.external_links]; nl[i].objectFit = e.target.value; setUnitData({...unitData, external_links: nl}); setIsDirty(true); }}>
+                                <option value="cover">Zoom</option>
+                                <option value="contain">Encaixar</option>
+                             </select>
                           </div>
-                        )}
-                      </div>
-
-                      {item.maskIcon && (
-                        <div style={{ 
-                          padding: '16px', 
-                          background: '#f8fafc', 
-                          borderRadius: '20px', 
-                          border: '1px solid #edf2f7',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '8px'
-                        }}>
-                           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                             <span style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', textTransform: 'uppercase', minWidth: '80px' }}>Tamanho:</span>
-                             <input 
-                               type="range" min="32" max="256" step="8"
-                               value={item.maskSize || 64}
-                               onChange={(e) => {
-                                 const next = [...unitData.embed_urls];
-                                 next[i] = { ...item, maskSize: parseInt(e.target.value) };
-                                 setUnitData({ ...unitData, embed_urls: next });
-                                 setIsDirty(true);
-                               }}
-                               style={{ flex: 1, accentColor: '#3b82f6' }}
-                             />
-                             <span style={{ fontSize: '12px', fontWeight: 900, color: '#1e293b', width: '45px', textAlign: 'right' }}>{item.maskSize || 64}px</span>
-                           </div>
-                        </div>
-                      )}
+                       </div>
+                       <button onClick={() => { const nl = unitData.external_links.filter((_: any, idx: number) => idx !== i); setUnitData({...unitData, external_links: nl}); setIsDirty(true); }} style={{ width: '100%', marginTop: '10px', color: '#ef4444', background: '#fee2e2', border: 'none', borderRadius: '8px', padding: '5px', fontSize: '10px', fontWeight: 900 }}>REMOVER</button>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </section>
-
-          <section className="editor-section-card">
-            <h3 className="section-title-v4">
-              <Plus className="text-orange" size={20} /> Descritores BNCC
-            </h3>
-            <p className="field-help">Adicione os códigos das habilidades da BNCC separados por vírgula (ex: D3, D5, EF06LI01).</p>
-            <input 
-              type="text" 
-              className="editor-input-v4"
-              placeholder="Ex: D3, D5, EF06LI01..."
-              value={descText}
-              onChange={(e) => setDescText(e.target.value)}
-            />
-          </section>
-          <section className="editor-section-card">
-            <h3 className="section-title-v4">
-              <Eye className="text-purple" size={20} /> Identidade Visual Pedagógica
-            </h3>
-            <p className="field-help">Selecione o tema visual com base no público-alvo da lição.</p>
-            
-            <div className="theme-grid-v4">
-              {[
-                { id: 'gamer', label: 'Turbo Gamer', target: 'High School / Adolescentes', desc: 'Estética moderna e digital' },
-                { id: 'creative', label: 'Energia Criativa', target: 'Middle School / Versátil', desc: 'Equilíbrio e foco organizacional' },
-                { id: 'pop', label: 'Pop Art', target: '6º e 7º anos / Crianças', desc: 'Cores saturadas e lúdicas' }
-              ].map(theme => (
-                <button
-                  key={theme.id}
-                  className={`theme-card-v4 ${unitData.color === theme.id ? 'active' : ''}`}
-                  onClick={() => setUnitData({ ...unitData, color: theme.id })}
-                >
-                  <div className="theme-swatch-v4" style={{ 
-                    background: `linear-gradient(135deg, ${COLORS[theme.id].main} 0%, ${COLORS[theme.id].dark} 100%)`,
-                    borderBottom: `4px solid ${COLORS[theme.id].accent}`
-                  }}>
-                    <div className="accent-dot-v4" style={{ background: COLORS[theme.id].accent }}></div>
-                  </div>
-                  <div className="theme-info-v4">
-                    <span className="theme-label-v4">{theme.label}</span>
-                    <span className="theme-target-v4">{theme.target}</span>
-                  </div>
-                </button>
-              ))}
-            </div>
-
-            <div className="color-selector-mini-v4">
-              <p className="field-help">Ou selecione uma cor clássica:</p>
-              <div className="mini-circles-row">
-                {['natural', 'emerald', 'sapphire', 'terracotta', 'amethyst', 'crimson'].map(key => (
-                  <button
-                    key={key}
-                    className={`mini-color-btn ${unitData.color === key ? 'active' : ''}`}
-                    style={{ background: COLORS[key].main }}
-                    onClick={() => setUnitData({ ...unitData, color: key })}
-                  />
-                ))}
+                 ))}
               </div>
-            </div>
-          </section>
-        </div>
+              <div style={{ background: '#f1f5f9', borderRadius: '24px', padding: '15px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                 <span style={{ fontSize: '10px', fontWeight: 900, marginBottom: '10px' }}>LIVE SIMULATOR</span>
+                 <div style={{ background: 'white', padding: '20px', borderRadius: '25px', display: 'flex', gap: '15px', width: '100%', maxWidth: '100%' }}>
+                    <div style={{ flex: 1, fontSize: '12px', overflow: 'hidden' }} dangerouslySetInnerHTML={{ __html: unitData.brief }} />
+                    <div style={{ flex: 1 }}>{unitData.external_links?.map((m: any, i: number) => <VideoPlayerV5 key={i} media={m} />)}</div>
+                 </div>
+              </div>
+           </div>
+        </section>
 
-        {/* Vocabulary Manager Section */}
-        <div className="editor-side-col">
-          <section className="editor-section-card">
-            <h3 className="section-title-v4">
-              <BookOpen className="text-emerald" size={20} /> Banco de Palavras (Word Fall)
-            </h3>
-            
-            <div className="vocab-input-group">
-              <input 
-                type="text" 
-                className="vocab-input-v4"
-                placeholder="Ex: Fridge / Geladeira / یخچال"
-                value={newWord}
-                onChange={(e) => setNewWord(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && addWord()}
-              />
-              <button onClick={addWord} className="vocab-add-btn-v4">
-                <Plus size={24} />
+        {/* SECTION 2: ATIVIDADES INTERATIVAS (WORDWALL / CANVA) */}
+        <section style={{ background: 'white', borderRadius: '30px', padding: '30px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
+           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ background: '#10b981', color: 'white', padding: '10px', borderRadius: '14px' }}><Globe size={24} /></div>
+              <h3 style={{ margin: 0, fontWeight: 900 }}>2. Atividades Interativas (Wordwall, Canva, etc.)</h3>
+           </div>
+           <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', background: '#f8fafc', padding: '20px', borderRadius: '20px', border: '2px dashed #cbd5e1' }}>
+              <div style={{ flex: 1 }}>
+                 <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b', marginBottom: '5px', display: 'block' }}>COLE O LINK DA ATIVIDADE AQUI</label>
+                 <input type="text" placeholder="Ex: https://wordwall.net/resource/..." value={tempEmbed} onChange={(e) => setTempEmbed(e.target.value)} style={{ width: '100%', padding: '15px', borderRadius: '15px', border: '1px solid #cbd5e1' }} />
+              </div>
+              <button onClick={saveEmbedLink} disabled={isSavingEmbed} style={{ alignSelf: 'flex-end', background: '#10b981', color: 'white', border: 'none', padding: '15px 30px', borderRadius: '15px', fontWeight: 900, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                 {isSavingEmbed ? 'Adicionando...' : <><Plus size={20} /> ADICIONAR E GRAVAR LINK</>}
               </button>
-            </div>
-
-            <div className="vocab-list-v4">
-              {unitData.vocabulary_list?.length === 0 && (
-                <div className="empty-mini">Nenhuma palavra cadastrada para este jogo.</div>
-              )}
-              {unitData.vocabulary_list?.map((word: any, i: number) => {
-                const display = typeof word === 'string' ? word : word.en;
-                return (
-                  <span key={i} className="vocab-tag-v4 group">
-                    <span style={{ marginRight: '6px' }}>{typeof word === 'object' ? word.icon : '🏷️'}</span>
-                    {display}
-                    <button 
-                      onClick={() => {
-                        const filtered = unitData.vocabulary_list.filter((_: any, index: number) => index !== i);
-                        setUnitData({ ...unitData, vocabulary_list: filtered });
-                        setIsDirty(true);
-                      }}
-                      className="vocab-tag-remove"
-                    >
-                      <Trash2 size={12} />
-                    </button>
-                  </span>
-                );
-              })}
-            </div>
-          </section>
-        </div>
-      </div>
-
-      <div className="editor-full-row" style={{ marginTop: '32px' }}>
-        <section className="editor-section-card">
-          <h3 className="section-title-v4">
-            <Plus className="text-purple" size={20} /> Questões Interativas (Estilo Google Forms)
-          </h3>
-          
-          <div className="questions-editor-list">
-            {(unitData.questions || []).map((q: any, idx: number) => (
-              <div key={idx} className="question-edit-item">
-                <div className="q-edit-header">
-                  <span className="q-number">Questão {idx + 1}</span>
-                  <button 
-                    onClick={() => {
-                      const newQs = unitData.questions.filter((_: any, i: number) => i !== idx);
-                      setUnitData({ ...unitData, questions: newQs });
-                      setIsDirty(true);
-                    }}
-                    className="q-delete-btn"
-                  >
-                    <Trash2 size={18} />
-                  </button>
+           </div>
+           
+           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '20px' }}>
+              {unitData.embed_urls?.map((item: any, i: number) => (
+                <div key={i} style={{ background: '#f8fafc', padding: '20px', borderRadius: '25px', border: '1px solid #e2e8f0' }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '10px' }}>
+                      <input value={item.title} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].title = e.target.value; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ fontWeight: 800, background: 'none', border: 'none', width: '80%' }} />
+                      <button onClick={() => { const nl = unitData.embed_urls.filter((_: any, idx: number) => idx !== i); setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }}><Trash2 size={16} color="#ef4444" /></button>
+                   </div>
+                   <input value={item.url} readOnly style={{ width: '100%', fontSize: '10px', color: '#64748b', background: 'none', border: 'none', marginBottom: '10px' }} />
+                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                      <Smartphone size={16} color="#64748b" />
+                      <input type="range" min="30" max="100" value={parseInt(item.width?.replace('%','') || '100')} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].width = `${e.target.value}%`; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ flex: 1 }} />
+                      <span style={{ fontSize: '10px', fontWeight: 900 }}>{item.width || '100%'}</span>
+                   </div>
                 </div>
-                
-                <div className="q-edit-body">
-                  <div className="q-field">
-                    <label>Pergunta</label>
-                    <input 
-                      type="text" 
-                      value={q.q} 
-                      onChange={(e) => {
-                        const newQs = [...unitData.questions];
-                        newQs[idx].q = e.target.value;
-                        setUnitData({ ...unitData, questions: newQs });
-                        setIsDirty(true);
-                      }}
-                      placeholder="Ex: Qual a tradução de Spoon?"
-                    />
-                  </div>
+              ))}
+           </div>
+        </section>
 
-                  <div className="q-field-row">
-                    <div className="q-field">
-                      <label>Tipo</label>
-                      <select 
-                        value={q.type}
-                        onChange={(e) => {
-                          const newQs = [...unitData.questions];
-                          newQs[idx].type = e.target.value;
-                          setUnitData({ ...unitData, questions: newQs });
-                          setIsDirty(true);
+        {/* SECTION 3: QUESTÕES INTERATIVAS */}
+        <section style={{ background: 'white', borderRadius: '30px', padding: '30px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
+           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ background: '#8b5cf6', color: 'white', padding: '10px', borderRadius: '14px' }}><Zap size={24} /></div>
+              <h3 style={{ margin: 0, fontWeight: 900 }}>3. Questões Interativas (Estilo Forms)</h3>
+           </div>
+           <button onClick={() => { setUnitData({...unitData, questions: [...(unitData.questions || []), { title: 'Nova Pergunta', type: 'choice', options: ['Opção 1'], correct: 'Opção 1' }]}); setIsDirty(true); }} style={{ background: '#8b5cf6', color: 'white', border: 'none', padding: '12px 25px', borderRadius: '15px', fontWeight: 900, marginBottom: '20px' }}>+ CRIAR NOVA QUESTÃO</button>
+           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              {unitData.questions?.map((q: any, i: number) => (
+                <div key={i} style={{ background: '#f8fafc', padding: '25px', borderRadius: '25px', border: '1px solid #e2e8f0' }}>
+                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+                      <input value={q.title} onChange={(e) => { const nq = [...unitData.questions]; nq[i].title = e.target.value; setUnitData({...unitData, questions: nq}); setIsDirty(true); }} style={{ fontSize: '18px', fontWeight: 800, width: '80%', background: 'none', border: 'none' }} />
+                      <button onClick={() => { const nq = unitData.questions.filter((_: any, idx: number) => idx !== i); setUnitData({...unitData, questions: nq}); setIsDirty(true); }}><Trash2 color="#ef4444" /></button>
+                   </div>
+                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                      {q.options?.map((opt: string, oIdx: number) => (
+                        <div key={oIdx} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                           <input type="radio" checked={q.correct === opt} onChange={() => { const nq = [...unitData.questions]; nq[i].correct = opt; setUnitData({...unitData, questions: nq}); setIsDirty(true); }} />
+                           <input value={opt} onChange={(e) => { const nq = [...unitData.questions]; nq[i].options[oIdx] = e.target.value; setUnitData({...unitData, questions: nq}); setIsDirty(true); }} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0' }} />
+                           <button onClick={() => { const nq = [...unitData.questions]; nq[i].options = nq[i].options.filter((_: any, idx: number) => idx !== oIdx); setUnitData({...unitData, questions: nq}); setIsDirty(true); }} style={{ color: '#ef4444' }}><X size={16} /></button>
+                        </div>
+                      ))}
+                      <button onClick={() => { const nq = [...unitData.questions]; nq[i].options.push('Nova Opção'); setUnitData({...unitData, questions: nq}); setIsDirty(true); }} style={{ color: '#8b5cf6', fontWeight: 800, fontSize: '13px', textAlign: 'left', marginTop: '10px' }}>+ ADICIONAR OPÇÃO</button>
+                   </div>
+                </div>
+              ))}
+           </div>
+        </section>
+
+        {/* SECTION 4: BNCC & TEMA */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+           <section style={{ background: 'white', borderRadius: '30px', padding: '30px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
+              <h3 style={{ margin: 0, fontWeight: 900, marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}><Target color="#f59e0b" /> Descritores BNCC</h3>
+              <input value={descText} onChange={(e) => { setDescText(e.target.value); setIsDirty(true); }} placeholder="D3, D5, EF06LI01..." style={{ width: '100%', padding: '15px', borderRadius: '15px', border: '1px solid #cbd5e1' }} />
+           </section>
+           <section style={{ background: 'white', borderRadius: '30px', padding: '30px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
+              <h3 style={{ margin: 0, fontWeight: 900, marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}><Palette color="#ec4899" /> Tema da Unidade</h3>
+              <div style={{ display: 'flex', gap: '15px' }}>
+                 {['gamer', 'creative', 'pop', 'natural'].map(t => (
+                    <button key={t} onClick={() => { setUnitData({...unitData, color: t}); setIsDirty(true); }} style={{ 
+                       width: '45px', height: '45px', borderRadius: '50%', background: COLORS[t]?.main, 
+                       border: unitData.color === t ? '5px solid #1e293b' : 'none',
+                       boxShadow: unitData.color === t ? '0 0 15px rgba(0,0,0,0.2)' : 'none',
+                       transition: 'all 0.2s'
+                    }} />
+                 ))}
+              </div>
+           </section>
+        </div>
+
+        {/* SECTION 4.5: VISUAL & GAMIFICAÇÃO */}
+        <section style={{ background: 'white', borderRadius: '30px', padding: '30px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
+           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ background: '#f59e0b', color: 'white', padding: '10px', borderRadius: '14px' }}><Sparkles size={24} /></div>
+              <h3 style={{ margin: 0, fontWeight: 900 }}>4. Visual & Gamificação (Ícones e Skins)</h3>
+           </div>
+           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+              <div>
+                 <label style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '10px' }}>ÍCONE 3D DA AULA</label>
+                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+                    {[
+                      { id: 'chef', icon: <ChefHat /> },
+                      { id: 'headphones', icon: <Headphones /> },
+                      { id: 'user', icon: <User /> },
+                      { id: 'building', icon: <Building2 /> },
+                      { id: 'book', icon: <BookOpen /> },
+                      { id: 'mobile', icon: <Smartphone /> },
+                      { id: 'school', icon: <GraduationCap /> },
+                      { id: 'clipboard', icon: <ClipboardList /> },
+                      { id: 'image', icon: <ImageIcon /> },
+                      { id: 'zap', icon: <Zap /> }
+                    ].map(item => (
+                      <button 
+                        key={item.id} 
+                        onClick={() => { setUnitData({...unitData, icon: item.id}); setIsDirty(true); }}
+                        style={{ 
+                          padding: '15px', borderRadius: '16px', background: unitData.icon === item.id ? 'var(--unit-color, #3b82f6)' : '#f8fafc',
+                          color: unitData.icon === item.id ? 'white' : '#64748b', border: '1px solid #e2e8f0'
                         }}
                       >
-                        <option value="mc">Múltipla Escolha</option>
-                        <option value="text">Resposta Aberta (curta)</option>
-                        <option value="paragraph">Resposta Aberta (longa)</option>
-                        <option value="instruction">Somente Instrução</option>
-                      </select>
-                    </div>
-
-                    <div className="q-field">
-                      <label>Dica TTS (Áudio)</label>
-                      <input 
-                        type="text" 
-                        value={q.hint || ""} 
-                        onChange={(e) => {
-                          const newQs = [...unitData.questions];
-                          newQs[idx].hint = e.target.value;
-                          setUnitData({ ...unitData, questions: newQs });
-                          setIsDirty(true);
-                        }}
-                        placeholder="Ex: [PT]Pense na cozinha...[/PT]"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="q-field-row" style={{ marginTop: '12px' }}>
-                    <div className="q-field" style={{ flex: 2 }}>
-                      <label>Mídia (Link da Imagem ou Vídeo MP4)</label>
-                      <input 
-                        type="text" 
-                        value={q.imageUrl || ""} 
-                        onChange={(e) => {
-                          const newQs = [...unitData.questions];
-                          newQs[idx].imageUrl = e.target.value;
-                          setUnitData({ ...unitData, questions: newQs });
-                          setIsDirty(true);
-                        }}
-                        placeholder="Link .mp4 ou .jpg"
-                        style={{ fontSize: '12px' }}
-                      />
-                    </div>
-                    <div className="q-field" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px', paddingTop: '5px', minWidth: '150px' }}>
-                       <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '11px', fontWeight: 900, color: '#3b82f6', background: 'rgba(59, 130, 246, 0.05)', padding: '4px 8px', borderRadius: '8px' }}>
-                          <input 
-                            type="checkbox" 
-                            checked={!!q.autoPlayOnce}
-                            onChange={(e) => {
-                              const newQs = [...unitData.questions];
-                              newQs[idx].autoPlayOnce = e.target.checked;
-                              setUnitData({ ...unitData, questions: newQs });
-                              setIsDirty(true);
-                            }}
-                          />
-                          AUTO-PLAY ✨
-                       </label>
-                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b', whiteSpace: 'nowrap' }}>ESPERA: {q.delay || 0}s</label>
-                          <input 
-                            type="range" min="0" max="10" step="1"
-                            value={q.delay || 0}
-                            onChange={(e) => {
-                              const newQs = [...unitData.questions];
-                              newQs[idx].delay = parseInt(e.target.value);
-                              setUnitData({ ...unitData, questions: newQs });
-                              setIsDirty(true);
-                            }}
-                            style={{ flex: 1, accentColor: '#f59e0b' }}
-                          />
-                       </div>
-                    </div>
-                  </div>
-
-                  {q.type === 'mc' && (
-                    <div className="q-field">
-                      <label>Opções (separadas por vírgula)</label>
-                      <input 
-                        type="text" 
-                        value={Array.isArray(q.opts) ? q.opts.join(', ') : ""} 
-                        onChange={(e) => {
-                          const newQs = [...unitData.questions];
-                          newQs[idx].opts = e.target.value.split(',').map(s => s.trim());
-                          setUnitData({ ...unitData, questions: newQs });
-                          setIsDirty(true);
-                        }}
-                        placeholder="Opção 1, Opção 2, Opção 3"
-                      />
-                    </div>
-                  )}
-
-                  {(q.type === 'text' || q.type === 'paragraph') && (
-                    <div className="q-field">
-                      <label>Resposta correta / esperada (referência — não aparece para a aluna)</label>
-                      <textarea
-                        rows={q.type === 'paragraph' ? 4 : 2}
-                        value={
-                          typeof q.correctAnswer === 'string'
-                            ? q.correctAnswer
-                            : Array.isArray(q.correctAnswer)
-                              ? q.correctAnswer.join('\n')
-                              : ''
-                        }
-                        onChange={(e) => {
-                          const newQs = [...unitData.questions];
-                          const raw = e.target.value;
-                          newQs[idx].correctAnswer = raw === '' ? undefined : raw;
-                          setUnitData({ ...unitData, questions: newQs });
-                          setIsDirty(true);
-                        }}
-                        placeholder="Uma resposta por linha se quiser aceitar várias formas (ex.: spoon / colher)"
-                      />
-                    </div>
-                  )}
-
-                  <div className="q-field">
-                    <label>Guia da Mediadora (Observação)</label>
-                    <textarea 
-                      rows={2}
-                      value={q.mediator || ""}
-                      onChange={(e) => {
-                        const newQs = [...unitData.questions];
-                        newQs[idx].mediator = e.target.value;
-                        setUnitData({ ...unitData, questions: newQs });
-                        setIsDirty(true);
-                      }}
-                      placeholder="Ex: Peça para ela apontar para o objeto real."
-                    />
-                  </div>
-                </div>
+                        {/* @ts-ignore */}
+                        {React.cloneElement(item.icon as React.ReactElement, { size: 24 })}
+                      </button>
+                    ))}
+                 </div>
               </div>
-            ))}
-            
-            <button 
-              className="add-question-full-btn"
-              onClick={() => {
-                const newQ = { q: '', type: 'mc', opts: [''], mediator: '', hint: '' };
-                const newQs = [...(unitData.questions || []), newQ];
-                setUnitData({ ...unitData, questions: newQs });
-                setIsDirty(true);
-              }}
-            >
-              <Plus size={20} /> ADICIONAR NOVA QUESTÃO
-            </button>
-          </div>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                 <label style={{ fontSize: '11px', fontWeight: 900, color: '#64748b' }}>ÍCONE MISTERIOSO (MÁSCARA)</label>
+                 <input 
+                   type="text" 
+                   value={unitData.mystery_icon || ""} 
+                   onChange={(e) => { setUnitData({...unitData, mystery_icon: e.target.value}); setIsDirty(true); }}
+                   placeholder="Link da imagem (Ex: Interrogação, Baú...)"
+                   style={{ width: '100%', padding: '15px', borderRadius: '15px', border: '1px solid #cbd5e1' }}
+                 />
+                 
+                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                   <label style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', whiteSpace: 'nowrap' }}>TAMANHO: {unitData.mystery_icon_size || 120}px</label>
+                   <input 
+                     type="range" 
+                     min="40" 
+                     max="300" 
+                     value={unitData.mystery_icon_size || 120} 
+                     onChange={(e) => { setUnitData({...unitData, mystery_icon_size: parseInt(e.target.value)}); setIsDirty(true); }}
+                     style={{ flex: 1 }}
+                   />
+                 </div>
+
+                 <div style={{ background: '#f1f5f9', padding: '15px', borderRadius: '20px', textAlign: 'center', display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '120px' }}>
+                    {unitData.mystery_icon ? (
+                      <img 
+                        src={unitData.mystery_icon} 
+                        alt="Mystery" 
+                        style={{ 
+                          width: `${unitData.mystery_icon_size || 120}px`, 
+                          height: `${unitData.mystery_icon_size || 120}px`, 
+                          objectFit: 'contain' 
+                        }} 
+                      />
+                    ) : (
+                      <span style={{ fontSize: '11px', color: '#94a3b8' }}>Sem máscara ativa (usará padrão)</span>
+                    )}
+                 </div>
+              </div>
+           </div>
         </section>
+
+        {/* SECTION 5: BANCO DE PALAVRAS (WORD FALL) */}
+        <section style={{ background: 'white', borderRadius: '30px', padding: '30px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
+           <h3 style={{ margin: 0, fontWeight: 900, marginBottom: '15px', display: 'flex', alignItems: 'center', gap: '10px' }}><Zap color="#10b981" /> Banco de Palavras (Jogo WordFall)</h3>
+           <div style={{ display: 'flex', gap: '10px' }}>
+              <input value={newWord} onChange={(e) => setNewWord(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && addWord()} placeholder="Ex: Fridge / Geladeira" style={{ flex: 1, padding: '15px', borderRadius: '15px', border: '1px solid #cbd5e1' }} />
+              <button onClick={addWord} style={{ background: '#10b981', color: 'white', border: 'none', padding: '0 25px', borderRadius: '15px', fontWeight: 900 }}>ADICIONAR À LISTA</button>
+           </div>
+           <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginTop: '20px' }}>
+              {unitData.vocabulary_list?.map((w: any, i: number) => (
+                <span key={i} style={{ background: '#f1f5f9', padding: '10px 18px', borderRadius: '15px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '10px', border: '1px solid #e2e8f0' }}>
+                   <span style={{ fontSize: '14px' }}>{typeof w === 'object' ? w.en : w}</span>
+                   <button onClick={() => { const nv = unitData.vocabulary_list.filter((_: any, idx: number) => idx !== i); setUnitData({...unitData, vocabulary_list: nv}); setIsDirty(true); }} style={{ background: 'none', border: 'none', color: '#ef4444', padding: 0 }}><Trash2 size={14} /></button>
+                </span>
+              ))}
+           </div>
+        </section>
+
       </div>
 
-      {isPreviewing && (
-        <div className="preview-overlay">
-          <div className="preview-modal">
-            <header className="preview-header">
-              <h3>Preview do Estudante</h3>
-              <button onClick={() => setIsPreviewing(false)} className="close-preview-btn">
-                <X size={24} />
-              </button>
-            </header>
-            <div className="preview-content">
-              <UnitCard 
-                unit={unitData}
-                answers={{}}
-                onSaveAnswer={async () => true}
-                onSaveSession={async () => true}
-                isExpanded={true}
-                onToggle={() => {}}
-                isAdmin={false}
-              />
-            </div>
-          </div>
-        </div>
-      )}
-
       <style>{`
-        .header-right { display: flex; gap: 12px; }
-        .preview-plano-btn {
-          background: white;
-          color: #475569;
-          border: 1px solid #e2e8f0;
-          padding: 16px 24px;
-          border-radius: 20px;
-          font-weight: 900;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-        }
-
-        .preview-overlay {
-          position: fixed;
-          inset: 0;
-          background: rgba(0,0,0,0.5);
-          backdrop-filter: blur(4px);
-          z-index: 3000;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          padding: 40px;
-        }
-        .preview-modal {
-          background: #f8fafc;
-          width: 100%;
-          max-width: 1400px;
-          max-height: 90vh;
-          border-radius: 32px;
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          box-shadow: 0 40px 80px -20px rgba(0,0,0,0.3);
-        }
-        .preview-header {
-          padding: 24px 32px;
-          background: white;
-          border-bottom: 1px solid #e2e8f0;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-        }
-        .preview-header h3 { margin: 0; font-weight: 900; color: #1e293b; }
-        .close-preview-btn { background: none; border: none; color: #94a3b8; cursor: pointer; }
-        .preview-content {
-          padding: 32px;
-          overflow-y: auto;
-          flex: 1;
-        }
-        .planning-editor-view {
-          padding: 32px;
-          background: #FDFBF7;
-          min-height: 100vh;
-          max-width: 1400px;
-          margin: 0 auto;
-        }
-        .editor-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 40px;
-        }
-        .header-left {
-          display: flex;
-          align-items: center;
-          gap: 20px;
-        }
-        .back-btn-v4 {
-          background: white;
-          border: 1px solid #e2e8f0;
-          width: 48px;
-          height: 48px;
-          border-radius: 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          color: #64748b;
-          cursor: pointer;
-        }
-        .editor-title { font-size: 28px; font-weight: 900; color: #1e293b; margin: 0; }
-        .editor-subtitle { color: #64748b; font-weight: 600; margin-top: 4px; }
-        
-        .save-plano-btn {
-          background: #059669;
-          color: white;
-          padding: 16px 32px;
-          border-radius: 20px;
-          font-weight: 900;
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          box-shadow: 0 10px 20px rgba(5, 150, 105, 0.2);
-          border: none;
-        }
-
-        .editor-grid {
-          display: grid;
-          grid-template-columns: 1fr 400px;
-          gap: 32px;
-        }
-        
-        .editor-section-card {
-          background: white;
-          padding: 32px;
-          border-radius: 32px;
-          border: 1px solid #f1f5f9;
-          box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
-          margin-bottom: 24px;
-        }
-
-        .section-title-v4 {
-          font-size: 12px;
-          font-weight: 900;
-          text-transform: uppercase;
-          letter-spacing: 0.1em;
-          color: #64748b;
-          margin-bottom: 24px;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .editor-textarea {
-          width: 100%;
-          border: none;
-          background: #f8fafc;
-          border-radius: 24px;
-          padding: 24px;
-          font-size: 16px;
-          color: #334155;
-          line-height: 1.6;
-          outline: none;
-          resize: none;
-        }
-
-        .vocab-input-group {
-          display: flex;
-          gap: 12px;
-          margin-bottom: 24px;
-        }
-        .vocab-input-v4 {
-          flex: 1;
-          background: #f8fafc;
-          border: none;
-          border-radius: 16px;
-          padding: 16px 20px;
-          font-size: 15px;
-          outline: none;
-        }
-        .vocab-add-btn-v4 {
-          background: #ecfdf5;
-          color: #059669;
-          border: none;
-          width: 54px;
-          height: 54px;
-          border-radius: 16px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-
-        .vocab-list-v4 {
-          display: flex;
-          flex-wrap: wrap;
-          gap: 10px;
-        }
-        .vocab-tag-v4 {
-          background: white;
-          border: 1px solid #f1f5f9;
-          padding: 8px 16px;
-          border-radius: 99px;
-          font-size: 14px;
-          font-weight: 800;
-          color: #475569;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-        }
-        .vocab-tag-remove {
-          border: none;
-          background: none;
-          color: #cbd5e1;
-          cursor: pointer;
-        }
-        .vocab-tag-remove:hover { color: #ef4444; }
-
-        .questions-editor-list {
-          display: flex;
-          flex-direction: column;
-          gap: 20px;
-        }
-
-        .question-edit-item {
-          background: #f8fafc;
-          border-radius: 24px;
-          padding: 24px;
-          border: 1px solid #e2e8f0;
-        }
-
-        .q-edit-header {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 20px;
-        }
-
-        .q-number {
-          font-weight: 900;
-          color: #6366f1;
-          font-size: 14px;
-        }
-
-        .q-delete-btn {
-          background: #fee2e2;
-          color: #ef4444;
-          border: none;
-          padding: 8px;
-          border-radius: 12px;
-          cursor: pointer;
-        }
-
-        .q-edit-body {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
-        }
-
-        .q-field {
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-        }
-
-        .q-field label {
-          font-size: 12px;
-          font-weight: 800;
-          color: #94a3b8;
-          text-transform: uppercase;
-        }
-
-        .q-field input, .q-field select, .q-field textarea {
-          background: white;
-          border: 1px solid #e2e8f0;
-          border-radius: 14px;
-          padding: 12px 16px;
-          font-size: 14px;
-          color: #1e293b;
-          outline: none;
-        }
-
-        .q-field-row {
-          display: grid;
-          grid-template-columns: 200px 1fr;
-          gap: 16px;
-        }
-
-        .add-question-full-btn {
-          background: white;
-          border: 2px dashed #e2e8f0;
-          color: #64748b;
-          padding: 20px;
-          border-radius: 24px;
-          font-weight: 800;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 12px;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .add-question-full-btn:hover {
-          border-color: #6366f1;
-          color: #6366f1;
-          background: #f5f3ff;
-        }
-
-        .embed-list-editor {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-          margin-top: 16px;
-        }
-
-        .embed-item-mini {
-          background: #f8fafc;
-          padding: 12px 16px;
-          border-radius: 12px;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 10px;
-          border: 1px solid #e2e8f0;
-        }
-
-        .embed-url-text {
-          font-size: 12px;
-          color: #64748b;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          flex: 1;
-        }
-
-        .embed-remove-btn {
-          background: none;
-          border: none;
-          color: #94a3b8;
-          cursor: pointer;
-        }
-
-        .embed-remove-btn:hover { color: #ef4444; }
-
-        .field-help {
-          font-size: 12px;
-          color: #94a3b8;
-          margin-bottom: 12px;
-          font-weight: 500;
-        }
-
-        .theme-grid-v4 {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-          gap: 16px;
-          margin-bottom: 24px;
-        }
-
-        .theme-card-v4 {
-          background: white;
-          border: 2px solid #e2e8f0;
-          border-radius: 20px;
-          padding: 8px;
-          cursor: pointer;
-          transition: all 0.2s;
-          display: flex;
-          flex-direction: column;
-          gap: 8px;
-          text-align: left;
-        }
-
-        .theme-card-v4:hover {
-          border-color: #cbd5e1;
-          transform: translateY(-2px);
-        }
-
-        .theme-card-v4.active {
-          border-color: #0d9488;
-          background: #f0fdfa;
-          box-shadow: 0 10px 20px rgba(13, 148, 136, 0.1);
-        }
-
-        .theme-swatch-v4 {
-          height: 60px;
-          border-radius: 14px;
-          position: relative;
-          overflow: hidden;
-          display: flex;
-          align-items: flex-end;
-          padding: 8px;
-        }
-
-        .accent-dot-v4 {
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          border: 2px solid white;
-        }
-
-        .theme-info-v4 {
-          padding: 4px;
-          display: flex;
-          flex-direction: column;
-        }
-
-        .theme-label-v4 {
-          font-weight: 800;
-          font-size: 13px;
-          color: #1e293b;
-        }
-
-        .theme-target-v4 {
-          font-size: 10px;
-          color: #64748b;
-          font-weight: 600;
-        }
-
-        .color-selector-mini-v4 {
-          padding-top: 16px;
-          border-top: 1px dashed #e2e8f0;
-        }
-
-        .mini-circles-row {
-          display: flex;
-          gap: 10px;
-          margin-top: 8px;
-        }
-
-        .section-header-v4 {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          margin-bottom: 24px;
-        }
-
-        .smart-badge-v4 {
-          background: #f0fdfa;
-          color: #0d9488;
-          font-size: 11px;
-          font-weight: 900;
-          padding: 6px 12px;
-          border-radius: 99px;
-          border: 1px solid #ccfbf1;
-        }
-
-        .editor-textarea-premium {
-          width: 100%;
-          border: 2px solid #f1f5f9;
-          background: #fff;
-          border-radius: 24px;
-          padding: 24px;
-          font-size: 16px;
-          color: #1e293b;
-          line-height: 1.6;
-          outline: none;
-          resize: vertical;
-          transition: all 0.3s ease;
-          box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
-
-        .editor-textarea-premium:focus {
-          border-color: #5b7cff;
-          box-shadow: 0 0 0 4px rgba(91, 124, 255, 0.1);
-        }
-
-        .media-input-bar {
-          display: flex;
-          gap: 12px;
-        }
-
-        .media-add-btn-v4 {
-          background: #1e293b;
-          color: white;
-          border: none;
-          padding: 0 24px;
-          border-radius: 16px;
-          font-weight: 800;
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          cursor: pointer;
-        }
-
-        .media-item-card-v4 {
-          background: white;
-          border: 1px solid #e2e8f0;
-          padding: 12px;
-          border-radius: 16px;
-          display: flex;
-          align-items: center;
-          gap: 16px;
-          transition: all 0.2s;
-        }
-
-        .media-item-card-v4:hover {
-          border-color: #cbd5e1;
-          box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-        }
-
-        .media-preview-mini {
-          width: 44px;
-          height: 44px;
-          background: #f1f5f9;
-          border-radius: 10px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 20px;
-        }
-
-        .media-info-mini {
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          gap: 4px;
-          overflow: hidden;
-        }
-
-        .media-type-tag {
-          font-size: 9px;
-          text-transform: uppercase;
-          font-weight: 900;
-          color: white;
-          padding: 2px 8px;
-          border-radius: 4px;
-          width: fit-content;
-        }
-
-        .media-url-mini {
-          font-size: 13px;
-          color: #64748b;
-          white-space: nowrap;
-          overflow: hidden;
-          text-overflow: ellipsis;
-        }
-
-        .media-delete-btn {
-          background: #fff1f2;
-          color: #e11d48;
-          border: none;
-          padding: 10px;
-          border-radius: 10px;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .media-delete-btn:hover {
-          background: #ffe4e6;
-        }
-
-        .empty-media-placeholder {
-          padding: 32px;
-          border: 2px dashed #e2e8f0;
-          border-radius: 16px;
-          text-align: center;
-          color: #94a3b8;
-          font-size: 14px;
-          font-weight: 600;
-        }
-
-        .mini-color-btn:hover {
-          transform: scale(1.2);
-        }
-
-        .mini-color-btn.active {
-          box-shadow: 0 0 0 2px #0d9488;
-        }
-
-        .embed-input-group {
-          display: flex;
-          gap: 12px;
-          margin-bottom: 16px;
-        }
-
-        .editor-input-v4 {
-          flex: 1;
-          background: #f8fafc;
-          border: 2px solid #e2e8f0;
-          border-radius: 14px;
-          padding: 12px 16px;
-          font-size: 14px;
-          color: #1e293b;
-          outline: none;
-          transition: all 0.2s;
-        }
-
-        .editor-input-v4:focus {
-          border-color: #0d9488;
-          background: white;
-        }
-
-        .embed-add-btn-v4 {
-          padding: 0 20px;
-          background: #0d9488;
-          color: white;
-          border: none;
-          border-radius: 14px;
-          font-weight: 700;
-          font-size: 14px;
-          display: flex;
-          align-items: center;
-          gap: 8px;
-          cursor: pointer;
-        }
-
-        .embed-add-btn-v4:disabled {
-          opacity: 0.7;
-          cursor: not-allowed;
-        }
-
-        .embed-add-btn-v4.saved {
-          background: #059669;
-        }
-
-        .embed-list-v4 {
-          display: flex;
-          flex-direction: column;
-          gap: 10px;
-        }
-
-        .admin-embed-edit-card-v5 {
-          background: #f8fafc;
-          border: 1px solid #e2e8f0;
-          border-radius: 12px;
-          padding: 16px;
-          margin-bottom: 12px;
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-
-        .admin-embed-main-row {
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          gap: 10px;
-        }
-
-        .admin-embed-title-input {
-          flex: 1;
-          padding: 8px 12px;
-          border: 1.5px solid #cbd5e1;
-          border-radius: 8px;
-          font-size: 14px;
-          font-weight: 700;
-          outline: none;
-        }
-
-        .admin-embed-url-input {
-          width: 100%;
-          padding: 8px 12px;
-          border: 1.5px solid #cbd5e1;
-          border-radius: 8px;
-          font-size: 13px;
-          color: #64748b;
-          outline: none;
-        }
-
-        .admin-embed-width-row {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          font-size: 12px;
-          font-weight: 600;
-          color: #64748b;
-        }
-
-        .admin-embed-width-row input[type="range"] {
-          flex: 1;
-        }
-
-        .width-label {
-          min-width: 40px;
-          text-align: right;
-          font-weight: 800;
-          color: #1e293b;
-        }
-
-        .admin-item-del {
-          background: #fee2e2;
-          border: none;
-          color: #ef4444;
-          width: 32px;
-          height: 32px;
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .admin-item-del:hover {
-          background: #ef4444;
-          color: white;
-        }
-        .link-list-v4 {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-
-        .link-editor-item-v4 {
-          display: flex;
-          gap: 8px;
-          align-items: center;
-        }
-
-        .link-label-input {
-          width: 120px;
-          background: #f1f5f9;
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
-          padding: 8px;
-          font-size: 12px;
-          font-weight: 700;
-          color: #1e293b;
-        }
-
-        .link-url-input {
-          flex: 1;
-          background: #f1f5f9;
-          border: 1px solid #e2e8f0;
-          border-radius: 8px;
-          padding: 8px;
-          font-size: 12px;
-          color: #64748b;
-        }
-
-        .add-link-btn-v4 {
-          background: white;
-          border: 1.5px dashed #cbd5e1;
-          color: #64748b;
-          padding: 10px;
-          border-radius: 10px;
-          font-size: 12px;
-          font-weight: 700;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          gap: 6px;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-
-        .add-link-btn-v4:hover {
-          border-color: #f97316;
-          color: #f97316;
-          background: #fff7ed;
+        @keyframes pulse {
+          0% { opacity: 0.6; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.05); }
+          100% { opacity: 0.6; transform: scale(1); }
         }
       `}</style>
     </div>

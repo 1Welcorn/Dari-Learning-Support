@@ -71,13 +71,15 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
           background: isLocked ? 'rgba(0,0,0,0.02)' : (isCurrent ? 'linear-gradient(135deg, #fff 0%, #FFF9FA 100%)' : 'white'),
           backdropFilter: 'blur(10px)',
           border: isCurrent ? '3px solid #FF8DA1' : '3px solid white',
-          borderRadius: '24px',
-          padding: '10px',
-          boxShadow: isCurrent ? '0 8px 0px #E56A81' : '0 6px 0px rgba(0,0,0,0.05)',
+          borderRadius: '21px',
+          padding: '16px 14px',
+          minHeight: '220px',
+          boxShadow: isCurrent ? '0 6px 0px #E56A81' : '0 5px 0px rgba(0,0,0,0.05)',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: '6px'
+          justifyContent: 'center',
+          gap: '8px'
         }}
       >
         {isCompleted && (
@@ -86,43 +88,47 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
           </div>
         )}
 
-        <div className="lesson-icon-v5" style={{ filter: isLocked ? 'grayscale(1) opacity(0.3)' : 'none' }}>
-          {hasIcon ? (
-            <img 
-              src={displayIcon} 
-              alt={lesson.title}
-              className={isCompleted ? 'animate-pop' : ''}
-              style={{ 
-                width: '80px', 
-                height: '80px', 
-                objectFit: 'contain' 
-              }}
-              onError={(e) => {
-                 (e.target as any).style.display = 'none';
-                 (e.target as any).parentElement.innerHTML = '<span style="font-size: 24px">📚</span>';
-              }}
-            />
-          ) : (
-            <span style={{ fontSize: '32px' }}>
-              {lesson.status === 'completed' ? '🌟' : (isLocked ? '🔒' : '📖')}
-            </span>
-          )}
-        </div>
-        
-        <div className="lesson-info-v5" style={{ textAlign: 'center', width: '100%' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', position: 'relative' }}>
+          <div className="lesson-icon-v5" style={{ filter: isLocked ? 'grayscale(1) opacity(0.3)' : 'none' }}>
+            {hasIcon ? (
+              <img 
+                src={displayIcon} 
+                alt={lesson.title}
+                className={isCompleted ? 'animate-pop' : ''}
+                style={{ 
+                  width: '108px', 
+                  height: '108px', 
+                  objectFit: 'contain' 
+                }}
+                onError={(e) => {
+                   (e.target as any).style.display = 'none';
+                   (e.target as any).parentElement.innerHTML = '<span style="font-size: 24px">📚</span>';
+                }}
+              />
+            ) : (
+              <span style={{ fontSize: '32px' }}>
+                {lesson.status === 'completed' ? '🌟' : (isLocked ? '🔒' : '📖')}
+              </span>
+            )}
+          </div>
+          
           <span className="lesson-id-tag" style={{ 
-            background: 'rgba(162, 210, 255, 0.2)', 
-            color: '#0369a1', 
-            padding: '2px 10px', 
-            borderRadius: '8px', 
-            fontSize: '9px', 
+            background: 'var(--color-sky-shadow)', 
+            color: 'white', 
+            padding: '4px 12px', 
+            borderRadius: '12px', 
+            fontSize: '10px', 
             fontWeight: 900, 
-            marginBottom: '4px', 
-            display: 'inline-block'
+            boxShadow: '0 4px 10px rgba(216, 180, 216, 0.4)',
+            whiteSpace: 'nowrap'
           }}>
             {lesson.sub || `AULA ${idx + 1}`}
           </span>
-          <h3 className="lesson-title-v5" style={{ 
+        </div>
+        
+        <div className="lesson-info-v5" style={{ textAlign: 'center', width: '100%' }}>
+
+            <h3 className="lesson-title-v5" style={{ 
             fontSize: '14px', 
             color: 'var(--ink1)', 
             fontWeight: 900, 
@@ -137,8 +143,9 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
               fontSize: '18px', 
               fontWeight: 900, 
               color: 'var(--ink1)',
-              lineHeight: 1,
-              fontFamily: 'Outfit, sans-serif'
+              lineHeight: 1.1,
+              fontFamily: 'Outfit, sans-serif',
+              marginTop: '0px'
             }}>
               {lesson.titleDari}
             </div>
@@ -146,7 +153,7 @@ export const LessonCard: React.FC<LessonCardProps & { isAdmin?: boolean, onToggl
         </div>
         
         {!isLocked && (
-          <div className="lesson-footer-v5" style={{ marginTop: '2px', width: '100%' }}>
+          <div className="lesson-footer-v5" style={{ marginTop: '-3px', width: '100%' }}>
              <div className="lesson-bar-v5" style={{ 
                height: '6px', 
                background: 'rgba(0,0,0,0.05)', 

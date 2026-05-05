@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../services/supabase';
 import type { Unit, Session, Answer, AppSettings } from '../types';
 
@@ -10,7 +10,7 @@ export const useDariData = () => {
   const [loading, setLoading] = useState(true);
   const [syncStatus, setSyncStatus] = useState<'ok' | 'err'>('ok');
 
-  const fetchData = async () => {
+  const fetchData = useCallback(async () => {
     try {
       const [uRes, sRes, aRes, setsRes] = await Promise.all([
         supabase.from('units').select('*').order('sort_order'),
@@ -49,7 +49,7 @@ export const useDariData = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchData();
@@ -70,7 +70,7 @@ export const useDariData = () => {
     };
   }, []);
 
-  const saveAnswer = async (unitId: string, qIdx: number, val: string) => {
+  const saveAnswer = useCallback(async (unitId: string, qIdx: number, val: string) => {
     try {
       const { error } = await supabase.from('answers').upsert({
         unit_id: unitId,
@@ -104,9 +104,9 @@ export const useDariData = () => {
       setSyncStatus('err');
       return false;
     }
-  };
+  }, []);
 
-  const saveSession = async (unitId: string, note: string) => {
+  const saveSession = useCallback(async (unitId: string, note: string) => {
     try {
       const { data, error } = await supabase.from('sessions').insert({
         unit_id: unitId,
@@ -127,9 +127,9 @@ export const useDariData = () => {
       console.error('Exception in saveSession:', err);
       return false;
     }
-  };
+  }, []);
 
-  const resetUnitAnswers = async (unitId: string): Promise<boolean> => {
+  const resetUnitAnswers = useCallback(async (unitId: string): Promise<boolean> => {
     try {
       const { error } = await supabase.from('answers').delete().eq('unit_id', unitId);
       if (error) {
@@ -155,9 +155,9 @@ export const useDariData = () => {
       setSyncStatus('err');
       return false;
     }
-  };
+  }, []);
 
-  const updateSession = async (sessionId: string, note: string) => {
+  const updateSession = useCallback(async (sessionId: string, note: string) => {
     try {
       const { error } = await supabase.from('sessions').update({ note }).eq('id', sessionId);
       if (error) {
@@ -173,9 +173,9 @@ export const useDariData = () => {
       setSyncStatus('err');
       return false;
     }
-  };
+  }, []);
 
-  const deleteSession = async (sessionId: string) => {
+  const deleteUnitSession = useCallback(async (sessionId: string) => {
     try {
       const { error } = await supabase.from('sessions').delete().eq('id', sessionId);
       if (error) {
@@ -191,9 +191,9 @@ export const useDariData = () => {
       setSyncStatus('err');
       return false;
     }
-  };
+  }, []);
 
-  const createUnit = async (title: string) => {
+  const createUnit = useCallback(async (title: string) => {
     try {
       const newId = `u${Date.now()}`;
       const newUnit: Unit = {
@@ -226,9 +226,9 @@ export const useDariData = () => {
       console.error('Exception in createUnit:', err);
       return false;
     }
-  };
+  }, [units.length]);
 
-  const updateUnit = async (id: string, updates: any) => {
+  const updateUnit = useCallback(async (id: string, updates: any) => {
     try {
       console.log('useData: Updating unit', id, updates);
       
@@ -255,7 +255,7 @@ export const useDariData = () => {
       console.error('[SAVE EXCEPTION] useData:', err);
       return { success: false, error: err.message || 'Erro desconhecido' };
     }
-  };
+  }, []);
 
   return {
     units,
@@ -267,7 +267,7 @@ export const useDariData = () => {
     saveAnswer,
     saveSession,
     updateSession,
-    deleteSession,
+    deleteSession: deleteUnitSession,
     resetUnitAnswers,
     updateUnit,
     createUnit,

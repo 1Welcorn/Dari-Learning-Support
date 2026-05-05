@@ -241,7 +241,7 @@ export const Planning: React.FC<PlanningProps> = ({ units, sessions, isAdmin, se
             </div>
           </div>
           
-          <h2 className="doc-title">PLANO DE TRABALHO DOCENTE - DARI/Domiciliar</h2>
+          <h2 className="doc-title">PLANO DE TRABALHO DOCENTE - Pontes da Esperança/Domiciliar</h2>
           
           <table className="meta-table">
             <tbody>

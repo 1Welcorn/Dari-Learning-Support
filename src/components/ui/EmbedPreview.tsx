@@ -86,13 +86,16 @@ const EmbedPreview = React.forwardRef<EmbedPreviewHandle, { url: string; title?:
                     src={maskIcon} 
                     alt="Mask" 
                     style={{ 
-                      width: maskSize ? `${maskSize}px` : '70%', 
-                      height: maskSize ? `${maskSize}px` : '70%', 
+                      width: maskSize ? `${maskSize}px` : '100px', 
+                      height: maskSize ? `${maskSize}px` : '100px', 
                       objectFit: 'contain' 
                     }} 
                   />
                 ) : (
-                  <Play size={64} fill="currentColor" />
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '10px' }}>
+                    <Sparkles size={maskSize || 80} color="#fbbf24" fill="#fbbf24" />
+                    <span style={{ fontSize: '14px', fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '2px' }}>Conteúdo Misterioso</span>
+                  </div>
                 )}
               </div>
             </div>

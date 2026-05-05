@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 // Build trigger: TS_ERRORS_FIXED_V2
 import type { Unit } from './types';
 import { useAuth } from './context/AuthContext';
@@ -9,7 +9,7 @@ import helpButton from './assets/help-button.png';
 import plansButton from './assets/plans-button.png';
 import { LoginScreen } from './components/features/LoginScreen';
 import { Dashboard } from './components/features/Dashboard';
-import tulipIcon from './assets/tulip icon.png';
+import tulipIcon from './assets/imagem do projeto.png';
 import { Activities } from './components/features/Activities';
 import { Progress } from './components/features/Progress';
 import { Planning } from './components/features/Planning';
@@ -37,51 +37,58 @@ export const App: React.FC = () => {
     saveAnswer, saveSession, updateSession, deleteSession, resetUnitAnswers, updateUnit, createUnit, refresh
   } = useDariData();
 
+  const hasSynced = useRef(false);
   // Sync units to Supabase (Add missing or Update existing with new titles/icons)
   useEffect(() => {
     const syncUnits = async () => {
-      if (role === 'admin' && units && units.length > 0) {
+      if (role === 'admin' && units && units.length > 0 && !hasSynced.current) {
+        hasSynced.current = true;
         console.log("Checking unit synchronization...");
         let needsRefresh = false;
 
-        for (const defaultUnit of DEFAULT_UNITS) {
-          const existing = units.find(u => u.id === defaultUnit.id);
-          
-          // FORÇANDO A SINCRONIZAÇÃO TOTAL: 
-          // Se não existe ou se TÍTULO, SUBTÍTULO ou SORT_ORDER forem diferentes
-          if (!existing || existing.title !== defaultUnit.title || existing.sub !== defaultUnit.sub || existing.sort_order !== defaultUnit.sort_order || existing.title_dari !== defaultUnit.title_dari) {
-            console.log(`Force syncing unit: ${defaultUnit.title}`);
+        try {
+          for (const defaultUnit of DEFAULT_UNITS) {
+            const existing = units.find(u => u.id === defaultUnit.id);
             
-            const unitToSync = {
-              id: defaultUnit.id,
-              title: defaultUnit.title,
-              title_dari: defaultUnit.title_dari,
-              sub: defaultUnit.sub,
-              color: defaultUnit.color,
-              sort_order: defaultUnit.sort_order,
-              brief: defaultUnit.brief,
-              plan_c: defaultUnit.plan_c,
-              plan_h: defaultUnit.plan_h,
-              plan_e: defaultUnit.plan_e,
-              plan_a: defaultUnit.plan_a,
-              wa: defaultUnit.wa,
-              questions: defaultUnit.questions,
-              external_links: defaultUnit.external_links
-            };
+            // Se não existe ou se campos principais mudaram
+            if (!existing || existing.title !== defaultUnit.title || existing.sub !== defaultUnit.sub || existing.sort_order !== defaultUnit.sort_order || existing.title_dari !== defaultUnit.title_dari || (defaultUnit.mystery_icon && existing.mystery_icon !== defaultUnit.mystery_icon)) {
+              console.log(`Force syncing unit: ${defaultUnit.title}`);
+              
+              const unitToSync = {
+                id: defaultUnit.id,
+                title: defaultUnit.title,
+                title_dari: defaultUnit.title_dari,
+                sub: defaultUnit.sub,
+                color: defaultUnit.color,
+                sort_order: defaultUnit.sort_order,
+                brief: defaultUnit.brief,
+                plan_c: defaultUnit.plan_c,
+                plan_h: defaultUnit.plan_h,
+                plan_e: defaultUnit.plan_e,
+                plan_a: defaultUnit.plan_a,
+                wa: defaultUnit.wa,
+                mystery_icon: defaultUnit.mystery_icon || (existing?.mystery_icon || null),
+                mystery_icon_size: defaultUnit.mystery_icon_size || (existing?.mystery_icon_size || 120),
+                questions: defaultUnit.questions,
+                external_links: defaultUnit.external_links
+              };
 
-            const { error } = await supabase.from('units').upsert(unitToSync);
-            
-            if (error) {
-              console.error(`Error syncing unit ${defaultUnit.id}:`, error.message);
-            } else {
-              needsRefresh = true;
+              const { error } = await supabase.from('units').upsert(unitToSync);
+              
+              if (error) {
+                console.error(`Error syncing unit ${defaultUnit.id}:`, error.message);
+              } else {
+                needsRefresh = true;
+              }
             }
           }
-        }
 
-        if (needsRefresh) {
-          console.log("Units updated, refreshing...");
-          refresh?.();
+          if (needsRefresh) {
+            console.log("Units updated, refreshing...");
+            refresh?.();
+          }
+        } catch (err) {
+          console.error("Critical error during unit synchronization:", err);
         }
       }
     };
@@ -130,12 +137,13 @@ export const App: React.FC = () => {
     return status;
   }, [sortedUnits, answers]);
 
+  console.log("App Rendering: Version - Mystery Icon Controls Added");
   console.log("App State:", { role, loading, unitsCount: units?.length, settingsAvailable: !!settings });
 
   if (loading) {
     return (
       <div id="loader">
-        <div className="loader-logo">Dari Project · 2026</div>
+        <img src={tulipIcon} alt="Logo" style={{ width: '220px', height: 'auto', marginBottom: '30px' }} />
         <div className="loader-spinner"></div>
         <div className="loader-msg">Carregando o sistema...</div>
       </div>
@@ -150,7 +158,7 @@ export const App: React.FC = () => {
   if (!units || units.length === 0) {
     return (
       <div style={{ padding: '40px 20px', textAlign: 'center', background: 'var(--bg)', minHeight: '100vh' }}>
-        <div className="loader-logo" style={{ marginBottom: '20px' }}>Dari Project · 2026</div>
+        <img src={tulipIcon} alt="Logo" style={{ width: '200px', height: 'auto', marginBottom: '30px' }} />
         <h3 style={{ color: 'var(--ink2)', marginBottom: '10px' }}>Nenhuma Aula Encontrada</h3>
         <p style={{ color: 'var(--ink4)', maxWidth: '400px', margin: '0 auto 24px' }}>
           As unidades de ensino não foram carregadas. Isso geralmente acontece se as permissões (RLS) no Supabase não foram atualizadas para o seu e-mail.
@@ -168,7 +176,7 @@ export const App: React.FC = () => {
 
       <div className="topbar">
         <div>
-          <div className="topbar-logo">Dari Project · 2026</div>
+          <div className="topbar-logo">Projeto Pontes da Esperança · 2026</div>
           <div className="topbar-name" style={{ direction: 'rtl', textAlign: 'left' }}>
             {user?.user_metadata?.full_name || 'دانش‌آmuz (Estudante)'}
           </div>
@@ -251,9 +259,7 @@ export const App: React.FC = () => {
       )}
       <aside className="sidebar-kids" style={{ background: 'rgba(216, 180, 216, 0.1)', backdropFilter: 'var(--glass)', borderRight: '1px solid var(--border)' }}>
         <div style={{ textAlign: 'center', marginBottom: '48px', padding: '24px 0' }}>
-          <img src={tulipIcon} alt="Tulip Logo" style={{ width: '64px', height: '64px', marginBottom: '10px' }} />
-          <h2 style={{ color: 'var(--lavender)', fontSize: '2rem', fontWeight: 900, filter: 'drop-shadow(0 4px 6px rgba(255, 183, 197, 0.2))', fontFamily: 'Fraunces, serif' }}>Projeto Dari</h2>
-          <div style={{ fontSize: '10px', color: 'var(--ink3)', letterSpacing: '2px', textTransform: 'uppercase', marginTop: '-5px' }}>Pontes de Esperança</div>
+          <img src={tulipIcon} alt="Projeto Logo" style={{ width: '200px', height: 'auto', marginBottom: '15px' }} />
         </div>
 
         <button 
@@ -363,6 +369,7 @@ export const App: React.FC = () => {
                   unitId={editingUnitId}
                   onBack={() => setEditingUnitId(null)}
                   updateUnit={updateUnit}
+                  units={units}
                 />
               )}
             </div>

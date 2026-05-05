@@ -20,12 +20,19 @@ export interface ExternalLink {
   label: string;
   url: string;
   width?: string;
+  height?: number;
+  objectFit?: string;
+  scale?: number;
+  borderRadius?: number;
+  playerBorderRadius?: number;
   loop?: boolean;
   repeatCount?: number;
   delay?: number;
   showSubtitles?: boolean;
   caption?: string;
   autoPlayOnce?: boolean;
+  frameColor?: string;
+  framePadding?: string;
 }
 
 export interface EmbedActivity {
@@ -69,6 +76,8 @@ export interface Unit {
   methodology?: string;
   is_locked?: boolean;
   title_dari?: string;
+  mystery_icon?: string;
+  mystery_icon_size?: number;
 }
 
 export interface Session {
