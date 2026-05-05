@@ -143,7 +143,7 @@ export const App: React.FC = () => {
   if (loading) {
     return (
       <div id="loader">
-        <img src={tulipIcon} alt="Logo" style={{ width: '220px', height: 'auto', marginBottom: '30px' }} />
+        <img src={tulipIcon} alt="Logo" style={{ width: '440px', height: 'auto', marginBottom: '40px' }} />
         <div className="loader-spinner"></div>
         <div className="loader-msg">Carregando o sistema...</div>
       </div>
@@ -155,11 +155,10 @@ export const App: React.FC = () => {
     return <LoginScreen settings={settings} />;
   }
 
-  if (!units || units.length === 0) {
     return (
-      <div style={{ padding: '40px 20px', textAlign: 'center', background: 'var(--bg)', minHeight: '100vh' }}>
-        <img src={tulipIcon} alt="Logo" style={{ width: '200px', height: 'auto', marginBottom: '30px' }} />
-        <h3 style={{ color: 'var(--ink2)', marginBottom: '10px' }}>Nenhuma Aula Encontrada</h3>
+      <div style={{ padding: '40px 20px', textAlign: 'center', background: 'var(--bg)', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <img src={tulipIcon} alt="Logo" style={{ width: '400px', height: 'auto', marginBottom: '40px' }} />
+        <h3 style={{ color: 'var(--ink2)', marginBottom: '10px', fontSize: '24px' }}>Nenhuma Aula Encontrada</h3>
         <p style={{ color: 'var(--ink4)', maxWidth: '400px', margin: '0 auto 24px' }}>
           As unidades de ensino não foram carregadas. Isso geralmente acontece se as permissões (RLS) no Supabase não foram atualizadas para o seu e-mail.
         </p>
