@@ -162,6 +162,7 @@ export const App: React.FC = () => {
     return <LoginScreen settings={settings} />;
   }
 
+  if (!units || units.length === 0) {
     return (
       <div style={{ padding: '40px 20px', textAlign: 'center', background: 'var(--bg)', minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <img src={tulipIcon} alt="Logo" style={{ width: '400px', height: 'auto', marginBottom: '40px' }} />
