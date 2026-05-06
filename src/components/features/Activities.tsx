@@ -260,22 +260,17 @@ const StepNavigation: React.FC<{
               <h1 className="mission-subtitle-v7 main-theme" dangerouslySetInnerHTML={{ __html: current.title || 'Atividade' }} />
               {current.brief && <div dangerouslySetInnerHTML={{ __html: current.brief }} style={{ fontSize: '16px', lineHeight: '1.6' }} />}
             </div>
-            <div className="mission-media-v7" style={{ position: 'relative' }}>
+            <div className="mission-media-v7" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                <img 
                  src={startButtonDari} 
                  alt="Clique aqui para começar" 
                  className="dari-start-arrow"
                  style={{ 
-                   width: '220px', 
-                   position: 'absolute',
-                   top: '-30px',
-                   left: '50%',
-                   transform: 'translateX(-50%)',
-                   zIndex: 10,
-                   cursor: 'pointer', 
+                   width: '200px', 
+                   marginBottom: '15px',
+                   cursor: 'default', 
                    animation: 'bounceArrow 1.5s ease-in-out infinite',
-                   filter: 'drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3))',
-                   pointerEvents: 'none'
+                   filter: 'drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3))'
                  }} 
                />
                <EmbedPreview
