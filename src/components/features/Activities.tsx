@@ -284,7 +284,7 @@ const StepNavigation: React.FC<{
                 url={current.url || ''}
                 title={current.title}
                 maskIcon={current.mystery_icon || unit.mystery_icon}
-                maskSize={current.mystery_icon_size || unit.mystery_icon_size || 120}
+                maskSize={current.mystery_icon_size || unit.mystery_icon_size || 280}
               />
             </div>
           </div>
@@ -426,21 +426,57 @@ const StepNavigation: React.FC<{
           display: flex !important;
           flex-direction: row !important;
           align-items: center !important;
-          gap: 40px !important;
+          gap: 60px !important;
           background: white !important;
-          padding: 60px 40px !important;
-          border-radius: 40px !important;
+          padding: 80px 60px !important;
+          border-radius: 50px !important;
           overflow: visible !important;
-          box-shadow: 0 30px 80px rgba(0,0,0,0.06) !important;
+          box-shadow: 0 40px 100px rgba(0,0,0,0.07) !important;
           width: 100% !important;
-          max-width: 1400px !important;
-          min-height: 600px !important;
+          max-width: 1500px !important;
+          min-height: 850px !important;
           height: auto !important;
           transition: all 0.3s ease !important;
           margin: 0 auto !important;
         }
-        .mission-content-v7 { flex: 1 1 auto !important; min-width: 250px !important; }
-        .mission-media-v7 { flex: 2 1 auto !important; display: flex !important; flex-direction: column !important; align-items: center !important; width: 100%; }
+        .mission-content-v7 { flex: 1 1 auto !important; min-width: 300px !important; }
+        .mission-media-v7 { flex: 3 1 auto !important; display: flex !important; flex-direction: column !important; align-items: center !important; width: 100%; }
+
+        /* Estilização do Frame do Ícone Misterioso */
+        .embed-preview {
+          width: 100% !important;
+          max-width: 700px !important;
+          min-height: 500px !important;
+          background: #f8fafc !important;
+          border-radius: 40px !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          border: 4px dashed #e2e8f0 !important;
+          cursor: pointer !important;
+          transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
+        }
+        .embed-preview:hover {
+          border-color: #10b981 !important;
+          background: #ecfdf5 !important;
+          transform: scale(1.03) !important;
+        }
+        .solid-play-circle {
+          width: 350px !important;
+          height: 350px !important;
+          background: white !important;
+          border-radius: 50% !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: center !important;
+          box-shadow: 0 25px 60px rgba(0,0,0,0.12) !important;
+          border: 12px solid #fff !important;
+          transition: all 0.4s ease !important;
+        }
+        .embed-preview:hover .solid-play-circle {
+          transform: rotate(5deg) scale(1.05) !important;
+          box-shadow: 0 35px 80px rgba(16, 185, 129, 0.2) !important;
+        }
 
         .media-renderer-v10 iframe {          transition: transform 0.3s ease !important;
         }
