@@ -428,7 +428,7 @@ const StepNavigation: React.FC<{
           align-items: center !important;
           gap: 60px !important;
           background: white !important;
-          padding: 40px 60px !important;
+          padding: 20px 60px !important;
           border-radius: 50px !important;
           overflow: visible !important;
           box-shadow: 0 40px 100px rgba(0,0,0,0.07) !important;
