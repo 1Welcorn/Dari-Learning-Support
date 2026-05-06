@@ -587,11 +587,24 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                             height="250px"
                             placeholder="Dicas para o aluno..." 
                           />
-                        </div>
-
-                        <div>
-                          <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '4px' }}>TAMANHO DO ÍCONE: {item.mystery_icon_size || 120}px</label>
-                          <input type="range" min="40" max="300" value={item.mystery_icon_size || 120} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon_size = parseInt(e.target.value); setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ width: '100%' }} />
+                          <div>
+                           <label style={{ fontSize: '11px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '8px', letterSpacing: '1px' }}>CONFIGURAÇÃO DE MISTÉRIO</label>
+                           <div style={{ background: '#f8fafc', padding: '15px', borderRadius: '20px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                             <div>
+                               <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '4px' }}>IMAGEM DA MÁSCARA (URL)</label>
+                               <div style={{ display: 'flex', gap: '8px' }}>
+                                 <input type="text" value={item.mystery_icon || ''} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = e.target.value; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} placeholder="Link ou escolha na galeria..." style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1.5px solid #e2e8f0', fontSize: '12px' }} />
+                                 <button onClick={() => triggerUpload((url) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = url; setUnitData({...unitData, embed_urls: nl}); })} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px' }} title="Upload Local"><ImageIcon size={16} /></button>
+                                 <button onClick={() => setShowAssetPicker({ active: true, callback: (path) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = path; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); setShowAssetPicker({ active: false, callback: () => {} }); } })} style={{ background: '#fff', border: '1px solid #e2e8f0', borderRadius: '10px', padding: '8px' }} title="Galeria"><Globe size={16} /></button>
+                               </div>
+                             </div>
+                             
+                             <div>
+                               <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '4px' }}>TAMANHO DO ÍCONE: {item.mystery_icon_size || 120}px</label>
+                               <input type="range" min="40" max="300" value={item.mystery_icon_size || 120} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon_size = parseInt(e.target.value); setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ width: '100%' }} />
+                             </div>
+                           </div>
+                         </div>
                         </div>
                       </div>
 
