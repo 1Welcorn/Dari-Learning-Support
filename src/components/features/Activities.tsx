@@ -268,6 +268,8 @@ const StepNavigation: React.FC<{
                  style={{ 
                    width: '200px', 
                    marginBottom: '15px',
+                   marginRight: '200px',
+                   transform: 'rotate(20deg)',
                    cursor: 'default', 
                    animation: 'bounceArrow 1.5s ease-in-out infinite',
                    filter: 'drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3))'
@@ -451,8 +453,8 @@ const StepNavigation: React.FC<{
         }
 
         @keyframes bounceArrow {
-          0%, 100% { transform: translateX(0); }
-          50% { transform: translateX(12px); }
+          0%, 100% { transform: rotate(20deg) translateX(0); }
+          50% { transform: rotate(20deg) translateX(12px); }
         }
         .dari-start-arrow:hover {
           transform: scale(1.08) !important;
