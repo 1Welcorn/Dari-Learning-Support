@@ -281,7 +281,7 @@ const StepNavigation: React.FC<{
               maxWidth: current.width || '1500px',
               minHeight: current.height ? `${current.height}px` : '400px',
               borderRadius: current.borderRadius !== undefined ? `${current.borderRadius}px` : '50px',
-              padding: current.framePadding ? `${current.framePadding} 60px 60px` : '30px 60px 60px',
+              padding: `${current.framePadding || '0px'} 60px 60px`,
               background: current.frameColor || 'white',
               boxShadow: current.frameColor === 'transparent' ? 'none' : '0 40px 100px rgba(0,0,0,0.07)'
             }}
@@ -329,7 +329,7 @@ const StepNavigation: React.FC<{
               maxWidth: current.width || '1500px',
               minHeight: current.height ? `${current.height}px` : '400px',
               borderRadius: current.borderRadius !== undefined ? `${current.borderRadius}px` : '50px',
-              padding: current.framePadding ? `${current.framePadding} 60px 60px` : '30px 60px 60px',
+              padding: `${current.framePadding || '0px'} 60px 60px`,
               background: current.frameColor || 'white',
               boxShadow: current.frameColor === 'transparent' ? 'none' : '0 40px 100px rgba(0,0,0,0.07)'
             }}
