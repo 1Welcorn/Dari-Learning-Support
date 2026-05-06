@@ -434,7 +434,7 @@ const StepNavigation: React.FC<{
           box-shadow: 0 40px 100px rgba(0,0,0,0.07) !important;
           width: 100% !important;
           max-width: 1500px !important;
-          min-height: 850px !important;
+          min-height: 400px !important;
           height: auto !important;
           transition: all 0.3s ease !important;
           margin: 0 auto !important;
@@ -446,7 +446,8 @@ const StepNavigation: React.FC<{
         .embed-preview {
           width: 100% !important;
           max-width: 700px !important;
-          min-height: 500px !important;
+          min-height: auto !important;
+          padding: 40px !important;
           background: #f8fafc !important;
           border-radius: 40px !important;
           display: flex !important;
