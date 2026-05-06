@@ -11,6 +11,7 @@ import {
 import homeButtonImg from '../../assets/home-button.png';
 import memoryGameImg from '../../assets/memory_game.png';
 import wordGameImg from '../../assets/word_game.png';
+import startButtonDari from '../../assets/botão clique aqui em PersaDari (297 x 210 mm).png';
 import { HomeButton } from '../ui/HomeButton';
 import { QuestionBlock } from './QuestionBlock';
 import EmbedPreview from '../ui/EmbedPreview';
@@ -259,14 +260,31 @@ const StepNavigation: React.FC<{
               <h1 className="mission-subtitle-v7 main-theme" dangerouslySetInnerHTML={{ __html: current.title || 'Atividade' }} />
               {current.brief && <div dangerouslySetInnerHTML={{ __html: current.brief }} style={{ fontSize: '16px', lineHeight: '1.6' }} />}
             </div>
-            <div className="mission-media-v7">
-              <EmbedPreview
-                url={current.url || ''}
-                title={current.title}
-                maskIcon={current.mystery_icon || unit.mystery_icon}
-                maskSize={current.mystery_icon_size || unit.mystery_icon_size || 120}
-              />
-            </div>
+            <div className="mission-media-v7" style={{ position: 'relative' }}>
+               <img 
+                 src={startButtonDari} 
+                 alt="Clique aqui para começar" 
+                 className="dari-start-arrow"
+                 style={{ 
+                   width: '220px', 
+                   position: 'absolute',
+                   top: '-30px',
+                   left: '50%',
+                   transform: 'translateX(-50%)',
+                   zIndex: 10,
+                   cursor: 'pointer', 
+                   animation: 'bounceArrow 1.5s ease-in-out infinite',
+                   filter: 'drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3))',
+                   pointerEvents: 'none'
+                 }} 
+               />
+               <EmbedPreview
+                 url={current.url || ''}
+                 title={current.title}
+                 maskIcon={current.mystery_icon || unit.mystery_icon}
+                 maskSize={current.mystery_icon_size || unit.mystery_icon_size || 120}
+               />
+             </div>
           </div>
         )}
 
@@ -435,6 +453,15 @@ const StepNavigation: React.FC<{
         .next-step-glow:hover {
           transform: scale(1.06) !important;
           box-shadow: 0 0 40px rgba(16, 185, 129, 0.7), 0 0 100px rgba(16, 185, 129, 0.3) !important;
+        }
+
+        @keyframes bounceArrow {
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(12px); }
+        }
+        .dari-start-arrow:hover {
+          transform: scale(1.08) !important;
+          filter: drop-shadow(0 6px 20px rgba(16, 185, 129, 0.5)) brightness(1.1) !important;
         }
       `}</style>
     </div>
