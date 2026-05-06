@@ -169,6 +169,7 @@ const AssetPicker: React.FC<{ onSelect: (path: string) => void; onClose: () => v
          boxShadow: item.frameColor === 'transparent' ? 'none' : '0 10px 30px rgba(0,0,0,0.05)',
          display: 'flex',
          gap: '10px',
+         minHeight: item.height ? `${item.height / 2.5}px` : '180px',
          height: 'fit-content'
        }}>
          <div style={{ flex: 1 }}>
@@ -219,6 +220,7 @@ const AssetPicker: React.FC<{ onSelect: (path: string) => void; onClose: () => v
          display: 'flex',
          flexDirection: 'column',
          gap: '10px',
+         minHeight: item.height ? `${item.height / 2.5}px` : '150px',
          height: 'fit-content'
        }}>
          <div style={{ fontSize: '8px', color: '#7c3aed', fontWeight: 900 }}>QUESTÃO 1</div>
