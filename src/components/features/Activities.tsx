@@ -271,6 +271,8 @@ const StepNavigation: React.FC<{
                    marginTop: '40px',
                    marginRight: '200px',
                    transform: 'rotate(50deg)',
+                   position: 'relative',
+                   zIndex: 9999,
                    cursor: 'default', 
                    animation: 'bounceArrow 1.5s ease-in-out infinite',
                    filter: 'drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3))'
