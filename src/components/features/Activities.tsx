@@ -253,12 +253,13 @@ const StepNavigation: React.FC<{
         )}
         
         {current.type === 'embed' && (
-          <div className="embed-card-v5" style={{ background: 'white', padding: '40px', borderRadius: '40px', boxShadow: '0 20px 60px rgba(0,0,0,0.05)', width: '100%', maxWidth: '1100px', minHeight: '650px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-             <div style={{ textAlign: 'center', marginBottom: '10px' }}>
-                <h2 style={{ margin: 0, fontWeight: 900, color: 'var(--ink1)' }}>{current.title || 'Atividade Interativa'}</h2>
-                {current.brief && <div dangerouslySetInnerHTML={{ __html: current.brief }} style={{ marginTop: '10px', fontSize: '15px', color: 'var(--ink3)', fontWeight: 500, lineHeight: '1.4' }} />}
+          <div className="mission-intro-card-v7 dynamic-wrap-v7">
+             <div className="mission-content-v7">
+                <span className="mission-tag-v7" style={{ background: '#dbeafe', color: '#1d4ed8' }}>ATIVIDADE INTERATIVA</span>
+                <h1 className="mission-subtitle-v7 main-theme" dangerouslySetInnerHTML={{ __html: current.title || 'Atividade' }} />
+                {current.brief && <div dangerouslySetInnerHTML={{ __html: current.brief }} style={{ fontSize: '16px', lineHeight: '1.6' }} />}
              </div>
-             <div style={{ flex: 1, borderRadius: '24px', overflow: 'hidden', border: '2px solid #f1f5f9', display: 'flex', justifyContent: 'center', alignItems: 'center', background: '#f8fafc' }}>
+             <div className="mission-media-v7">
                 <EmbedPreview 
                    url={current.url || ''} 
                    title={current.title} 
@@ -276,7 +277,14 @@ const StepNavigation: React.FC<{
           </div>
         )}
 
-        {current.type === 'question' && <QuestionBlock question={current.q as any} index={current.idx as any} unitId={unit.id} onSaveAnswer={(val) => onSaveAnswer(current.idx as any, val)} isAdmin={isAdmin} color={currentColors?.main || '#10b981'} />}
+        {current.type === 'question' && (
+          <div className="mission-intro-card-v7 dynamic-wrap-v7" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+             <div style={{ marginBottom: '10px' }}>
+                <span className="mission-tag-v7" style={{ background: '#f3e8ff', color: '#7c3aed' }}>QUESTÃO {(current.idx as number) + 1}</span>
+             </div>
+             <QuestionBlock question={current.q as any} index={current.idx as any} unitId={unit.id} onSaveAnswer={(val) => onSaveAnswer(current.idx as any, val)} isAdmin={isAdmin} color={currentColors?.main || '#10b981'} />
+          </div>
+        )}
         {/* BOTÃO DE PRÓXIMO PASSO SEMPRE VISÍVEL NO RODAPÉ DO CARD */}
         {activeStep < steps.length - 1 && current.type !== 'brief' && (
           <button 
@@ -486,7 +494,7 @@ const normalizeEmbedUrl = (rawUrl: string): string => {
   }
 };
 type StepType = 'brief' | 'game' | 'embed' | 'question' | 'report' | 'congratulations';
-type StepContent = { type: StepType; title?: string; mechanic?: string; xp?: number; url?: string; idx?: number; q?: any };
+type StepContent = { type: StepType; title?: string; mechanic?: string; xp?: number; url?: string; idx?: number; q?: any; brief?: string; mystery_icon?: string; mystery_icon_size?: number };
 export const Activities: React.FC<any> = ({ units, ...props }) => {
   const [activeUnitId] = useState<string | null>(props.initialExpandedId || null);
   const activeUnit = useMemo(() => units.find((u: any) => u.id === activeUnitId), [units, activeUnitId]);
