@@ -203,18 +203,18 @@ const StepNavigation: React.FC<{
   if (unit.brief || (unit.external_links && unit.external_links.length > 0)) steps.push({ type: 'brief' });
 
   // 3. Atividades Interativas (Wordwall/Canva)
-  (unit.embed_urls || []).forEach((e: any, i: number) => steps.push({
-    type: 'embed',
-    url: normalizeEmbedUrl(typeof e === 'string' ? e : e.url),
-    title: typeof e === 'string' ? '' : e.title,
-    brief: typeof e === 'string' ? '' : e.brief,
-    mystery_icon: typeof e === 'string' ? undefined : e.mystery_icon,
-    mystery_icon_size: typeof e === 'string' ? undefined : e.mystery_icon_size,
-    idx: i
-  }));
+  (unit.embed_urls || []).forEach((e: any, i: number) => {
+    const eObj = typeof e === 'string' ? { url: e } : e;
+    steps.push({
+      ...eObj,
+      type: 'embed',
+      url: normalizeEmbedUrl(eObj.url),
+      idx: i
+    });
+  });
 
   // 4. Perguntas (Tipo Google Forms)
-  unit.questions.forEach((q, i) => steps.push({ type: 'question', q, idx: i }));
+  unit.questions.forEach((q: any, i) => steps.push({ ...q, type: 'question', q, idx: i }));
 
   // 5. Finalização
   steps.push({ type: isAdmin || isMediator ? 'report' : 'congratulations' });
