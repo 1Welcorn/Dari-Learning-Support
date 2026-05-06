@@ -238,7 +238,26 @@ const StepNavigation: React.FC<{
         </div>
       </div>
 
-      <div className="activities-v5-main" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '20px', gap: '20px' }}>
+      <div className="activities-v5-main" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '20px', gap: '20px', overflow: 'visible' }}>
+        {current.type === 'embed' && (
+          <img 
+            src={startButtonDari} 
+            alt="Clique aqui para começar" 
+            className="dari-start-arrow"
+            style={{ 
+              width: '200px', 
+              position: 'absolute',
+              top: '180px',
+              left: '140px',
+              transform: 'rotate(40deg)',
+              zIndex: 999999,
+              cursor: 'default', 
+              animation: 'bounceArrow 1.5s ease-in-out infinite',
+              filter: 'drop-shadow(0 12px 30px rgba(16, 185, 129, 0.4))',
+              pointerEvents: 'none'
+            }} 
+          />
+        )}
         {current.type === 'brief' && (
           <div className="mission-intro-card-v7 dynamic-wrap-v7">
             <div className="mission-content-v7">
@@ -254,38 +273,19 @@ const StepNavigation: React.FC<{
         )}
 
         {current.type === 'embed' && (
-          <div style={{ position: 'relative', width: '100%', maxWidth: '1400px', margin: '0 auto', overflow: 'visible' }}>
-            <img 
-              src={startButtonDari} 
-              alt="Clique aqui para começar" 
-              className="dari-start-arrow"
-              style={{ 
-                width: '200px', 
-                position: 'absolute',
-                top: '40px',
-                left: '120px',
-                transform: 'rotate(40deg)',
-                zIndex: 999999,
-                cursor: 'default', 
-                animation: 'bounceArrow 1.5s ease-in-out infinite',
-                filter: 'drop-shadow(0 12px 30px rgba(16, 185, 129, 0.4))',
-                pointerEvents: 'none'
-              }} 
-            />
-            <div className="mission-intro-card-v7 dynamic-wrap-v7" style={{ overflow: 'visible' }}>
-              <div className="mission-content-v7">
-                <span className="mission-tag-v7" style={{ background: '#dbeafe', color: '#1d4ed8' }}>ATIVIDADE INTERATIVA</span>
-                <h1 className="mission-subtitle-v7 main-theme" dangerouslySetInnerHTML={{ __html: current.title || 'Atividade' }} />
-                {current.brief && <div dangerouslySetInnerHTML={{ __html: current.brief }} style={{ fontSize: '16px', lineHeight: '1.6' }} />}
-              </div>
-              <div className="mission-media-v7" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                <EmbedPreview
-                  url={current.url || ''}
-                  title={current.title}
-                  maskIcon={current.mystery_icon || unit.mystery_icon}
-                  maskSize={current.mystery_icon_size || unit.mystery_icon_size || 120}
-                />
-              </div>
+          <div className="mission-intro-card-v7 dynamic-wrap-v7" style={{ overflow: 'visible' }}>
+            <div className="mission-content-v7">
+              <span className="mission-tag-v7" style={{ background: '#dbeafe', color: '#1d4ed8' }}>ATIVIDADE INTERATIVA</span>
+              <h1 className="mission-subtitle-v7 main-theme" dangerouslySetInnerHTML={{ __html: current.title || 'Atividade' }} />
+              {current.brief && <div dangerouslySetInnerHTML={{ __html: current.brief }} style={{ fontSize: '16px', lineHeight: '1.6' }} />}
+            </div>
+            <div className="mission-media-v7" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <EmbedPreview
+                url={current.url || ''}
+                title={current.title}
+                maskIcon={current.mystery_icon || unit.mystery_icon}
+                maskSize={current.mystery_icon_size || unit.mystery_icon_size || 120}
+              />
             </div>
           </div>
         )}
@@ -421,6 +421,7 @@ const StepNavigation: React.FC<{
       )}
 
       <style>{`
+        .activities-v5-wrapper, .activities-v5-main { overflow: visible !important; position: relative !important; }
         .dynamic-wrap-v7 {
           display: flex !important;
           flex-direction: row !important;
@@ -429,6 +430,7 @@ const StepNavigation: React.FC<{
           background: white !important;
           padding: 60px 40px !important;
           border-radius: 40px !important;
+          overflow: visible !important;
           box-shadow: 0 30px 80px rgba(0,0,0,0.06) !important;
           width: 100% !important;
           max-width: 1400px !important;
