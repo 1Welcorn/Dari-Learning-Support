@@ -201,9 +201,6 @@ const StepNavigation: React.FC<{
   // 1. Welcome Page (Guia de Estudo)
   if (unit.brief || (unit.external_links && unit.external_links.length > 0)) steps.push({ type: 'brief' });
   
-  // 2. WordFall Game (Agora em segundo lugar)
-  steps.push({ type: 'game', title: 'WordFall Game' });
-  
   // 3. Atividades Interativas (Wordwall/Canva)
   (unit.embed_urls || []).forEach((e: any, i: number) => steps.push({ 
     type: 'embed', 
