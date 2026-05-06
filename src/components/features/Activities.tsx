@@ -268,8 +268,8 @@ const StepNavigation: React.FC<{
                  style={{ 
                    width: '200px', 
                    marginBottom: '5px',
-                   marginTop: '20px',
-                   marginRight: '160px',
+                   marginTop: '40px',
+                   marginRight: '200px',
                    transform: 'rotate(20deg)',
                    cursor: 'default', 
                    animation: 'bounceArrow 1.5s ease-in-out infinite',
