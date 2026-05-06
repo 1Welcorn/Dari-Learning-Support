@@ -557,21 +557,40 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
            </div>
            <button onClick={() => { setUnitData({...unitData, questions: [...(unitData.questions || []), { title: 'Nova Pergunta', type: 'choice', options: ['Opção 1'], correct: 'Opção 1' }]}); setIsDirty(true); }} style={{ background: '#8b5cf6', color: 'white', border: 'none', padding: '12px 25px', borderRadius: '15px', fontWeight: 900, marginBottom: '20px' }}>+ CRIAR NOVA QUESTÃO</button>
            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              {unitData.questions?.map((q: any, i: number) => (
-                <div key={i} style={{ background: '#f8fafc', padding: '25px', borderRadius: '25px', border: '1px solid #e2e8f0' }}>
-                   <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
-                      <div style={{ flex: 1 }}>
+               {unitData.questions?.map((q: any, i: number) => (
+                 <div key={i} style={{ background: '#f8fafc', padding: '25px', borderRadius: '25px', border: '1px solid #e2e8f0' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
+                       <div style={{ flex: 1 }}>
                           <RichTextEditor height="150px" value={q.q} onChange={(val) => { const nq = [...unitData.questions]; nq[i].q = val; setUnitData({...unitData, questions: nq}); setIsDirty(true); }} />
                        </div>
-                      <button onClick={() => { const nq = unitData.questions.filter((_: any, idx: number) => idx !== i); setUnitData({...unitData, questions: nq}); setIsDirty(true); }}><Trash2 color="#ef4444" /></button>
-                   </div>
-                           <button onClick={() => { const nq = [...unitData.questions]; nq[i].options = nq[i].options.filter((_: any, idx: number) => idx !== oIdx); setUnitData({...unitData, questions: nq}); setIsDirty(true); }} style={{ color: '#ef4444' }}><X size={16} /></button>
-                        </div>
-                      ))}
-                      <button onClick={() => { const nq = [...unitData.questions]; nq[i].options.push('Nova Opção'); setUnitData({...unitData, questions: nq}); setIsDirty(true); }} style={{ color: '#8b5cf6', fontWeight: 800, fontSize: '13px', textAlign: 'left', marginTop: '10px' }}>+ ADICIONAR OPÇÃO</button>
-                   </div>
-                </div>
-              ))}
+                       <button onClick={() => { const nq = unitData.questions.filter((_: any, idx: number) => idx !== i); setUnitData({...unitData, questions: nq}); setIsDirty(true); }} style={{ background: 'none', border: 'none', alignSelf: 'flex-start' }}><Trash2 color="#ef4444" /></button>
+                    </div>
+                    
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
+                       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                          <label style={{ fontSize: '11px', fontWeight: 900, color: '#94a3b8' }}>OPÇÕES DE RESPOSTA</label>
+                          {q.options?.map((opt: string, oIdx: number) => (
+                            <div key={oIdx} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+                               <input type="radio" checked={q.correct === opt} onChange={() => { const nq = [...unitData.questions]; nq[i].correct = opt; setUnitData({...unitData, questions: nq}); setIsDirty(true); }} />
+                               <input value={opt} onChange={(e) => { const nq = [...unitData.questions]; nq[i].options[oIdx] = e.target.value; setUnitData({...unitData, questions: nq}); setIsDirty(true); }} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0' }} />
+                               <button onClick={() => { const nq = [...unitData.questions]; nq[i].options = nq[i].options.filter((_: any, idx: number) => idx !== oIdx); setUnitData({...unitData, questions: nq}); setIsDirty(true); }} style={{ background: 'none', border: 'none', color: '#ef4444' }}><X size={16} /></button>
+                            </div>
+                          ))}
+                          <button onClick={() => { const nq = [...unitData.questions]; nq[i].options = [...(nq[i].options || []), 'Nova Opção']; setUnitData({...unitData, questions: nq}); setIsDirty(true); }} style={{ color: '#8b5cf6', fontWeight: 800, fontSize: '13px', textAlign: 'left', marginTop: '10px', background: 'none', border: 'none' }}>+ ADICIONAR OPÇÃO</button>
+                       </div>
+                       
+                       <StylingControls 
+                          item={q} 
+                          onChange={(updates) => {
+                            const nq = [...unitData.questions];
+                            nq[i] = { ...nq[i], ...updates };
+                            setUnitData({ ...unitData, questions: nq });
+                            setIsDirty(true);
+                          }} 
+                        />
+                    </div>
+                 </div>
+               ))}
            </div>
         </section>
 
