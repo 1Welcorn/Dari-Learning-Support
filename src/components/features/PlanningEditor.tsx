@@ -152,7 +152,12 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
       activeUploadCallback(publicUrl);
       setIsDirty(true);
     } catch (err: any) {
-      alert('Erro no upload: ' + err.message + '\nCertifique-se de que o bucket "media" existe no Supabase.');
+      console.error('Upload error:', err);
+      if (err.message === 'Bucket not found') {
+        alert('Erro no upload: O "bucket" chamado "media" não foi encontrado no seu Supabase.\n\nPara corrigir:\n1. Vá ao painel do Supabase -> Storage\n2. Crie um novo bucket chamado: media\n3. Marque como "Public bucket"');
+      } else {
+        alert('Erro no upload: ' + (err.message || 'Erro desconhecido'));
+      }
     } finally {
       setLoading(false);
       if (fileInputRef.current) fileInputRef.current.value = '';
