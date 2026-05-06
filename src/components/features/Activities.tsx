@@ -480,11 +480,11 @@ const StepNavigation: React.FC<{
         /* Estilização do Frame do Ícone Misterioso */
         .embed-preview {
           width: 100% !important;
-          max-width: 700px !important;
+          max-width: 550px !important;
           min-height: auto !important;
-          padding: 40px !important;
+          padding: 30px !important;
           background: #f8fafc !important;
-          border-radius: 40px !important;
+          border-radius: 120px !important;
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
