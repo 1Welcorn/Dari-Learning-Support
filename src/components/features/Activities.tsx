@@ -291,7 +291,6 @@ const StepNavigation: React.FC<{
               <h1 className="mission-subtitle-v7 main-theme" dangerouslySetInnerHTML={{ __html: current.title || 'Atividade' }} />
               {current.brief && <div dangerouslySetInnerHTML={{ __html: current.brief }} style={{ fontSize: '16px', lineHeight: '1.6' }} />}
             </div>
-            </div>
             <div 
               className="mission-media-v7" 
               style={{ 
