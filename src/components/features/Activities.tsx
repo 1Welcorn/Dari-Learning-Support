@@ -468,7 +468,7 @@ const StepNavigation: React.FC<{
           overflow: visible !important;
           box-shadow: 0 40px 100px rgba(0,0,0,0.07);
           width: 100%;
-          max-width: 1500px;
+          max-width: none;
           min-height: 400px;
           height: auto !important;
           transition: all 0.3s ease !important;
