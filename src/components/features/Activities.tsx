@@ -273,7 +273,7 @@ const StepNavigation: React.FC<{
         )}
 
         {current.type === 'embed' && (
-          <div className="mission-intro-card-v7 dynamic-wrap-v7" style={{ overflow: 'visible' }}>
+          <div className="mission-intro-card-v7 dynamic-wrap-v7" style={{ overflow: 'visible', width: current.width || '100%', maxWidth: current.width || '1500px' }}>
             <div className="mission-content-v7">
               <span className="mission-tag-v7" style={{ background: '#dbeafe', color: '#1d4ed8' }}>ATIVIDADE INTERATIVA</span>
               <h1 className="mission-subtitle-v7 main-theme" dangerouslySetInnerHTML={{ __html: current.title || 'Atividade' }} />
