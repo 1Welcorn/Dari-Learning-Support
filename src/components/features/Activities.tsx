@@ -267,8 +267,9 @@ const StepNavigation: React.FC<{
                  className="dari-start-arrow"
                  style={{ 
                    width: '200px', 
-                   marginBottom: '15px',
-                   marginRight: '200px',
+                   marginBottom: '5px',
+                   marginTop: '20px',
+                   marginRight: '160px',
                    transform: 'rotate(20deg)',
                    cursor: 'default', 
                    animation: 'bounceArrow 1.5s ease-in-out infinite',
