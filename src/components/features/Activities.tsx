@@ -195,6 +195,9 @@ const StepNavigation: React.FC<{
   const [tempBrief, setTempBrief] = useState(unit.brief || '');
   const [tempLinks, setTempLinks] = useState<any[]>([]);
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'success' | 'error'>('idle');
+  const [arrowPos, setArrowPos] = useState({ top: 60, right: 120 });
+  const [dragging, setDragging] = useState(false);
+  const dragStartRef = useRef({ x: 0, y: 0, top: 0, right: 0 });
 
   useEffect(() => { if (isEditingBrief) { setTempBrief(unit.brief || ''); setTempLinks(unit.external_links || []); } }, [isEditingBrief, unit]);
 
@@ -255,51 +258,41 @@ const StepNavigation: React.FC<{
 
         {current.type === 'embed' && (
           <div style={{ position: 'relative', width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
-            {(() => {
-              const [arrowPos, setArrowPos] = React.useState({ top: 60, right: 120 });
-              const [dragging, setDragging] = React.useState(false);
-              const dragStart = React.useRef({ x: 0, y: 0, top: 0, right: 0 });
-              
-              const onMouseDown = (e: React.MouseEvent) => {
+            <div style={{ position: 'fixed', bottom: '20px', left: '20px', background: '#1e293b', color: '#4ade80', padding: '15px 25px', borderRadius: '16px', zIndex: 99999, fontFamily: 'monospace', fontSize: '16px', fontWeight: 900, boxShadow: '0 10px 40px rgba(0,0,0,0.3)' }}>
+              🎯 top: {arrowPos.top}px | right: {arrowPos.right}px
+            </div>
+            <img 
+              src={startButtonDari} 
+              alt="Clique aqui para começar" 
+              className="dari-start-arrow"
+              onMouseDown={(e) => {
                 e.preventDefault();
                 setDragging(true);
-                dragStart.current = { x: e.clientX, y: e.clientY, top: arrowPos.top, right: arrowPos.right };
+                dragStartRef.current = { x: e.clientX, y: e.clientY, top: arrowPos.top, right: arrowPos.right };
                 const onMove = (ev: MouseEvent) => {
-                  const dx = ev.clientX - dragStart.current.x;
-                  const dy = ev.clientY - dragStart.current.y;
-                  setArrowPos({ top: dragStart.current.top + dy, right: dragStart.current.right - dx });
+                  const dx = ev.clientX - dragStartRef.current.x;
+                  const dy = ev.clientY - dragStartRef.current.y;
+                  setArrowPos({ top: dragStartRef.current.top + dy, right: dragStartRef.current.right - dx });
                 };
                 const onUp = () => { setDragging(false); window.removeEventListener('mousemove', onMove); window.removeEventListener('mouseup', onUp); };
                 window.addEventListener('mousemove', onMove);
                 window.addEventListener('mouseup', onUp);
-              };
-
-              return <>
-                <div style={{ position: 'fixed', bottom: '20px', left: '20px', background: '#1e293b', color: '#4ade80', padding: '15px 25px', borderRadius: '16px', zIndex: 99999, fontFamily: 'monospace', fontSize: '16px', fontWeight: 900, boxShadow: '0 10px 40px rgba(0,0,0,0.3)' }}>
-                  🎯 top: {arrowPos.top}px | right: {arrowPos.right}px
-                </div>
-                <img 
-                  src={startButtonDari} 
-                  alt="Clique aqui para começar" 
-                  className="dari-start-arrow"
-                  onMouseDown={onMouseDown}
-                  style={{ 
-                    width: '200px', 
-                    position: 'absolute',
-                    top: `${arrowPos.top}px`,
-                    right: `${arrowPos.right}px`,
-                    transform: 'rotate(50deg)',
-                    zIndex: 9999,
-                    cursor: dragging ? 'grabbing' : 'grab', 
-                    animation: dragging ? 'none' : 'bounceArrow 1.5s ease-in-out infinite',
-                    filter: 'drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3))',
-                    border: '3px dashed #f59e0b',
-                    borderRadius: '12px',
-                    padding: '4px'
-                  }} 
-                />
-              </>;
-            })()}
+              }}
+              style={{ 
+                width: '200px', 
+                position: 'absolute',
+                top: `${arrowPos.top}px`,
+                right: `${arrowPos.right}px`,
+                transform: 'rotate(50deg)',
+                zIndex: 9999,
+                cursor: dragging ? 'grabbing' : 'grab', 
+                animation: dragging ? 'none' : 'bounceArrow 1.5s ease-in-out infinite',
+                filter: 'drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3))',
+                border: '3px dashed #f59e0b',
+                borderRadius: '12px',
+                padding: '4px'
+              }} 
+            />
             <div className="mission-intro-card-v7 dynamic-wrap-v7" style={{ overflow: 'visible' }}>
               <div className="mission-content-v7">
                 <span className="mission-tag-v7" style={{ background: '#dbeafe', color: '#1d4ed8' }}>ATIVIDADE INTERATIVA</span>
