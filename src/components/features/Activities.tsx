@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useRef, useEffect } from 'react';
 import type { Unit, Question, ExternalLink } from '../../types';
 import { COLORS } from '../../constants';
-import { 
-  Sparkles, Plus, FileText, ChevronDown, 
+import {
+  Sparkles, Plus, FileText, ChevronDown,
   Trash2, Info, Edit2,
   ChefHat, Headphones, User, Building2, Smartphone, BookOpen, GraduationCap,
   Maximize, ChevronRight, ChevronLeft, ArrowLeft,
@@ -63,7 +63,7 @@ export const VideoPlayerV5: React.FC<{ media: ExternalLink }> = ({ media }) => {
   // Apenas considera iframe se for youtube ou vimeo
   const isIframeEmbed = actualUrl.includes('youtube.com/embed') || actualUrl.includes('vimeo.com');
   const isImage = media.label === 'media' || actualUrl.match(/\.(jpeg|jpg|gif|png|webp|svg)$/i);
-  
+
   // URL instantânea para evitar sensação de "quebrado"
   const getBaseSrc = (url: string) => {
     try {
@@ -77,7 +77,7 @@ export const VideoPlayerV5: React.FC<{ media: ExternalLink }> = ({ media }) => {
       return `${url}${sep}autoplay=0&controls=0&rel=0`;
     }
   };
-  
+
   const [iframeSrc, setIframeSrc] = useState(isIframeEmbed ? getBaseSrc(actualUrl) : actualUrl);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -90,7 +90,7 @@ export const VideoPlayerV5: React.FC<{ media: ExternalLink }> = ({ media }) => {
 
   useEffect(() => {
     if (isImage || !actualUrl) return;
-    
+
     // Reseta o estado do vídeo quando o delay muda para poder visualizar o efeito
     if (isIframeEmbed) {
       setIframeSrc(getBaseSrc(actualUrl));
@@ -200,21 +200,21 @@ const StepNavigation: React.FC<{
   const steps: StepContent[] = [];
   // 1. Welcome Page (Guia de Estudo)
   if (unit.brief || (unit.external_links && unit.external_links.length > 0)) steps.push({ type: 'brief' });
-  
+
   // 3. Atividades Interativas (Wordwall/Canva)
-  (unit.embed_urls || []).forEach((e: any, i: number) => steps.push({ 
-    type: 'embed', 
-    url: normalizeEmbedUrl(typeof e === 'string' ? e : e.url), 
-    title: typeof e === 'string' ? '' : e.title, 
+  (unit.embed_urls || []).forEach((e: any, i: number) => steps.push({
+    type: 'embed',
+    url: normalizeEmbedUrl(typeof e === 'string' ? e : e.url),
+    title: typeof e === 'string' ? '' : e.title,
     brief: typeof e === 'string' ? '' : e.brief,
     mystery_icon: typeof e === 'string' ? undefined : e.mystery_icon,
     mystery_icon_size: typeof e === 'string' ? undefined : e.mystery_icon_size,
-    idx: i 
+    idx: i
   }));
-  
+
   // 4. Perguntas (Tipo Google Forms)
   unit.questions.forEach((q, i) => steps.push({ type: 'question', q, idx: i }));
-  
+
   // 5. Finalização
   steps.push({ type: isAdmin || isMediator ? 'report' : 'congratulations' });
 
@@ -232,7 +232,7 @@ const StepNavigation: React.FC<{
         </div>
         <div className="header-nav-mini">
           <button className="header-nav-btn-v7 prev" onClick={handleBack} disabled={activeStep === 0}><ChevronLeft size={20} /></button>
-          <button className="header-nav-btn-v7 next" onClick={handleNext} disabled={activeStep === steps.length - 1}><ChevronRight size={20} /></button>
+          <button className="header-nav-btn-v7 next next-step-glow" onClick={handleNext} disabled={activeStep === steps.length - 1} style={{ animation: activeStep < steps.length - 1 ? 'glowPulse 2s ease-in-out infinite' : 'none' }}><ChevronRight size={20} /></button>
           <button className="exit-btn-v7" onClick={onToggle}><X size={20} /></button>
         </div>
       </div>
@@ -240,188 +240,166 @@ const StepNavigation: React.FC<{
       <div className="activities-v5-main" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '20px', gap: '20px' }}>
         {current.type === 'brief' && (
           <div className="mission-intro-card-v7 dynamic-wrap-v7">
-             <div className="mission-content-v7">
-                <span className="mission-tag-v7">GUIA DE ESTUDO</span>
-                <h1 className="mission-subtitle-v7 main-theme">{unit.title}</h1>
-                <div dangerouslySetInnerHTML={{ __html: unit.brief || '' }} style={{ fontSize: '16px', lineHeight: '1.6' }} />
-                {isAdmin && <button className="play-btn-v7-mission" onClick={() => setIsEditingBrief(true)} style={{ background: '#f59e0b', marginTop: '20px' }}>Editar Conteúdo</button>}
-             </div>
-             <div className="mission-media-v7">
-                {unit.external_links?.map((media, i) => <VideoPlayerV5 key={i} media={media} />)}
-             </div>
+            <div className="mission-content-v7">
+              <span className="mission-tag-v7">GUIA DE ESTUDO</span>
+              <h1 className="mission-subtitle-v7 main-theme">{unit.title}</h1>
+              <div dangerouslySetInnerHTML={{ __html: unit.brief || '' }} style={{ fontSize: '16px', lineHeight: '1.6' }} />
+              {isAdmin && <button className="play-btn-v7-mission" onClick={() => setIsEditingBrief(true)} style={{ background: '#f59e0b', marginTop: '20px' }}>Editar Conteúdo</button>}
+            </div>
+            <div className="mission-media-v7">
+              {unit.external_links?.map((media, i) => <VideoPlayerV5 key={i} media={media} />)}
+            </div>
           </div>
         )}
-        
+
         {current.type === 'embed' && (
           <div className="mission-intro-card-v7 dynamic-wrap-v7">
-             <div className="mission-content-v7">
-                <span className="mission-tag-v7" style={{ background: '#dbeafe', color: '#1d4ed8' }}>ATIVIDADE INTERATIVA</span>
-                <h1 className="mission-subtitle-v7 main-theme" dangerouslySetInnerHTML={{ __html: current.title || 'Atividade' }} />
-                {current.brief && <div dangerouslySetInnerHTML={{ __html: current.brief }} style={{ fontSize: '16px', lineHeight: '1.6' }} />}
-             </div>
-             <div className="mission-media-v7">
-                <EmbedPreview 
-                   url={current.url || ''} 
-                   title={current.title} 
-                   maskIcon={current.mystery_icon || unit.mystery_icon} 
-                   maskSize={current.mystery_icon_size || unit.mystery_icon_size || 120}
-                />
-             </div>
+            <div className="mission-content-v7">
+              <span className="mission-tag-v7" style={{ background: '#dbeafe', color: '#1d4ed8' }}>ATIVIDADE INTERATIVA</span>
+              <h1 className="mission-subtitle-v7 main-theme" dangerouslySetInnerHTML={{ __html: current.title || 'Atividade' }} />
+              {current.brief && <div dangerouslySetInnerHTML={{ __html: current.brief }} style={{ fontSize: '16px', lineHeight: '1.6' }} />}
+            </div>
+            <div className="mission-media-v7">
+              <EmbedPreview
+                url={current.url || ''}
+                title={current.title}
+                maskIcon={current.mystery_icon || unit.mystery_icon}
+                maskSize={current.mystery_icon_size || unit.mystery_icon_size || 120}
+              />
+            </div>
           </div>
         )}
 
         {current.type === 'game' && (
           <div className="mission-intro-card-v7 dynamic-wrap-v7" style={{ minHeight: '300px', textAlign: 'center', flexDirection: 'column' }}>
-             <h2 style={{ fontWeight: 900, marginBottom: '20px' }}>Hora do Desafio WordFall! 🎮</h2>
-             <button className="play-btn-v7-mission" onClick={onStartGame} style={{ background: '#10b981', padding: '20px 60px', fontSize: '20px' }}>JOGAR AGORA</button>
+            <h2 style={{ fontWeight: 900, marginBottom: '20px' }}>Hora do Desafio WordFall! 🎮</h2>
+            <button className="play-btn-v7-mission" onClick={onStartGame} style={{ background: '#10b981', padding: '20px 60px', fontSize: '20px' }}>JOGAR AGORA</button>
           </div>
         )}
 
         {current.type === 'question' && (
           <div className="mission-intro-card-v7 dynamic-wrap-v7" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
-             <div style={{ marginBottom: '10px' }}>
-                <span className="mission-tag-v7" style={{ background: '#f3e8ff', color: '#7c3aed' }}>QUESTÃO {(current.idx as number) + 1}</span>
-             </div>
-             <QuestionBlock question={current.q as any} index={current.idx as any} unitId={unit.id} onSaveAnswer={(val) => onSaveAnswer(current.idx as any, val)} isAdmin={isAdmin} color={currentColors?.main || '#10b981'} />
+            <div style={{ marginBottom: '10px' }}>
+              <span className="mission-tag-v7" style={{ background: '#f3e8ff', color: '#7c3aed' }}>QUESTÃO {(current.idx as number) + 1}</span>
+            </div>
+            <QuestionBlock question={current.q as any} index={current.idx as any} unitId={unit.id} onSaveAnswer={(val) => onSaveAnswer(current.idx as any, val)} isAdmin={isAdmin} color={currentColors?.main || '#10b981'} />
           </div>
         )}
-        {/* BOTÃO DE PRÓXIMO PASSO SEMPRE VISÍVEL NO RODAPÉ DO CARD */}
-        {activeStep < steps.length - 1 && current.type !== 'brief' && (
-          <button 
-            className="next-step-giant-btn next-step-glow"
-            onClick={handleNext}
-            style={{ 
-              background: 'var(--unit-color, #10b981)', 
-              color: 'white', 
-              padding: '20px 50px', 
-              borderRadius: '20px', 
-              fontWeight: 900, 
-              fontSize: '18px',
-              border: 'none',
-              boxShadow: '0 0 20px rgba(16, 185, 129, 0.4), 0 0 60px rgba(16, 185, 129, 0.15)',
-              marginTop: '10px',
-              cursor: 'pointer',
-              letterSpacing: '1px',
-              animation: 'glowPulse 2s ease-in-out infinite'
-            }}
-          >
-            PRÓXIMA ATIVIDADE
-          </button>
-        )}
+
       </div>
 
       {isEditingBrief && (
         <div className="brief-editor-overlay-v7" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', background: '#f8fafc', zIndex: 9999, display: 'flex', flexDirection: 'column' }}>
-           <header style={{ padding: '15px 30px', background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Zap size={24} color="#f59e0b" fill="#f59e0b" />
-                <h2 style={{ margin: 0, fontWeight: 900 }}>Editor Maestro Ultra-Rápido ⚡</h2>
-              </div>
-              <div style={{ display: 'flex', gap: '10px' }}>
-                 <button onClick={async () => {
-                    setSaveStatus('saving');
-                    const { success } = await handleUpdateUnitContent({ brief: tempBrief, external_links: tempLinks.map(l => ({ ...l })) });
-                    if (success) { setSaveStatus('success'); setTimeout(() => { setSaveStatus('idle'); setIsEditingBrief(false); }, 800); }
-                 }} style={{ background: '#10b981', color: 'white', padding: '10px 25px', borderRadius: '12px', border: 'none', fontWeight: 900, cursor: 'pointer' }}>
-                    {saveStatus === 'saving' ? 'Salvando...' : saveStatus === 'success' ? 'Salvo ✓' : 'Salvar Alterações'}
-                 </button>
-                 <button onClick={() => setIsEditingBrief(false)} style={{ background: '#f1f5f9', padding: '10px', borderRadius: '12px', border: 'none' }}><X size={20} /></button>
-              </div>
-           </header>
+          <header style={{ padding: '15px 30px', background: 'white', borderBottom: '1px solid #e2e8f0', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <Zap size={24} color="#f59e0b" fill="#f59e0b" />
+              <h2 style={{ margin: 0, fontWeight: 900 }}>Editor Maestro Ultra-Rápido ⚡</h2>
+            </div>
+            <div style={{ display: 'flex', gap: '10px' }}>
+              <button onClick={async () => {
+                setSaveStatus('saving');
+                const { success } = await handleUpdateUnitContent({ brief: tempBrief, external_links: tempLinks.map(l => ({ ...l })) });
+                if (success) { setSaveStatus('success'); setTimeout(() => { setSaveStatus('idle'); setIsEditingBrief(false); }, 800); }
+              }} style={{ background: '#10b981', color: 'white', padding: '10px 25px', borderRadius: '12px', border: 'none', fontWeight: 900, cursor: 'pointer' }}>
+                {saveStatus === 'saving' ? 'Salvando...' : saveStatus === 'success' ? 'Salvo ✓' : 'Salvar Alterações'}
+              </button>
+              <button onClick={() => setIsEditingBrief(false)} style={{ background: '#f1f5f9', padding: '10px', borderRadius: '12px', border: 'none' }}><X size={20} /></button>
+            </div>
+          </header>
 
-           <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 340px 1fr', gap: '20px', padding: '20px', overflow: 'hidden' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                 <h4 style={{ margin: 0, color: '#64748b', fontSize: '11px', fontWeight: 900 }}>1. CONTEÚDO</h4>
-                 <RichTextEditor value={tempBrief} onChange={setTempBrief} />
-              </div>
+          <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 340px 1fr', gap: '20px', padding: '20px', overflow: 'hidden' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+              <h4 style={{ margin: 0, color: '#64748b', fontSize: '11px', fontWeight: 900 }}>1. CONTEÚDO</h4>
+              <RichTextEditor value={tempBrief} onChange={setTempBrief} />
+            </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', overflowY: 'auto', paddingRight: '10px' }}>
-                 <h4 style={{ margin: 0, color: '#64748b', fontSize: '11px', fontWeight: 900 }}>2. DIMENSÕES DO VÍDEO</h4>
-                 {tempLinks.map((link, lIdx) => (
-                    <div key={lIdx} style={{ background: 'white', padding: '15px', borderRadius: '16px', border: '2px solid #f59e0b', marginBottom: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
-                       <input type="text" value={link.url} placeholder="Link do vídeo..." style={{ width: '100%', padding: '10px', marginBottom: '12px', borderRadius: '10px', border: '1px solid #cbd5e1' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].url = e.target.value; setTempLinks(nl); }} />
-                       
-                       <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-                          <div className="control-group">
-                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>LARGURA DO PLAYER: {link.width || '600px'}</span></div>
-                             <input type="range" min="200" max="1200" step="10" value={parseInt(String(link.width || '600').replace(/[^0-9]/g, '')) > 100 ? parseInt(String(link.width || '600').replace(/[^0-9]/g, '')) : 600} style={{ width: '100%', accentColor: '#f59e0b' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].width = `${e.target.value}px`; setTempLinks(nl); }} />
-                          </div>                          
-                          <div className="control-group">
-                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>ALTURA DO PLAYER: {link.height || 300}px</span></div>
-                             <input type="range" min="50" max="1000" step="5" value={link.height || 300} style={{ width: '100%', accentColor: '#f59e0b' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].height = parseInt(e.target.value); setTempLinks(nl); }} />
-                          </div>
-                          <div className="control-group">
-                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>CANTOS DO FRAME: {link.borderRadius !== undefined ? link.borderRadius : 20}px</span></div>
-                             <input type="range" min="0" max="100" step="1" value={link.borderRadius !== undefined ? link.borderRadius : 20} style={{ width: '100%', accentColor: '#f59e0b' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].borderRadius = parseInt(e.target.value); setTempLinks(nl); }} />
-                          </div>
-                          <div className="control-group">
-                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>CANTOS DO PLAYER: {link.playerBorderRadius !== undefined ? link.playerBorderRadius : (link.borderRadius !== undefined ? link.borderRadius : 20)}px</span></div>
-                             <input type="range" min="0" max="100" step="1" value={link.playerBorderRadius !== undefined ? link.playerBorderRadius : (link.borderRadius !== undefined ? link.borderRadius : 20)} style={{ width: '100%', accentColor: '#f59e0b' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].playerBorderRadius = parseInt(e.target.value); setTempLinks(nl); }} />
-                          </div>                          <div className="control-group">
-                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>ZOOM DA IMAGEM/VÍDEO: {link.scale || 1}x</span></div>
-                             <input type="range" min="0.5" max="3" step="0.1" value={link.scale || 1} style={{ width: '100%', accentColor: '#f59e0b' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].scale = parseFloat(e.target.value); setTempLinks(nl); }} />
-                          </div>
-                          <div className="control-group">
-                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>ESPESSURA DO FRAME: {link.framePadding || '0px'}</span></div>
-                             <input type="range" min="0" max="50" step="1" value={parseInt(link.framePadding || '0')} style={{ width: '100%', accentColor: '#f59e0b' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].framePadding = `${e.target.value}px`; setTempLinks(nl); }} />
-                          </div>
-                          <div className="control-group">
-                             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>COR DO FRAME:</span></div>
-                             <select value={link.frameColor || ''} style={{ width: '100%', padding: '8px', borderRadius: '8px', fontSize: '12px' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].frameColor = e.target.value; setTempLinks(nl); }}>
-                                <option value="">Padrão (Preto/Transp.)</option>
-                                <option value="transparent">Transparente (Vazio)</option>
-                                <option value="white">Branco</option>
-                                <option value="#fef3c7">Bege</option>
-                                <option value="#000000">Preto</option>
-                                <option value="#fbbf24">Amarelo</option>
-                                <option value="#3b82f6">Azul</option>
-                              </select>
-                           </div>
-                           <div className="control-group">
-                              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>DELAY DE INÍCIO: {link.delay || 0}s</span></div>
-                              <input type="range" min="0" max="15" step="0.5" value={link.delay || 0} style={{ width: '100%', accentColor: '#10b981' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].delay = parseFloat(e.target.value); setTempLinks(nl); }} />
-                           </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', overflowY: 'auto', paddingRight: '10px' }}>
+              <h4 style={{ margin: 0, color: '#64748b', fontSize: '11px', fontWeight: 900 }}>2. DIMENSÕES DO VÍDEO</h4>
+              {tempLinks.map((link, lIdx) => (
+                <div key={lIdx} style={{ background: 'white', padding: '15px', borderRadius: '16px', border: '2px solid #f59e0b', marginBottom: '15px', boxShadow: '0 4px 15px rgba(0,0,0,0.05)' }}>
+                  <input type="text" value={link.url} placeholder="Link do vídeo..." style={{ width: '100%', padding: '10px', marginBottom: '12px', borderRadius: '10px', border: '1px solid #cbd5e1' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].url = e.target.value; setTempLinks(nl); }} />
 
-                          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
-                             <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <label style={{ fontSize: '9px', fontWeight: 900, color: '#94a3b8' }}>ENCAIXE (OBJ-FIT)</label>
-                                <select value={link.objectFit || 'cover'} style={{ fontSize: '12px', padding: '8px', borderRadius: '8px' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].objectFit = e.target.value; setTempLinks(nl); }}>
-                                   <option value="cover">Preencher (Sem Barras)</option>
-                                   <option value="contain">Encaixar (Com Barras)</option>
-                                </select>
-                             </div>
-                             <div style={{ display: 'flex', flexDirection: 'column' }}>
-                                <label style={{ fontSize: '9px', fontWeight: 900, color: '#94a3b8' }}>TIPO</label>
-                                <select value={link.label} style={{ fontSize: '12px', padding: '8px', borderRadius: '8px' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].label = e.target.value; setTempLinks(nl); }}>
-                                   <option value="video">🎥 Vídeo</option>
-                                   <option value="media">🖼️ Imagem</option>
-                                </select>
-                             </div>
-                          </div>                       </div>
-                       <button onClick={() => setTempLinks(tempLinks.filter((_, i) => i !== lIdx))} style={{ width: '100%', marginTop: '15px', background: '#fee2e2', color: '#ef4444', border: 'none', padding: '10px', borderRadius: '12px', fontWeight: 900 }}>REMOVER</button>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    <div className="control-group">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>LARGURA DO PLAYER: {link.width || '600px'}</span></div>
+                      <input type="range" min="200" max="1200" step="10" value={parseInt(String(link.width || '600').replace(/[^0-9]/g, '')) > 100 ? parseInt(String(link.width || '600').replace(/[^0-9]/g, '')) : 600} style={{ width: '100%', accentColor: '#f59e0b' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].width = `${e.target.value}px`; setTempLinks(nl); }} />
                     </div>
-                 ))}
-                 <button onClick={() => setTempLinks([...tempLinks, { label: 'video', url: '', width: '100%', height: 350, objectFit: 'cover' }])} style={{ background: '#f59e0b', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 900, fontSize: '11px' }}>+ ADICIONAR NOVO VÍDEO</button>
-              </div>
-
-              {/* SIMULADOR DINÂMICO */}
-              <div style={{ display: 'flex', flexDirection: 'column', background: '#f1f5f9', borderRadius: '24px', overflow: 'hidden', justifyContent: 'center', alignItems: 'center' }}>
-                 <div style={{ padding: '10px', background: '#e2e8f0', textAlign: 'center', fontSize: '10px', fontWeight: 900, width: '100%' }}>SIMULADOR DE RESULTADO</div>
-                 <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px', width: '100%', overflowY: 'auto' }}>
-                    <div className="dynamic-wrap-v7" style={{ background: 'white', padding: '30px', borderRadius: '30px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)', display: 'flex', gap: '20px', alignItems: 'center', width: 'auto', maxWidth: '95%' }}>
-                       <div style={{ flex: '1 1 auto', minWidth: '200px' }}>
-                          <div dangerouslySetInnerHTML={{ __html: tempBrief }} style={{ fontSize: '14px', lineHeight: '1.5' }} />
-                       </div>
-                       <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-                          {tempLinks.map((media, i) => <VideoPlayerV5 key={i} media={media} />)}
-                       </div>
+                    <div className="control-group">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>ALTURA DO PLAYER: {link.height || 300}px</span></div>
+                      <input type="range" min="50" max="1000" step="5" value={link.height || 300} style={{ width: '100%', accentColor: '#f59e0b' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].height = parseInt(e.target.value); setTempLinks(nl); }} />
                     </div>
-                 </div>
+                    <div className="control-group">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>CANTOS DO FRAME: {link.borderRadius !== undefined ? link.borderRadius : 20}px</span></div>
+                      <input type="range" min="0" max="100" step="1" value={link.borderRadius !== undefined ? link.borderRadius : 20} style={{ width: '100%', accentColor: '#f59e0b' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].borderRadius = parseInt(e.target.value); setTempLinks(nl); }} />
+                    </div>
+                    <div className="control-group">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>CANTOS DO PLAYER: {link.playerBorderRadius !== undefined ? link.playerBorderRadius : (link.borderRadius !== undefined ? link.borderRadius : 20)}px</span></div>
+                      <input type="range" min="0" max="100" step="1" value={link.playerBorderRadius !== undefined ? link.playerBorderRadius : (link.borderRadius !== undefined ? link.borderRadius : 20)} style={{ width: '100%', accentColor: '#f59e0b' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].playerBorderRadius = parseInt(e.target.value); setTempLinks(nl); }} />
+                    </div>                          <div className="control-group">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>ZOOM DA IMAGEM/VÍDEO: {link.scale || 1}x</span></div>
+                      <input type="range" min="0.5" max="3" step="0.1" value={link.scale || 1} style={{ width: '100%', accentColor: '#f59e0b' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].scale = parseFloat(e.target.value); setTempLinks(nl); }} />
+                    </div>
+                    <div className="control-group">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>ESPESSURA DO FRAME: {link.framePadding || '0px'}</span></div>
+                      <input type="range" min="0" max="50" step="1" value={parseInt(link.framePadding || '0')} style={{ width: '100%', accentColor: '#f59e0b' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].framePadding = `${e.target.value}px`; setTempLinks(nl); }} />
+                    </div>
+                    <div className="control-group">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>COR DO FRAME:</span></div>
+                      <select value={link.frameColor || ''} style={{ width: '100%', padding: '8px', borderRadius: '8px', fontSize: '12px' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].frameColor = e.target.value; setTempLinks(nl); }}>
+                        <option value="">Padrão (Preto/Transp.)</option>
+                        <option value="transparent">Transparente (Vazio)</option>
+                        <option value="white">Branco</option>
+                        <option value="#fef3c7">Bege</option>
+                        <option value="#000000">Preto</option>
+                        <option value="#fbbf24">Amarelo</option>
+                        <option value="#3b82f6">Azul</option>
+                      </select>
+                    </div>
+                    <div className="control-group">
+                      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', fontWeight: 900, color: '#64748b', marginBottom: '4px' }}><span>DELAY DE INÍCIO: {link.delay || 0}s</span></div>
+                      <input type="range" min="0" max="15" step="0.5" value={link.delay || 0} style={{ width: '100%', accentColor: '#10b981' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].delay = parseFloat(e.target.value); setTempLinks(nl); }} />
+                    </div>
+
+                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px' }}>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <label style={{ fontSize: '9px', fontWeight: 900, color: '#94a3b8' }}>ENCAIXE (OBJ-FIT)</label>
+                        <select value={link.objectFit || 'cover'} style={{ fontSize: '12px', padding: '8px', borderRadius: '8px' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].objectFit = e.target.value; setTempLinks(nl); }}>
+                          <option value="cover">Preencher (Sem Barras)</option>
+                          <option value="contain">Encaixar (Com Barras)</option>
+                        </select>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <label style={{ fontSize: '9px', fontWeight: 900, color: '#94a3b8' }}>TIPO</label>
+                        <select value={link.label} style={{ fontSize: '12px', padding: '8px', borderRadius: '8px' }} onChange={(e) => { const nl = [...tempLinks]; nl[lIdx].label = e.target.value; setTempLinks(nl); }}>
+                          <option value="video">🎥 Vídeo</option>
+                          <option value="media">🖼️ Imagem</option>
+                        </select>
+                      </div>
+                    </div>                       </div>
+                  <button onClick={() => setTempLinks(tempLinks.filter((_, i) => i !== lIdx))} style={{ width: '100%', marginTop: '15px', background: '#fee2e2', color: '#ef4444', border: 'none', padding: '10px', borderRadius: '12px', fontWeight: 900 }}>REMOVER</button>
+                </div>
+              ))}
+              <button onClick={() => setTempLinks([...tempLinks, { label: 'video', url: '', width: '100%', height: 350, objectFit: 'cover' }])} style={{ background: '#f59e0b', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', fontWeight: 900, fontSize: '11px' }}>+ ADICIONAR NOVO VÍDEO</button>
+            </div>
+
+            {/* SIMULADOR DINÂMICO */}
+            <div style={{ display: 'flex', flexDirection: 'column', background: '#f1f5f9', borderRadius: '24px', overflow: 'hidden', justifyContent: 'center', alignItems: 'center' }}>
+              <div style={{ padding: '10px', background: '#e2e8f0', textAlign: 'center', fontSize: '10px', fontWeight: 900, width: '100%' }}>SIMULADOR DE RESULTADO</div>
+              <div style={{ flex: 1, display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '20px', width: '100%', overflowY: 'auto' }}>
+                <div className="dynamic-wrap-v7" style={{ background: 'white', padding: '30px', borderRadius: '30px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)', display: 'flex', gap: '20px', alignItems: 'center', width: 'auto', maxWidth: '95%' }}>
+                  <div style={{ flex: '1 1 auto', minWidth: '200px' }}>
+                    <div dangerouslySetInnerHTML={{ __html: tempBrief }} style={{ fontSize: '14px', lineHeight: '1.5' }} />
+                  </div>
+                  <div style={{ flex: '0 0 auto', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                    {tempLinks.map((media, i) => <VideoPlayerV5 key={i} media={media} />)}
+                  </div>
+                </div>
               </div>
-           </div>
+            </div>
+          </div>
         </div>
       )}
-      
+
       <style>{`
         .dynamic-wrap-v7 {
           display: flex !important;
@@ -509,5 +487,5 @@ export const Activities: React.FC<any> = ({ units, ...props }) => {
   if (!activeUnit) return <div style={{ padding: '60px', textAlign: 'center' }}>Selecione uma aula no mapa.</div>;
   return <StepNavigation unit={activeUnit} {...props} handleUpdateUnitContent={async (u: any) => { const success = await props.onUpdateUnit(activeUnit.id, u); return { success }; }} completeLesson={async () => ({})} />;
 };
-export const UnitCard: React.FC<any> = (props) => <StepNavigation {...props} handleUpdateUnitContent={async () => ({ success: true })} completeLesson={async () => ({})} editQuestion={() => {}} deleteQuestion={() => {}} />;
+export const UnitCard: React.FC<any> = (props) => <StepNavigation {...props} handleUpdateUnitContent={async () => ({ success: true })} completeLesson={async () => ({})} editQuestion={() => { }} deleteQuestion={() => { }} />;
 export default Activities;
