@@ -5,19 +5,70 @@ import { UnitCard, VideoPlayerV5 } from './Activities';
 import { COLORS } from '../../constants';
 
 // --- RICH TEXT EDITOR ---
-const RichTextEditor: React.FC<{ value: string; onChange: (val: string) => void; height?: string }> = ({ value, onChange, height = '350px' }) => {
+const RichTextEditor: React.FC<{ value: string; onChange: (val: string) => void; height?: string; placeholder?: string }> = ({ value, onChange, height = '350px', placeholder }) => {
   const editorRef = useRef<HTMLDivElement>(null);
-  useEffect(() => { if (editorRef.current && editorRef.current.innerHTML !== value) { editorRef.current.innerHTML = value; } }, []);
-  const exec = (cmd: string, val?: string) => { document.execCommand(cmd, false, val); if (editorRef.current) { onChange(editorRef.current.innerHTML); } };
+  
+  useEffect(() => { 
+    if (editorRef.current && editorRef.current.innerHTML !== value) { 
+      editorRef.current.innerHTML = value || ''; 
+    } 
+  }, [value]);
+
+  const exec = (cmd: string, val?: string) => { 
+    document.execCommand(cmd, false, val); 
+    if (editorRef.current) { 
+      onChange(editorRef.current.innerHTML); 
+    } 
+  };
+
+  const btnStyle = { 
+    padding: '6px 10px', 
+    borderRadius: '8px', 
+    border: '1px solid #e2e8f0', 
+    background: 'white', 
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontSize: '12px',
+    fontWeight: 900,
+    color: '#64748b',
+    transition: 'all 0.2s'
+  };
+
   return (
-    <div className="rich-editor-container" style={{ display: 'flex', flexDirection: 'column', height: height, border: '1px solid #e2e8f0', borderRadius: '20px', overflow: 'hidden', background: '#fff' }}>
-      <div className="rich-editor-toolbar" style={{ padding: '6px', borderBottom: '1px solid #e2e8f0', display: 'flex', flexWrap: 'wrap', gap: '4px', background: '#f8fafc' }}>
-        <button onClick={() => exec('bold')} style={{ padding: '4px', borderRadius: '4px', border: '1px solid #e2e8f0', background: 'white' }}><Bold size={14} /></button>
-        <button onClick={() => exec('italic')} style={{ padding: '4px', borderRadius: '4px', border: '1px solid #e2e8f0', background: 'white' }}><Italic size={14} /></button>
-        <button onClick={() => exec('justifyCenter')} style={{ padding: '4px', borderRadius: '4px', border: '1px solid #e2e8f0', background: 'white' }}><AlignCenter size={14} /></button>
-        <button onClick={() => exec('foreColor', '#3b82f6')} style={{ padding: '4px', borderRadius: '4px', border: '1px solid #e2e8f0', background: 'white', color: '#3b82f6' }}><Palette size={14} /></button>
+    <div className="rich-editor-container" style={{ display: 'flex', flexDirection: 'column', height: height, border: '1px solid #e2e8f0', borderRadius: '24px', overflow: 'hidden', background: '#fff', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+      <div className="rich-editor-toolbar" style={{ padding: '8px', borderBottom: '1px solid #e2e8f0', display: 'flex', flexWrap: 'wrap', gap: '6px', background: '#f8fafc' }}>
+        <button onClick={() => exec('formatBlock', '<h1>')} style={btnStyle}>H1</button>
+        <button onClick={() => exec('formatBlock', '<h2>')} style={btnStyle}>H2</button>
+        <button onClick={() => exec('bold')} style={btnStyle} title="Negrito"><Bold size={14} /></button>
+        <button onClick={() => exec('italic')} style={btnStyle} title="Itálico"><Italic size={14} /></button>
+        <div style={{ width: '1px', background: '#e2e8f0', margin: '0 4px' }} />
+        <button onClick={() => exec('justifyLeft')} style={btnStyle} title="Alinhar à Esquerda"><AlignLeft size={14} /></button>
+        <button onClick={() => exec('justifyCenter')} style={btnStyle} title="Centralizar"><AlignCenter size={14} /></button>
+        <button onClick={() => exec('justifyRight')} style={btnStyle} title="Alinhar à Direita"><AlignRight size={14} /></button>
+        <button onClick={() => exec('justifyFull')} style={btnStyle} title="Justificar"><AlignJustify size={14} /></button>
+        <div style={{ width: '1px', background: '#e2e8f0', margin: '0 4px' }} />
+        <button onClick={() => exec('insertUnorderedList')} style={btnStyle} title="Lista"><List size={14} /></button>
+        <button onClick={() => exec('foreColor', '#3b82f6')} style={{ ...btnStyle, color: '#3b82f6' }} title="Cor Azul"><Palette size={14} /></button>
+        <button onClick={() => exec('removeFormat')} style={{ ...btnStyle, color: '#ef4444' }} title="Limpar Formatação"><Eraser size={14} /></button>
       </div>
-      <div ref={editorRef} className="rich-editor-content" contentEditable onInput={(e) => onChange(e.currentTarget.innerHTML)} style={{ flex: 1, padding: '12px', background: 'white', outline: 'none', overflowY: 'auto', fontSize: '14px', lineHeight: '1.5' }} />
+      <div 
+        ref={editorRef} 
+        className="rich-editor-content" 
+        contentEditable 
+        onInput={(e) => onChange(e.currentTarget.innerHTML)} 
+        style={{ 
+          flex: 1, 
+          padding: '20px', 
+          background: 'white', 
+          outline: 'none', 
+          overflowY: 'auto', 
+          fontSize: '15px', 
+          lineHeight: '1.6',
+          color: '#1e293b'
+        }} 
+      />
     </div>
   );
 };
@@ -246,6 +297,24 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', padding: '30px', maxWidth: '1400px', margin: '0 auto' }}>
         
+        {/* SECTION 0: IDENTIFICAÇÃO DA AULA */}
+        <section style={{ background: 'white', borderRadius: '30px', padding: '30px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
+           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+              <div style={{ background: '#6366f1', color: 'white', padding: '10px', borderRadius: '14px' }}><Type size={24} /></div>
+              <h3 style={{ margin: 0, fontWeight: 900 }}>Dados Gerais da Unidade</h3>
+           </div>
+           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '30px' }}>
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '8px' }}>TÍTULO DA AULA (PRINCIPAL)</label>
+                <RichTextEditor height="120px" value={unitData.title || ''} onChange={(val) => { setUnitData({...unitData, title: val}); setIsDirty(true); }} />
+              </div>
+              <div>
+                <label style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '8px' }}>SUBTÍTULO / DESCRIÇÃO RÁPIDA</label>
+                <RichTextEditor height="120px" value={unitData.sub || ''} onChange={(val) => { setUnitData({...unitData, sub: val}); setIsDirty(true); }} />
+              </div>
+           </div>
+        </section>
+
         {/* SECTION 1: MAESTRO INTRO & MEDIA */}
         <section style={{ background: 'white', borderRadius: '30px', padding: '30px', boxShadow: '0 10px 40px rgba(0,0,0,0.05)' }}>
            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
@@ -349,12 +418,12 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                    <div style={{ background: '#f8fafc', padding: '20px 30px', borderBottom: '1px solid #f1f5f9', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                         <div style={{ background: '#10b981', color: 'white', padding: '8px', borderRadius: '12px' }}><Globe size={18} /></div>
-                        <input 
-                          value={item.title} 
-                          onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].title = e.target.value; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} 
-                          style={{ fontWeight: 900, background: 'none', border: 'none', fontSize: '18px', color: '#1e293b', width: '300px' }} 
-                          placeholder="Título da Atividade..." 
-                        />
+                        <RichTextEditor 
+                           height="100px"
+                           value={item.title || ''} 
+                           onChange={(val) => { const nl = [...unitData.embed_urls]; nl[i].title = val; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} 
+                           placeholder="Título da Atividade..." 
+                         />
                       </div>
                       <button 
                         onClick={() => { if(window.confirm('Excluir esta atividade permanentemente?')) { const nl = unitData.embed_urls.filter((_: any, idx: number) => idx !== i); setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); } }}
@@ -438,7 +507,11 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
               {unitData.questions?.map((q: any, i: number) => (
                 <div key={i} style={{ background: '#f8fafc', padding: '25px', borderRadius: '25px', border: '1px solid #e2e8f0' }}>
                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
-                      <input value={q.title} onChange={(e) => { const nq = [...unitData.questions]; nq[i].title = e.target.value; setUnitData({...unitData, questions: nq}); setIsDirty(true); }} style={{ fontSize: '18px', fontWeight: 800, width: '80%', background: 'none', border: 'none' }} />
+                      <RichTextEditor 
+                         height="120px"
+                         value={q.title || ''} 
+                         onChange={(val) => { const nq = [...unitData.questions]; nq[i].title = val; setUnitData({...unitData, questions: nq}); setIsDirty(true); }} 
+                      />
                       <button onClick={() => { const nq = unitData.questions.filter((_: any, idx: number) => idx !== i); setUnitData({...unitData, questions: nq}); setIsDirty(true); }}><Trash2 color="#ef4444" /></button>
                    </div>
                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
