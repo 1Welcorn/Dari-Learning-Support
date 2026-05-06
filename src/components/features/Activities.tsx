@@ -254,30 +254,31 @@ const StepNavigation: React.FC<{
         )}
 
         {current.type === 'embed' && (
-          <div className="mission-intro-card-v7 dynamic-wrap-v7" style={{ overflow: 'visible' }}>
+          <div style={{ position: 'relative', width: '100%', maxWidth: '1400px', margin: '0 auto', overflow: 'visible' }}>
+            <img 
+              src={startButtonDari} 
+              alt="Clique aqui para começar" 
+              className="dari-start-arrow"
+              style={{ 
+                width: '200px', 
+                position: 'absolute',
+                top: '40px',
+                right: '120px',
+                transform: 'rotate(40deg)',
+                zIndex: 999999,
+                cursor: 'default', 
+                animation: 'bounceArrow 1.5s ease-in-out infinite',
+                filter: 'drop-shadow(0 12px 30px rgba(16, 185, 129, 0.4))',
+                pointerEvents: 'none'
+              }} 
+            />
+            <div className="mission-intro-card-v7 dynamic-wrap-v7" style={{ overflow: 'visible' }}>
               <div className="mission-content-v7">
                 <span className="mission-tag-v7" style={{ background: '#dbeafe', color: '#1d4ed8' }}>ATIVIDADE INTERATIVA</span>
                 <h1 className="mission-subtitle-v7 main-theme" dangerouslySetInnerHTML={{ __html: current.title || 'Atividade' }} />
                 {current.brief && <div dangerouslySetInnerHTML={{ __html: current.brief }} style={{ fontSize: '16px', lineHeight: '1.6' }} />}
               </div>
-              <div className="mission-media-v7" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', position: 'relative' }}>
-                <img 
-                  src={startButtonDari} 
-                  alt="Clique aqui para começar" 
-                  className="dari-start-arrow"
-                  style={{ 
-                    width: '180px', 
-                    position: 'absolute',
-                    top: '-20px',
-                    left: '-60px',
-                    transform: 'rotate(50deg)',
-                    zIndex: 9999,
-                    cursor: 'default', 
-                    animation: 'bounceArrow 1.5s ease-in-out infinite',
-                    filter: 'drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3))',
-                    pointerEvents: 'none'
-                  }} 
-                />
+              <div className="mission-media-v7" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                 <EmbedPreview
                   url={current.url || ''}
                   title={current.title}
@@ -286,6 +287,7 @@ const StepNavigation: React.FC<{
                 />
               </div>
             </div>
+          </div>
         )}
 
         {current.type === 'game' && (
@@ -456,8 +458,8 @@ const StepNavigation: React.FC<{
         }
 
         @keyframes bounceArrow {
-          0%, 100% { transform: rotate(50deg) translateX(0); }
-          50% { transform: rotate(50deg) translateX(12px); }
+          0%, 100% { transform: rotate(40deg) translateX(0); }
+          50% { transform: rotate(40deg) translateX(12px); }
         }
         .dari-start-arrow:hover {
           transform: scale(1.08) !important;
