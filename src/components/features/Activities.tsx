@@ -263,7 +263,7 @@ const StepNavigation: React.FC<{
                 width: '200px', 
                 position: 'absolute',
                 top: '40px',
-                right: '120px',
+                left: '120px',
                 transform: 'rotate(40deg)',
                 zIndex: 999999,
                 cursor: 'default', 
