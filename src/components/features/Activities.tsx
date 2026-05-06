@@ -254,37 +254,38 @@ const StepNavigation: React.FC<{
         )}
 
         {current.type === 'embed' && (
-          <div className="mission-intro-card-v7 dynamic-wrap-v7">
-            <div className="mission-content-v7">
-              <span className="mission-tag-v7" style={{ background: '#dbeafe', color: '#1d4ed8' }}>ATIVIDADE INTERATIVA</span>
-              <h1 className="mission-subtitle-v7 main-theme" dangerouslySetInnerHTML={{ __html: current.title || 'Atividade' }} />
-              {current.brief && <div dangerouslySetInnerHTML={{ __html: current.brief }} style={{ fontSize: '16px', lineHeight: '1.6' }} />}
+          <div style={{ position: 'relative', width: '100%', maxWidth: '1400px', margin: '0 auto' }}>
+            <img 
+              src={startButtonDari} 
+              alt="Clique aqui para começar" 
+              className="dari-start-arrow"
+              style={{ 
+                width: '200px', 
+                position: 'absolute',
+                top: '60px',
+                right: '80px',
+                transform: 'rotate(50deg)',
+                zIndex: 9999,
+                cursor: 'default', 
+                animation: 'bounceArrow 1.5s ease-in-out infinite',
+                filter: 'drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3))'
+              }} 
+            />
+            <div className="mission-intro-card-v7 dynamic-wrap-v7" style={{ overflow: 'visible' }}>
+              <div className="mission-content-v7">
+                <span className="mission-tag-v7" style={{ background: '#dbeafe', color: '#1d4ed8' }}>ATIVIDADE INTERATIVA</span>
+                <h1 className="mission-subtitle-v7 main-theme" dangerouslySetInnerHTML={{ __html: current.title || 'Atividade' }} />
+                {current.brief && <div dangerouslySetInnerHTML={{ __html: current.brief }} style={{ fontSize: '16px', lineHeight: '1.6' }} />}
+              </div>
+              <div className="mission-media-v7" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+                <EmbedPreview
+                  url={current.url || ''}
+                  title={current.title}
+                  maskIcon={current.mystery_icon || unit.mystery_icon}
+                  maskSize={current.mystery_icon_size || unit.mystery_icon_size || 120}
+                />
+              </div>
             </div>
-            <div className="mission-media-v7" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-               <img 
-                 src={startButtonDari} 
-                 alt="Clique aqui para começar" 
-                 className="dari-start-arrow"
-                 style={{ 
-                   width: '200px', 
-                   marginBottom: '5px',
-                   marginTop: '40px',
-                   marginRight: '200px',
-                   transform: 'rotate(50deg)',
-                   position: 'relative',
-                   zIndex: 9999,
-                   cursor: 'default', 
-                   animation: 'bounceArrow 1.5s ease-in-out infinite',
-                   filter: 'drop-shadow(0 4px 12px rgba(16, 185, 129, 0.3))'
-                 }} 
-               />
-               <EmbedPreview
-                 url={current.url || ''}
-                 title={current.title}
-                 maskIcon={current.mystery_icon || unit.mystery_icon}
-                 maskSize={current.mystery_icon_size || unit.mystery_icon_size || 120}
-               />
-             </div>
           </div>
         )}
 
