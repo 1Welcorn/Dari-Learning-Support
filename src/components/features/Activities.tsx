@@ -238,7 +238,7 @@ const StepNavigation: React.FC<{
         </div>
       </div>
 
-      <div className="activities-v5-main" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '0px 20px 20px', gap: '20px', overflow: 'visible', marginTop: '-30px' }}>
+      <div className="activities-v5-main" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '20px', gap: '20px', overflow: 'visible' }}>
         {current.type === 'embed' && (
           <img 
             src={startButtonDari} 
@@ -425,10 +425,10 @@ const StepNavigation: React.FC<{
         .dynamic-wrap-v7 {
           display: flex !important;
           flex-direction: row !important;
-          align-items: center !important;
+          align-items: flex-start !important;
           gap: 60px !important;
           background: white !important;
-          padding: 0 60px 60px !important;
+          padding: 30px 60px 60px !important;
           border-radius: 50px !important;
           overflow: visible !important;
           box-shadow: 0 40px 100px rgba(0,0,0,0.07) !important;
