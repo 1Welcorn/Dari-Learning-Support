@@ -452,7 +452,7 @@ const StepNavigation: React.FC<{
           display: flex !important;
           align-items: center !important;
           justify-content: center !important;
-          border: 4px dashed #e2e8f0 !important;
+          border: 2px solid rgba(0,0,0,0.05) !important;
           cursor: pointer !important;
           transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) !important;
         }
