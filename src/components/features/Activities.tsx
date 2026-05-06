@@ -273,13 +273,36 @@ const StepNavigation: React.FC<{
         )}
 
         {current.type === 'embed' && (
-          <div className="mission-intro-card-v7 dynamic-wrap-v7" style={{ overflow: 'visible', width: current.width || '100%', maxWidth: current.width || '1500px' }}>
+          <div 
+            className="mission-intro-card-v7 dynamic-wrap-v7" 
+            style={{ 
+              overflow: 'visible', 
+              width: current.width || '100%', 
+              maxWidth: current.width || '1500px',
+              minHeight: current.height ? `${current.height}px` : '400px',
+              borderRadius: current.borderRadius !== undefined ? `${current.borderRadius}px` : '50px',
+              padding: current.framePadding ? `${current.framePadding} 60px 60px` : '30px 60px 60px',
+              background: current.frameColor || 'white',
+              boxShadow: current.frameColor === 'transparent' ? 'none' : '0 40px 100px rgba(0,0,0,0.07)'
+            }}
+          >
             <div className="mission-content-v7">
               <span className="mission-tag-v7" style={{ background: '#dbeafe', color: '#1d4ed8' }}>ATIVIDADE INTERATIVA</span>
               <h1 className="mission-subtitle-v7 main-theme" dangerouslySetInnerHTML={{ __html: current.title || 'Atividade' }} />
               {current.brief && <div dangerouslySetInnerHTML={{ __html: current.brief }} style={{ fontSize: '16px', lineHeight: '1.6' }} />}
             </div>
-            <div className="mission-media-v7" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+            </div>
+            <div 
+              className="mission-media-v7" 
+              style={{ 
+                display: 'flex', 
+                flexDirection: 'column', 
+                alignItems: 'center',
+                transform: current.scale ? `scale(${current.scale})` : 'none',
+                borderRadius: current.playerBorderRadius !== undefined ? `${current.playerBorderRadius}px` : (current.borderRadius !== undefined ? `${current.borderRadius}px` : '40px'),
+                overflow: 'hidden'
+              }}
+            >
               <EmbedPreview
                 url={current.url || ''}
                 title={current.title}
@@ -298,7 +321,20 @@ const StepNavigation: React.FC<{
         )}
 
         {current.type === 'question' && (
-          <div className="mission-intro-card-v7 dynamic-wrap-v7" style={{ flexDirection: 'column', alignItems: 'stretch' }}>
+          <div 
+            className="mission-intro-card-v7 dynamic-wrap-v7" 
+            style={{ 
+              flexDirection: 'column', 
+              alignItems: 'stretch',
+              width: current.width || '100%', 
+              maxWidth: current.width || '1500px',
+              minHeight: current.height ? `${current.height}px` : '400px',
+              borderRadius: current.borderRadius !== undefined ? `${current.borderRadius}px` : '50px',
+              padding: current.framePadding ? `${current.framePadding} 60px 60px` : '30px 60px 60px',
+              background: current.frameColor || 'white',
+              boxShadow: current.frameColor === 'transparent' ? 'none' : '0 40px 100px rgba(0,0,0,0.07)'
+            }}
+          >
             <div style={{ marginBottom: '10px' }}>
               <span className="mission-tag-v7" style={{ background: '#f3e8ff', color: '#7c3aed' }}>QUESTÃO {(current.idx as number) + 1}</span>
             </div>

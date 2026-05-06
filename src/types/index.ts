@@ -14,6 +14,13 @@ export interface Question {
   ttsOptionsEnabled?: boolean;
   autoPlayOnce?: boolean;
   delay?: number;
+  width?: string;
+  height?: number;
+  borderRadius?: number;
+  playerBorderRadius?: number;
+  scale?: number;
+  framePadding?: string;
+  frameColor?: string;
 }
 
 export interface ExternalLink {
@@ -42,6 +49,13 @@ export interface EmbedActivity {
   thumbnailUrl?: string;
   maskIcon?: string;
   maskSize?: number;
+  height?: number;
+  borderRadius?: number;
+  playerBorderRadius?: number;
+  scale?: number;
+  framePadding?: string;
+  frameColor?: string;
+  brief?: string;
 }
 
 export interface GameWord {

@@ -101,6 +101,50 @@ const AssetPicker: React.FC<{ onSelect: (path: string) => void; onClose: () => v
     </div>
   </div>
 );
+ 
+ const StylingControls: React.FC<{ 
+   item: any; 
+   onChange: (updates: any) => void;
+   label?: string;
+ }> = ({ item, onChange, label = "CONFIGURAÇÕES DE APARÊNCIA" }) => (
+   <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+     <label style={{ fontSize: '11px', fontWeight: 900, color: '#64748b', letterSpacing: '1px' }}>{label}</label>
+     <div style={{ background: '#f8fafc', padding: '15px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
+       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+         
+         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>LARGURA: {item.width || '100%'}</span></div>
+         <input type="range" min="30" max="100" value={parseInt((item.width || '100%').replace(/[^0-9]/g, ''))} style={{ width: '100%' }} onChange={(e) => onChange({ width: `${e.target.value}%` })} />
+         
+         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>ALTURA: {item.height || 600}px</span></div>
+         <input type="range" min="300" max="1200" step="10" value={item.height || 600} style={{ width: '100%' }} onChange={(e) => onChange({ height: parseInt(e.target.value) })} />
+ 
+         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>CANTOS DO FRAME: {item.borderRadius !== undefined ? item.borderRadius : 40}px</span></div>
+         <input type="range" min="0" max="100" step="1" value={item.borderRadius !== undefined ? item.borderRadius : 40} style={{ width: '100%' }} onChange={(e) => onChange({ borderRadius: parseInt(e.target.value) })} />
+ 
+         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>CANTOS DO PLAYER: {item.playerBorderRadius !== undefined ? item.playerBorderRadius : (item.borderRadius !== undefined ? item.borderRadius : 40)}px</span></div>
+         <input type="range" min="0" max="100" step="1" value={item.playerBorderRadius !== undefined ? item.playerBorderRadius : (item.borderRadius !== undefined ? item.borderRadius : 40)} style={{ width: '100%' }} onChange={(e) => onChange({ playerBorderRadius: parseInt(e.target.value) })} />
+ 
+         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>ZOOM DA IMAGEM/VÍDEO: {item.scale || 1}x</span></div>
+         <input type="range" min="0.5" max="3" step="0.1" value={item.scale || 1} style={{ width: '100%' }} onChange={(e) => onChange({ scale: parseFloat(e.target.value) })} />
+ 
+         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>ESPESSURA DO FRAME: {item.framePadding || '0px'}</span></div>
+         <input type="range" min="0" max="60" step="1" value={parseInt(item.framePadding || '0')} style={{ width: '100%' }} onChange={(e) => onChange({ framePadding: `${e.target.value}px` })} />
+ 
+         <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '10px', fontWeight: 900 }}><span>COR DO FRAME:</span></div>
+         <select value={item.frameColor || ''} style={{ fontSize: '11px', width: '100%', padding: '8px', borderRadius: '10px', border: '1px solid #e2e8f0' }} onChange={(e) => onChange({ frameColor: e.target.value })}>
+           <option value="">Padrão (Branco)</option>
+           <option value="transparent">Transparente</option>
+           <option value="white">Branco Puro</option>
+           <option value="#f8fafc">Cinza Azulado</option>
+           <option value="#fef3c7">Bege Pastel</option>
+           <option value="#3b82f6">Azul Vibrante</option>
+           <option value="#10b981">Verde Dari</option>
+           <option value="#000000">Preto Profundo</option>
+         </select>
+       </div>
+     </div>
+   </div>
+ );
 
 interface PlanningEditorProps {
   unitId: string;
@@ -475,6 +519,15 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                               <input type="range" min="40" max="300" value={item.mystery_icon_size || 120} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon_size = parseInt(e.target.value); setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ width: '100%' }} />
                             </div>
                           </div>
+                          <StylingControls 
+                           item={item} 
+                           onChange={(updates) => {
+                             const nl = [...unitData.embed_urls];
+                             nl[i] = { ...nl[i], ...updates };
+                             setUnitData({ ...unitData, embed_urls: nl });
+                             setIsDirty(true);
+                           }} 
+                         />
                         </div>
 
                         <div>
@@ -507,18 +560,11 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
               {unitData.questions?.map((q: any, i: number) => (
                 <div key={i} style={{ background: '#f8fafc', padding: '25px', borderRadius: '25px', border: '1px solid #e2e8f0' }}>
                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '15px' }}>
-                      <RichTextEditor 
-                         height="120px"
-                         value={q.title || ''} 
-                         onChange={(val) => { const nq = [...unitData.questions]; nq[i].title = val; setUnitData({...unitData, questions: nq}); setIsDirty(true); }} 
-                      />
+                      <div style={{ flex: 1 }}>
+                          <RichTextEditor height="150px" value={q.q} onChange={(val) => { const nq = [...unitData.questions]; nq[i].q = val; setUnitData({...unitData, questions: nq}); setIsDirty(true); }} />
+                       </div>
                       <button onClick={() => { const nq = unitData.questions.filter((_: any, idx: number) => idx !== i); setUnitData({...unitData, questions: nq}); setIsDirty(true); }}><Trash2 color="#ef4444" /></button>
                    </div>
-                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                      {q.options?.map((opt: string, oIdx: number) => (
-                        <div key={oIdx} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
-                           <input type="radio" checked={q.correct === opt} onChange={() => { const nq = [...unitData.questions]; nq[i].correct = opt; setUnitData({...unitData, questions: nq}); setIsDirty(true); }} />
-                           <input value={opt} onChange={(e) => { const nq = [...unitData.questions]; nq[i].options[oIdx] = e.target.value; setUnitData({...unitData, questions: nq}); setIsDirty(true); }} style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1px solid #e2e8f0' }} />
                            <button onClick={() => { const nq = [...unitData.questions]; nq[i].options = nq[i].options.filter((_: any, idx: number) => idx !== oIdx); setUnitData({...unitData, questions: nq}); setIsDirty(true); }} style={{ color: '#ef4444' }}><X size={16} /></button>
                         </div>
                       ))}
