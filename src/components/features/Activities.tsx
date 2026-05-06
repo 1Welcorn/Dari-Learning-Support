@@ -288,25 +288,24 @@ const StepNavigation: React.FC<{
         {/* BOTÃO DE PRÓXIMO PASSO SEMPRE VISÍVEL NO RODAPÉ DO CARD */}
         {activeStep < steps.length - 1 && current.type !== 'brief' && (
           <button 
-            className="next-step-giant-btn"
+            className="next-step-giant-btn next-step-glow"
             onClick={handleNext}
             style={{ 
               background: 'var(--unit-color, #10b981)', 
               color: 'white', 
-              padding: '20px 40px', 
+              padding: '20px 50px', 
               borderRadius: '20px', 
               fontWeight: 900, 
               fontSize: '18px',
               border: 'none',
-              boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '12px',
+              boxShadow: '0 0 20px rgba(16, 185, 129, 0.4), 0 0 60px rgba(16, 185, 129, 0.15)',
               marginTop: '10px',
-              transition: 'all 0.3s'
+              cursor: 'pointer',
+              letterSpacing: '1px',
+              animation: 'glowPulse 2s ease-in-out infinite'
             }}
           >
-            PRÓXIMA ATIVIDADE <ChevronRight size={24} />
+            PRÓXIMA ATIVIDADE
           </button>
         )}
       </div>
@@ -449,6 +448,15 @@ const StepNavigation: React.FC<{
         @media (max-width: 800px) {
           .dynamic-wrap-v7 { flex-direction: column !important; padding: 25px !important; text-align: center !important; }
           .mission-content-v7 { min-width: 0 !important; }
+        }
+
+        @keyframes glowPulse {
+          0%, 100% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.4), 0 0 60px rgba(16, 185, 129, 0.15); transform: scale(1); }
+          50% { box-shadow: 0 0 30px rgba(16, 185, 129, 0.6), 0 0 80px rgba(16, 185, 129, 0.25); transform: scale(1.03); }
+        }
+        .next-step-glow:hover {
+          transform: scale(1.06) !important;
+          box-shadow: 0 0 40px rgba(16, 185, 129, 0.7), 0 0 100px rgba(16, 185, 129, 0.3) !important;
         }
       `}</style>
     </div>
