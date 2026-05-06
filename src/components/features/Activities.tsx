@@ -239,7 +239,7 @@ const StepNavigation: React.FC<{
       </div>
 
       <div className="activities-v5-main" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '20px', gap: '20px', overflow: 'visible' }}>
-        {current.type === 'embed' && (
+        {current.type === 'embed' && current.idx === 0 && (
           <img 
             src={startButtonDari} 
             alt="Clique aqui para começar" 
