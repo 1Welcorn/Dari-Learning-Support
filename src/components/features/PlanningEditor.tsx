@@ -145,6 +145,93 @@ const AssetPicker: React.FC<{ onSelect: (path: string) => void; onClose: () => v
      </div>
    </div>
  );
+ 
+ const MiniActivityPreview: React.FC<{ item: any; unitColor: string }> = ({ item, unitColor }) => (
+   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', width: '100%' }}>
+     <span style={{ fontSize: '10px', fontWeight: 900, color: '#94a3b8' }}>LIVE SIMULATOR (VISTA DO ALUNO)</span>
+     <div style={{ 
+       width: '100%', 
+       background: '#f1f5f9', 
+       borderRadius: '25px', 
+       padding: '20px', 
+       display: 'flex', 
+       justifyContent: 'center', 
+       minHeight: '250px',
+       overflow: 'hidden',
+       border: '1px solid #e2e8f0'
+     }}>
+       <div style={{ 
+         width: item.width || '100%', 
+         maxWidth: '100%',
+         background: item.frameColor || 'white', 
+         borderRadius: `${item.borderRadius !== undefined ? item.borderRadius / 2 : 20}px`,
+         padding: `${parseInt(item.framePadding || '0') / 2}px 15px 15px`,
+         boxShadow: item.frameColor === 'transparent' ? 'none' : '0 10px 30px rgba(0,0,0,0.05)',
+         display: 'flex',
+         gap: '10px',
+         height: 'fit-content'
+       }}>
+         <div style={{ flex: 1 }}>
+           <div style={{ fontSize: '8px', color: unitColor, fontWeight: 900 }}>ATIVIDADE</div>
+           <div style={{ fontSize: '10px', fontWeight: 900, marginTop: '2px' }} dangerouslySetInnerHTML={{ __html: item.title || 'Título' }} />
+           <div style={{ fontSize: '8px', color: '#64748b', marginTop: '4px' }}>Instruções pedagógicas aparecem aqui...</div>
+         </div>
+         <div style={{ 
+           width: '100px', 
+           height: '80px', 
+           background: '#f8fafc', 
+           borderRadius: `${item.playerBorderRadius !== undefined ? item.playerBorderRadius / 2 : 15}px`,
+           border: '1px solid rgba(0,0,0,0.05)',
+           display: 'flex',
+           alignItems: 'center',
+           justifyContent: 'center',
+           overflow: 'hidden',
+           transform: `scale(${item.scale || 1})`
+         }}>
+           <div style={{ width: '40px', height: '40px', borderRadius: '50%', background: '#fff', border: '2px solid #e2e8f0' }} />
+         </div>
+       </div>
+     </div>
+   </div>
+ );
+ 
+ const MiniQuestionPreview: React.FC<{ item: any; unitColor: string }> = ({ item, unitColor }) => (
+   <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'center', width: '100%' }}>
+     <span style={{ fontSize: '10px', fontWeight: 900, color: '#94a3b8' }}>LIVE SIMULATOR (VISTA DO ALUNO)</span>
+     <div style={{ 
+       width: '100%', 
+       background: '#f1f5f9', 
+       borderRadius: '25px', 
+       padding: '20px', 
+       display: 'flex', 
+       justifyContent: 'center', 
+       minHeight: '200px',
+       overflow: 'hidden',
+       border: '1px solid #e2e8f0'
+     }}>
+       <div style={{ 
+         width: item.width || '100%', 
+         maxWidth: '100%',
+         background: item.frameColor || 'white', 
+         borderRadius: `${item.borderRadius !== undefined ? item.borderRadius / 2 : 20}px`,
+         padding: `${parseInt(item.framePadding || '0') / 2}px 20px 20px`,
+         boxShadow: item.frameColor === 'transparent' ? 'none' : '0 10px 30px rgba(0,0,0,0.05)',
+         display: 'flex',
+         flexDirection: 'column',
+         gap: '10px',
+         height: 'fit-content'
+       }}>
+         <div style={{ fontSize: '8px', color: '#7c3aed', fontWeight: 900 }}>QUESTÃO 1</div>
+         <div style={{ fontSize: '10px', fontWeight: 900 }} dangerouslySetInnerHTML={{ __html: item.q || 'Pergunta?' }} />
+         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            {(item.options || ['Opção 1']).map((o: any, idx: number) => (
+              <div key={idx} style={{ padding: '6px', borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '8px' }}>{o}</div>
+            ))}
+         </div>
+       </div>
+     </div>
+   </div>
+ );
 
 interface PlanningEditorProps {
   unitId: string;
@@ -477,7 +564,7 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                       </button>
                    </div>
 
-                   <div style={{ padding: '30px', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '30px' }}>
+                   <div style={{ padding: '30px', display: 'grid', gridTemplateColumns: '1.2fr 0.8fr 1.2fr', gap: '30px' }}>
                       {/* LEFT COLUMN: CONTENT & INSTRUCTIONS */}
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                         <div>
@@ -495,54 +582,28 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                           <RichTextEditor 
                             value={item.brief || ''} 
                             onChange={(val) => { const nl = [...unitData.embed_urls]; nl[i].brief = val; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} 
-                            height="180px"
+                            height="250px"
+                            placeholder="Dicas para o aluno..." 
                           />
                         </div>
-                      </div>
-
-                      {/* RIGHT COLUMN: DESIGN & MYSTERY */}
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '20px', background: '#f8fafc', padding: '25px', borderRadius: '30px' }}>
-                        <div>
-                          <label style={{ fontSize: '11px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '8px', letterSpacing: '1px' }}>CONFIGURAÇÃO DE MISTÉRIO</label>
-                          <div style={{ background: 'white', padding: '15px', borderRadius: '20px', border: '1px solid #e2e8f0', display: 'flex', flexDirection: 'column', gap: '15px' }}>
-                            <div>
-                              <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '4px' }}>IMAGEM DA MÁSCARA (URL)</label>
-                              <div style={{ display: 'flex', gap: '8px' }}>
-                                <input type="text" value={item.mystery_icon || ''} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = e.target.value; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} placeholder="Link ou escolha na galeria..." style={{ flex: 1, padding: '10px', borderRadius: '10px', border: '1.5px solid #e2e8f0', fontSize: '12px' }} />
-                                <button onClick={() => triggerUpload((url) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = url; setUnitData({...unitData, embed_urls: nl}); })} style={{ background: '#f1f5f9', border: 'none', borderRadius: '10px', padding: '8px' }} title="Upload Local"><ImageIcon size={16} /></button>
-                                <button onClick={() => setShowAssetPicker({ active: true, callback: (path) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon = path; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); setShowAssetPicker({ active: false, callback: () => {} }); } })} style={{ background: '#f1f5f9', border: 'none', borderRadius: '10px', padding: '8px' }} title="Galeria"><Globe size={16} /></button>
-                              </div>
-                            </div>
-                            
-                            <div>
-                              <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '4px' }}>TAMANHO DO ÍCONE: {item.mystery_icon_size || 120}px</label>
-                              <input type="range" min="40" max="300" value={item.mystery_icon_size || 120} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon_size = parseInt(e.target.value); setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ width: '100%' }} />
-                            </div>
-                          </div>
-                          <StylingControls 
-                           item={item} 
-                           onChange={(updates) => {
-                             const nl = [...unitData.embed_urls];
-                             nl[i] = { ...nl[i], ...updates };
-                             setUnitData({ ...unitData, embed_urls: nl });
-                             setIsDirty(true);
-                           }} 
-                         />
-                        </div>
 
                         <div>
-                          <label style={{ fontSize: '11px', fontWeight: 900, color: '#94a3b8', display: 'block', marginBottom: '8px', letterSpacing: '1px' }}>APARÊNCIA NO APP</label>
-                          <div style={{ background: 'white', padding: '15px', borderRadius: '20px', border: '1px solid #e2e8f0' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                              <Smartphone size={20} color="#10b981" />
-                              <div style={{ flex: 1 }}>
-                                <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '4px' }}>LARGURA DO CARD: {item.width || '100%'}</label>
-                                <input type="range" min="30" max="100" value={parseInt(item.width?.replace('%','') || '100')} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].width = `${e.target.value}%`; setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ width: '100%' }} />
-                              </div>
-                            </div>
-                          </div>
+                          <label style={{ fontSize: '10px', fontWeight: 900, color: '#64748b', display: 'block', marginBottom: '4px' }}>TAMANHO DO ÍCONE: {item.mystery_icon_size || 120}px</label>
+                          <input type="range" min="40" max="300" value={item.mystery_icon_size || 120} onChange={(e) => { const nl = [...unitData.embed_urls]; nl[i].mystery_icon_size = parseInt(e.target.value); setUnitData({...unitData, embed_urls: nl}); setIsDirty(true); }} style={{ width: '100%' }} />
                         </div>
                       </div>
+
+                      <StylingControls 
+                         item={item} 
+                         onChange={(updates) => {
+                           const nl = [...unitData.embed_urls];
+                           nl[i] = { ...nl[i], ...updates };
+                           setUnitData({ ...unitData, embed_urls: nl });
+                           setIsDirty(true);
+                         }} 
+                       />
+                       
+                       <MiniActivityPreview item={item} unitColor={COLORS[unitData.color]?.main || '#10b981'} />
                    </div>
                  </div>
                ))}
@@ -566,8 +627,8 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                        <button onClick={() => { const nq = unitData.questions.filter((_: any, idx: number) => idx !== i); setUnitData({...unitData, questions: nq}); setIsDirty(true); }} style={{ background: 'none', border: 'none', alignSelf: 'flex-start' }}><Trash2 color="#ef4444" /></button>
                     </div>
                     
-                    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '30px' }}>
-                       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr 1.2fr', gap: '30px', marginTop: '20px' }}>
+                       <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
                           <label style={{ fontSize: '11px', fontWeight: 900, color: '#94a3b8' }}>OPÇÕES DE RESPOSTA</label>
                           {q.options?.map((opt: string, oIdx: number) => (
                             <div key={oIdx} style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
@@ -588,6 +649,8 @@ const PlanningEditor: React.FC<PlanningEditorProps> = ({ unitId, onBack, updateU
                             setIsDirty(true);
                           }} 
                         />
+
+                       <MiniQuestionPreview item={q} unitColor={COLORS[unitData.color]?.main || '#10b981'} />
                     </div>
                  </div>
                ))}
