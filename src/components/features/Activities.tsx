@@ -296,7 +296,7 @@ const StepNavigation: React.FC<{
               style={{ 
                 display: 'flex', 
                 flexDirection: 'column', 
-                alignItems: 'center',
+                alignItems: 'flex-end',
                 transform: current.scale ? `scale(${current.scale})` : 'none',
                 borderRadius: current.playerBorderRadius !== undefined ? `${current.playerBorderRadius}px` : (current.borderRadius !== undefined ? `${current.borderRadius}px` : '40px'),
                 overflow: 'hidden'
@@ -475,7 +475,7 @@ const StepNavigation: React.FC<{
           margin: 0 auto !important;
         }
         .mission-content-v7 { flex: 1 1 auto !important; min-width: 300px !important; }
-        .mission-media-v7 { flex: 3 1 auto !important; display: flex !important; flex-direction: column !important; align-items: center !important; width: 100%; }
+        .mission-media-v7 { flex: 3 1 auto !important; display: flex !important; flex-direction: column !important; align-items: flex-end !important; width: 100%; }
 
         /* Estilização do Frame do Ícone Misterioso */
         .embed-preview {
