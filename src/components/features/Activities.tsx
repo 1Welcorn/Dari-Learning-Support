@@ -583,7 +583,7 @@ const normalizeEmbedUrl = (rawUrl: string): string => {
   }
 };
 type StepType = 'brief' | 'game' | 'embed' | 'question' | 'report' | 'congratulations';
-type StepContent = { type: StepType; title?: string; mechanic?: string; xp?: number; url?: string; idx?: number; q?: any; brief?: string; mystery_icon?: string; mystery_icon_size?: number };
+type StepContent = { type: StepType; title?: string; mechanic?: string; xp?: number; url?: string; idx?: number; q?: any; brief?: string; mystery_icon?: string; mystery_icon_size?: number; width?: string; height?: number; borderRadius?: number; playerBorderRadius?: number; scale?: number; framePadding?: string; frameColor?: string; };
 export const Activities: React.FC<any> = ({ units, ...props }) => {
   const [activeUnitId] = useState<string | null>(props.initialExpandedId || null);
   const activeUnit = useMemo(() => units.find((u: any) => u.id === activeUnitId), [units, activeUnitId]);

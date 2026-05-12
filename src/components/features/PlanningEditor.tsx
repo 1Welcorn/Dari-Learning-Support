@@ -84,7 +84,7 @@ const INTERNAL_ASSETS = [
 ];
 
 const AssetPicker: React.FC<{ onSelect: (path: string) => void; onClose: () => void }> = ({ onSelect, onClose }) => (
-  <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyCenter: 'center', padding: '20px' }}>
+  <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px' }}>
     <div style={{ background: 'white', borderRadius: '30px', padding: '30px', maxWidth: '600px', width: '100%', maxHeight: '80vh', overflowY: 'auto' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
         <h3 style={{ margin: 0, fontWeight: 900 }}>Galeria do Repositório</h3>
